@@ -22,23 +22,27 @@ export default {
           children: [
             {
               label: '日志审计管理',
-              path: '/resource/config/LogAudit',
+              path: 'LogAudit',
               disabled: false
             },
             {
               label: '用户管理',
+              path: 'User',
               disabled: false
             },
             {
               label: '角色管理',
+              path: 'Role',
               disabled: false
             },
             {
               label: '员工管理',
+              path: 'Employee',
               disabled: false
             },
             {
               label: '部门管理',
+              path: 'Department',
               disabled: false
             }
           ]

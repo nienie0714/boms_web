@@ -77,6 +77,8 @@ export default {
       this.dataHis.forEach(item => {
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
+        } else if (this.type == 'update') {
+          this.$delete(item, 'disabled')
         }
         if (item.hasOwnProperty('url')) {
           queryAll(item.url, item.param || {}).then(res => {
@@ -210,7 +212,6 @@ export default {
   watch: {
     'form.data': {
       handler (data) {
-        this.updateData()
         if (data) {
           this.$set(this, 'data', data)
         }
@@ -230,6 +231,7 @@ export default {
           this.submit = true
           break
         }
+        this.updateData()
       },
       immediate: true
     }

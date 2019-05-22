@@ -61,17 +61,17 @@ var router = new Router({
           children: [
             {
               path: '/config',
-              name: '配置管理',
-              redirect: to => {
-                return {path: 'logAudit'}
-              },
-              children: [
-                {
-                  path: 'logAudit',
-                  name: '日志审计管理',
-                  component: r => require.ensure([], () => r(require('@/views/resource/config/LogAudit'), 'LogAudit')),
-                }
-              ]
+              name: '配置管理'
+              // redirect: to => {
+              //   return {path: 'logAudit'}
+              // },
+              // children: [
+              //   {
+              //     path: 'logAudit',
+              //     name: '日志审计管理',
+              //     component: r => require.ensure([], () => r(require('@/views/resource/config/LogAudit'), 'LogAudit')),
+              //   }
+              // ]
             }
           ]
         }

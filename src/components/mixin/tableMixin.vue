@@ -81,7 +81,7 @@ export default {
           if (response.data.data.hasOwnProperty('rows')) {
             this.tableData.data = response.data.data.rows
           } else {
-            this.tableData.data = response.data.data
+            this.tableData.data = response.data.data.slice(0,10)// todo
           }
           this.customAfterQuery()
           /* this.$msg.success({

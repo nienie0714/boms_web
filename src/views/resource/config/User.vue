@@ -11,6 +11,7 @@
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
             <button type="info" @click="openDetail('detail', row)">详情</button>
+            <button type="info" @click="openDetail('update', row)">编辑</button>
           </template>
         </template>
       </tables>
@@ -22,7 +23,7 @@
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
 import Tables from '@view/Table/Table'
-import Detail from './detail/LogAuditDetail'
+import Detail from './detail/UserDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
@@ -42,30 +43,27 @@ export default {
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
       queryParam: [
         {
-          key: 'flightNo',
+          key: 'userName',
           label: '用户名',
           type: 'input',
           width: 120,
           toUpper: true
         },
         {
+          key: 'empName',
+          label: '姓名',
+          type: 'input',
+          width: 120,
+          toUpper: true
+        },
+        {
           key: 'terminalStation',
-          label: '员工',
+          label: '角色',
           type: 'datalist',
           width: 120,
           itemValue: 'airportIata',
           itemLabel: 'briefC',
-          url: '/base/airport/queryAll',
-          toUpper: true
-        },
-        {
-          key: 'stand',
-          label: '操作时间',
-          type: 'datalist',
-          width: 140,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          url: '/base/airport/queryAll'
         }
       ],
       tableData: {
@@ -77,12 +75,11 @@ export default {
           // left
           [
             {type: 'mult', width: 50},
-            {key: 'flightNoAlias',  label: '用户名', width: 120, class: 'bold'},
-            {key: 'execDate', label: '姓名', width: 120, format: [0, 10]},
-            {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},
-            {key: 'aircraftType',  label: '操作模块', width: 250},
-            {key: 'routeCn',  label: '内容', width: 600, title: true},
-            {key: 'execDate',  label: '操作时间', width: 180, format: [0, 16]}
+            {key: 'userName',  label: '用户名', width: 355},
+            {key: 'empName', label: '姓名', width: 355},
+            {key: 'deptName',  label: '部门', width: 355},
+            {key: 'name',  label: '角色', width: 355},
+            // {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},, format: [0, 10]  , title: true
           ],
           // center
           [
