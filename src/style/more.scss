@@ -1,0 +1,32 @@
+.flight, .luggages, .log-audit {
+  .toolbar {
+    margin-left: 20px;
+    height: 38px;
+    align-self: flex-end;
+    >button {
+      height: 100%;
+      line-height: 100%;
+    }
+  }
+  .tabs-parent {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    .tab-item>div {
+      height: 22px;
+      line-height: 22px;
+    }
+  }
+}
+
+.under-head-dialog {
+  .dialog {
+    top: 80px !important;
+  }
+}
+.table-cont {
+  border-radius: 10px;
+  overflow: hidden;
+}

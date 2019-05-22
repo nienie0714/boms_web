@@ -1,0 +1,39 @@
+/* 灰色 */
+$gray-st: #3d424c;
+$gray-nd: #899db2;
+$gray-rd: #a3b6cc;
+$gray-rs: #dae3eb;
+
+/* 色号 */
+$blue: #3392ff;
+$yellow: #f79f2d;
+$red: #f75467;
+/* 投影 */
+$blue-shadow: rgb(51, 146, 255);
+$white-shadow: rgb(107, 130, 153);
+$black-shadow: rgb(115, 134, 153);
+$yellow-shadow: rgb(247, 159, 45);
+$green-shadow: rgb(2, 182, 116);
+$red-shadow: rgb(247, 84, 103);
+/* 遮罩 */
+$opt: rgba(0, 0, 0, .6);
+@mixin heightMix ($rowHeight) {
+  @for $i from 1 through 9 {
+    .row_height_#{$i} {
+      max-height: #{$rowHeight * $i + $i - 1};
+      height: #{$rowHeight * $i + $i - 1};
+      line-height: #{$rowHeight * $i + $i - 1};
+    }
+  }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
