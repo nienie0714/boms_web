@@ -24,7 +24,7 @@ export default {
         column: [
           {key: 'empId',  label: '员工编号', type: 'input'},
           {key: 'empName',  label: '姓名', type: 'input'},
-          {key: 'gender',  label: '性别', type: 'radio', radioOptions: [{title: '男'}, {title: '女'}], width: '191'},
+          {key: 'gender',  label: '性别', type: 'radio', radioOptions: [{value: '男'}, {value: '女'}], width: '191'},
           {key: 'deptName', label: '单位/部门', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
           {key: 'post',  label: '职务名称', type: 'input'},
           {key: 'phone',  label: '联系方式', type: 'input'},
@@ -58,6 +58,9 @@ export default {
     }
   },
   methods: {
+    changeRadio(data) {
+      console.log(data)
+    },
     changeData () {
       this.$nextTick(() => {
         this.changeWindowSize()

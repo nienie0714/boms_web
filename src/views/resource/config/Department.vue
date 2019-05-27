@@ -4,6 +4,7 @@
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
         <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        <button type="primary" @click="openDetail('insert')">新增</button>
       </div>
     </div>
     <div class="table-cont container cross">

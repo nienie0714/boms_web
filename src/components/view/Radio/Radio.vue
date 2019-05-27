@@ -1,10 +1,10 @@
 <template>
   <div class="wt-radio">
     <ul>
-      <li v-for="(item, index) in dataSource" :key="index"  @click='handle(item, index)' :class="{'disable': item.disable}">
+      <li v-for="(item, index) in dataSource && dataSource.radioOptions" :key="index"  @click='change(item, index, $event)' :class="{'disable': item.disable}">
         <div v-if="showBtn" :class="{'radio is-checked': index === isActive, 'radio':showBtn, 'disable': item.disable}"></div>
         <div class="item-inner">
-          <div class="title" :class="{'normal':showBtn}">{{item.title}}</div>
+          <div class="title" :class="{'normal':showBtn}">{{item.value}}</div>
         </div>
         <div v-if="!showBtn" :class="{'radio is-checked': index === isActive}"></div>
       </li>
@@ -16,9 +16,9 @@ export default {
   name: 'wt-radio-group',
   props: {
     dataSource: {
-      type: Array,
+      type: Object,
       default: function () {
-        return [];
+        return {};
       }
     },
     showBtn: {
@@ -33,13 +33,28 @@ export default {
     };
   },
   methods: {
-    handle (item, index) {
+    change (item, index, $event) {
       if (item.disable) {
         return;
       }
       this.selected = item;
       this.isActive = index;
-      this.$emit('handle', item, index);
+      let ret = {...this.dataSource, ...item}
+      // if (this.dataSource.hasOwnProperty('method')) {
+      //   let method = this.dataSource.method
+      //   method(this.dataSource[item.key], param => {
+      //     if (param) {
+      //       if (Array.isArray(param)) {
+      //         param.forEach(item => {
+      //           this.$set(this.dataSource, item.key, item.value)
+      //         })
+      //       } else {
+      //         this.$set(this.dataSource, param.key, param.value)
+      //       }
+      //     }
+      //   })
+      // }
+      this.$emit('change', {ret, $event});
     }
   }
 };

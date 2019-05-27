@@ -55,6 +55,8 @@ $menuW: 200px;
 
   >.body {
     width: calc(100% - #{$menuW});
+    >.header {
+    }
     >.title {
       height: 50px;
       color: $gray-st;

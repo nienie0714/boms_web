@@ -95,7 +95,7 @@ export default {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
-            } else if (type == 'update') {
+            } else if (type == 'update' || type == 'insert') {
               item.isHidden = true
             }
           }

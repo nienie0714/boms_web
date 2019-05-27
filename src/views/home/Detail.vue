@@ -11,12 +11,13 @@
           <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
             <input v-if="['datalist', 'inputlist'].includes(item.type)" v-model.trim="data[item.key]" :list="item.key" style="width: inherit;" :placeholder="'请输入'+item.label"
             :disabled="item.disabled"
-            @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)" @focus="handleFocus(item, $event)" @blur="handleBlur(item, $event)"/>
-            <component :is="item.type" :id="item.key" v-model.trim="data[item.key]" :value="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max"
+            @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)" @focus="handleFocus(item, $event)" @blur="handleBlur(item, $event)"/>  
+            <Radio v-if="item.type == 'radio'" :dataSource="item" @change="checkRadio($event)"></Radio>
+            <component v-if="item.type != 'radio'" :is="item.type" :id="item.key" v-model.trim="data[item.key]" :value="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max"
             class="value-component" :placeholder="'请输入'+item.label" :disabled="item.disabled"
             :itemKey="item.key" :options="item.options" :itemValue="item.itemValue" :label="item.itemLabel" :input="data[item.key]"
             @blur="item.toUpper&&toUpper(item, $event)" @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)"
-            @select="selectList" :dataSource="item.radioOptions" @handle="handleRadio">
+            @select="selectList">
               <template v-if="item.type=='datalist'">
                 <option v-for="(opt, idx) in item.options" :key="idx" :value="(opt.constructor==Object)?opt[item.itemValue]:opt">{{(opt.constructor==Object)?opt[item.itemLabel]:opt}}</option>
               </template>
@@ -134,6 +135,11 @@ export default {
         })
       }
     },
+    checkRadio({ret, $event}) {
+      if (ret) {
+        this.data[ret.key] = ret.value
+      }
+    },
     handleEnter (item, event) {
       if (item.toUpper) {
         this.toUpper(item, event)
@@ -155,9 +161,9 @@ export default {
         event.target.nextElementSibling.style.visibility = 'hidden'
       }
     },    
-    handleRadio(item, index) {
-      this.$emit('handleRadio', item, index);
-    },
+    // handleChange(item, index) {
+    //   this.$emit('handleRadio', item, index);
+    // },
     toUpper (item, event) {
       let value = item.value.trim().toUpperCase()
       event.target.value = value
@@ -186,6 +192,7 @@ export default {
           }
         }
       })
+      console.log(this.data)
       this.$emit('handleSubmit', this.data)
     },
     handleError (obj, value) {

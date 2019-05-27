@@ -16,7 +16,6 @@
         </template>
       </tables>
     </div>
-    <Radio :dataSource="dataSource" @handle="checkRadio"></Radio>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleClose="handleClose"></detail>
   </div>
 </template>
@@ -29,14 +28,12 @@ import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
 import _ from 'lodash'
-import Radio from '@view/Radio/Radio'
 
 export default {
   components: {
     QueryRow,
     Tables,
-    Detail,
-    Radio
+    Detail
   },
   mixins: [tableMixin, formMixin],
   data () {
@@ -103,9 +100,6 @@ export default {
   mounted () {
   },
   methods: {
-    checkRadio(item, index) {
-      console.log(item, index)
-    },
     openDetail (type, row) {
       this.detail.type = type
       this.detail.data = row
