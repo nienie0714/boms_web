@@ -16,7 +16,7 @@
             class="value-component" :placeholder="'请输入'+item.label" :disabled="item.disabled"
             :itemKey="item.key" :options="item.options" :itemValue="item.itemValue" :label="item.itemLabel" :input="data[item.key]"
             @blur="item.toUpper&&toUpper(item, $event)" @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)"
-            @select="selectList">
+            @select="selectList" :dataSource="item.radioOptions" @handle="handleRadio">
               <template v-if="item.type=='datalist'">
                 <option v-for="(opt, idx) in item.options" :key="idx" :value="(opt.constructor==Object)?opt[item.itemValue]:opt">{{(opt.constructor==Object)?opt[item.itemLabel]:opt}}</option>
               </template>
@@ -38,6 +38,7 @@
 
 <script>
 import Inputlist from '@view/Inputlist/Inputlist'
+import Radio from '@view/Radio/Radio'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
@@ -45,7 +46,8 @@ import _ from 'lodash'
 
 export default {
   components: {
-    Inputlist
+    Inputlist,
+    Radio
   },
   mixins: [utilMixin],
   props: ['form', 'type', 'title', 'close', 'position', 'header'],
@@ -77,8 +79,6 @@ export default {
       this.dataHis.forEach(item => {
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
-        } else if (this.type == 'update') {
-          this.$delete(item, 'disabled')
         }
         if (item.hasOwnProperty('url')) {
           queryAll(item.url, item.param || {}).then(res => {
@@ -154,6 +154,9 @@ export default {
       if (item.type == 'inputlist') {
         event.target.nextElementSibling.style.visibility = 'hidden'
       }
+    },    
+    handleRadio(item, index) {
+      this.$emit('handleRadio', item, index);
     },
     toUpper (item, event) {
       let value = item.value.trim().toUpperCase()

@@ -22,7 +22,7 @@ export default {
         loading: false,
         queryParam: {},
         column: [
-          {key: 'empName', label: '姓名', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          {key: 'ffid', label: '姓名', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
           {key: 'userName',  label: '用户名', type: 'input'},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'input'},
