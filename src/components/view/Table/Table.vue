@@ -11,10 +11,10 @@
               <th v-for="(item, itemIndex) in col" :key="itemIndex" :rowspan="item.rowspan" :colspan="item.colspan"
               :class="['row_height_'+(item.rowspan?item.rowspan:1), item.titleClass, item.class]"
               :style="`width:${item.width?(item.width+'px'):'auto'}; max-width:${item.width?(item.width+'px'):'auto'};`">
-                <template v-if="item.type=='mult'">
+                <template v-if="tableData.type=='mult' && itemIndex == 0">
                   <div :class="(tableData.multSelection.length == tableData.data.length && tableData.data.length > 0)?'radio is-checked':'radio'" @click="selectAuto"></div>
                 </template>
-                <template v-else>{{item.label}}</template>
+                <template>{{item.label}}</template>
               </th>
             </tr>
           </thead>
@@ -44,7 +44,7 @@
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- (colIndex!=columnData.length-1)&&(colIndex>0)?`width: ${centerWidth}px`:'' -->
           <tbody>
             <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
-            @dblclick="handleDblClick(row)" @click="selectIndex = index">
+            @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
               <td v-for="(item, itemIndex) in col" :key="itemIndex" :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false"
               :class="item.class"
               :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
@@ -183,6 +183,13 @@ export default {
       if (~index) {
         this.tableData.multSelection.splice(index, 1)
       } else {
+        this.tableData.multSelection.push(row)
+      }
+    },
+    selectRowTr (row, index) {
+      this.selectIndex = index
+      if (this.tableData.type == 'single') {
+        this.tableData.multSelection = []
         this.tableData.multSelection.push(row)
       }
     },

@@ -4,7 +4,6 @@
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
         <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
-        <button type="primary" @click="openDetail('insert')">新增</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -24,7 +23,7 @@
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
 import Tables from '@view/Table/Table'
-import Detail from './detail/DepartmentDetail'
+import Detail from './detail/EmployeeDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
@@ -39,39 +38,47 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
+      dataSource: [
+        {
+          title: '男'
+        },
+        {
+          title: '女'
+        }
+      ],
       axiosChildArr: [],
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
       queryParam: [
         {
-          key: 'deptName',
-          label: '部门名称',
+          key: 'empName',
+          label: '姓名',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         },
         {
-          key: 'phone',
-          label: '联系电话',
-          type: 'input',
+          key: 'deptName',
+          label: '部门',
+          type: 'datalist',
           width: 120,
-          toUpper: true
+          itemValue: 'airportIata',
+          itemLabel: 'briefC',
+          url: '/base/airport/queryAll'
         }
       ],
       tableData: {
         height: 600,
         multSelection: [],
         loading: false,
-        key: 'deptId',
+        key: 'dynamicFlightId',
         column: [
           // left
           [
             {type: 'mult', width: 50},
-            {key: 'deptId',  label: '部门编号', width: 355},
-            {key: 'deptName', label: '部门名称', width: 355},
-            {key: 'parentDeptName',  label: '上级部门名称', width: 355},
-            {key: 'phone',  label: '联系电话', width: 355},
-            // {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},, format: [0, 10]  , title: true
+            {key: 'deptName',  label: '单位/部门', width: 355},
+            {key: 'empName', label: '姓名', width: 355},
+            {key: 'post',  label: '职务名称', width: 355},
+            {key: 'phone',  label: '联系方式', width: 355}
           ],
           // center
           [
@@ -118,8 +125,8 @@ export default {
       let url = this.showComp[comp + 'Url']
       this.axiosChildArr.push({
         url: url,
-        method: 'post',
-        data: idObj
+        method: 'put',
+        params: idObj
       })
       queryAll(url, idObj).then(res => {
         if (res.data.code == 0) {

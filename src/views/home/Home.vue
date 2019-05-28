@@ -28,13 +28,14 @@ export default {
     DropMenu,
   },
   mounted () {
-    this.$router.push({name: '航班信息查询'})
+    this.$router.push({name: '信息共享平台'})
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .home {
+  height: 100%;
   >div {
     width: 100vw;
   }
@@ -71,6 +72,7 @@ export default {
     }
   }
   >.main {
+    height: calc(100% - 80px);
     padding: 20px;
     background-color: #edf1f5;
   }

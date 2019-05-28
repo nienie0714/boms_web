@@ -1,28 +1,30 @@
 <template>
-  <div class="resource container">
-    <div class="header">
-      <resrc-menu @skipPath="skipPath"></resrc-menu>
+  <div class="comprhs-query module container">
+    <div :class="['header', hidden ? 'hidden' : '']">
+      <div class="module-img"></div>
+      <second-menu @skipPath="skipPath"></second-menu>
+      <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
     <div class="body container cross">
       <div class="title">{{title}}</div>
-      <component :is="name"></component >
+      <component :is="name"></component>
     </div>
   </div>
 </template>
 
 <script>
-import ResrcMenu from './ResrcMenu'
-import Vue from 'vue'
-import * as component from '@/views/resource'
+import SecondMenu from '../SecondMenu'
+import * as component from '@/views/comprhsQuery'
 
 export default {
   components: {
-    ResrcMenu
+    SecondMenu
   },
   data () {
     return {
       name: '',
-      title: '信息查询'
+      title: '信息查询',
+      hidden: false
     }
   },
   mounted () {
@@ -46,23 +48,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$menuW: 200px;
-.resource {
+.comprhs-query {
   >.header {
-    width: $menuW - 20px;
-    margin-right: 20px;
-  }
-
-  >.body {
-    width: calc(100% - #{$menuW});
-    >.header {
-    }
-    >.title {
-      height: 50px;
-      color: $gray-st;
-      line-height: 50px;
-      font-size: 20px;
-      text-align: left;
+    >.module-img {
+      background-color: $blue-shadow;
     }
   }
 }

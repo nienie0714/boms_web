@@ -1,0 +1,57 @@
+<template>
+  <div class="config module container">
+    <div class="header">
+      <div class="module-img"></div>
+      <second-menu @skipPath="skipPath"></second-menu>
+      <div class="hidden-button"></div>
+    </div>
+    <div class="body container cross">
+      <div class="title">{{title}}</div>
+      <component :is="name"></component>
+    </div>
+  </div>
+</template>
+
+<script>
+import SecondMenu from '../SecondMenu'
+import * as component from '@/views/config'
+
+export default {
+  components: {
+    SecondMenu
+  },
+  data () {
+    return {
+      name: '',
+      title: '配置管理'
+    }
+  },
+  mounted () {
+    this.title = this.$route.name
+  },
+  methods: {
+    skipPath (obj) {
+      this.name = obj.path
+      if (this.name) {
+        this.title = obj.label
+        this.$options.components[this.name] = component[this.name]
+      }
+    }
+  },
+  watch: {
+    $route (to, from) {
+      this.title = to.name
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.config {
+  >.header {
+    >.module-img {
+      background-color: $blue-shadow;
+    }
+  }
+}
+</style>

@@ -18,29 +18,31 @@ export default {
     return {
       title: '用户管理',
       form: {
-        key: 'empId',
+        key: 'deptId',
         loading: false,
         queryParam: {},
         column: [
-          {key: 'empId',  label: '员工编号', type: 'input'},
-          {key: 'empName',  label: '姓名', type: 'input'},
-          {key: 'gender',  label: '性别', type: 'radio', radioOptions: [{value: '男'}, {value: '女'}], width: '191'},
-          {key: 'deptName', label: '单位/部门', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
-          {key: 'post',  label: '职务名称', type: 'input'},
-          {key: 'phone',  label: '联系方式', type: 'input'},
+          {key: 'deptId',  label: '部门编号', type: 'input', maxlength: 20},
+          {key: 'phone',  label: '联系电话', type: 'input', maxlength: 15},
+          {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 50},
+          {key: 'parentDeptName', label: '上级部门名称', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          {key: 'remark', label: '备注', type: 'textarea', maxlength: 100},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
-          empId: [
+          deptId: [
             {type: 'require', trigger: 'blur'}
           ],
-          empName: [
+          phone: [
             {type: 'require', trigger: 'blur'}
           ],
-          gender: [
+          deptName: [
+            {type: 'require', trigger: 'blur'}
+          ],
+          parentDeptName: [
             {type: 'require', trigger: 'blur'}
           ]
         },
@@ -58,9 +60,6 @@ export default {
     }
   },
   methods: {
-    changeRadio(data) {
-      console.log(data)
-    },
     changeData () {
       this.$nextTick(() => {
         this.changeWindowSize()
@@ -96,7 +95,7 @@ export default {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
-            } else if (type == 'update') {
+            } else if (type == 'update' || type == 'insert') {
               item.isHidden = true
             }
           }

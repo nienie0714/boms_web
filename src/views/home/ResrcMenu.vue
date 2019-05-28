@@ -1,5 +1,5 @@
 <template>
-  <div class="resource-menu">
+  <div class="second-menu">
     <menu-list :menuData="menuData" @skipPath="skipPath"></menu-list>
   </div>
 </template>
@@ -16,36 +16,29 @@ export default {
     return {
       menuData: [
         {
-          label: '配置管理',
-          disabled: false,
-          open: true,
-          children: [
-            {
-              label: '日志审计管理',
-              path: 'LogAudit',
-              disabled: false
-            },
-            {
-              label: '用户管理',
-              path: 'User',
-              disabled: false
-            },
-            {
-              label: '角色管理',
-              path: 'Role',
-              disabled: false
-            },
-            {
-              label: '员工管理',
-              path: 'Employee',
-              disabled: false
-            },
-            {
-              label: '部门管理',
-              path: 'Department',
-              disabled: false
-            }
-          ]
+          label: '日志审计管理',
+          path: 'LogAudit',
+          disabled: false
+        },
+        {
+          label: '用户管理',
+          path: 'User',
+          disabled: false
+        },
+        {
+          label: '角色管理',
+          path: 'Role',
+          disabled: false
+        },
+        {
+          label: '员工管理',
+          path: 'Employee',
+          disabled: false
+        },
+        {
+          label: '部门管理',
+          path: 'Department',
+          disabled: false
         }
       ]
     }
@@ -61,3 +54,7 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped>
+.second-menu {
+}
+</style>

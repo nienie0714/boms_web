@@ -195,8 +195,8 @@ export default {
       let url = this.showComp[comp + 'Url']
       this.axiosChildArr.push({
         url: url,
-        method: 'post',
-        data: idObj
+        method: 'put',
+        params: idObj
       })
       queryAll(url, idObj).then(res => {
         if (res.data.code == 0) {

@@ -76,7 +76,7 @@ export default {
       this.$emit('handleClose')
     },
     submitDialog () {
-      this.$emit('handleSubmit')
+      this.$emit('submitDialog')
     }
   },
   watch: {

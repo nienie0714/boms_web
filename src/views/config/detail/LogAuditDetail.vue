@@ -1,5 +1,5 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form" @handleSubmit="handleSubmit"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
 </template>
 
 <script>
@@ -16,28 +16,36 @@ export default {
   props: ['data', 'type'],
   data () {
     return {
-      title: '用户管理',
+      title: '日志审计',
       form: {
-        key: 'ata',
-        loading: false,
+        key: 'logId',
         queryParam: {},
         column: [
-          {key: 'ffid', label: '姓名', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
-          {key: 'userName',  label: '用户名', type: 'input'},
-          {key: 'deptName',  label: '部门', type: 'input', disabled: true},
-          {key: 'password',  label: '密码', type: 'input'},
-          {key: 'name', label: '角色', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          // {key: 'atd',  label: '行李号', type: 'input', class: 'bold'},
+          // {key: 'abnormalReason', label: '行李类型', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          // {key: 'aircraftType',  label: '拉减', type: 'input', enumKey: 'isYOrN'},
+          // {key: 'airline',  label: '追加', type: 'input', enumKey: 'isYOrN', isHidden: true},
+          // {key: 'ata', label: '行李类型', type: 'textarea', enumKey: 'inOutFlag'}
+          {key: 'logId',  label: '日志Id', type: 'input', isHidden: true},
+          {key: 'logUser',  label: '用户名', type: 'input'},
+          {key: 'empName',  label: '姓名', type: 'input'},
+          {key: 'logType',  label: '操作类型', type: 'input'},
+          {key: 'logModule',  label: '操作模块', type: 'input'},
+          {key: 'logDetail',  label: '操作内容', type: 'input'},
+          {key: 'logTime',  label: '操作时间', type: 'input'},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
-          empName: [
-            {type: 'require', trigger: 'blur'}
+          logUser: [
+            {type: 'require', trigger: 'blur'},
+            {type: 'unique', url: '/integrated/dynamicFlight', trigger: 'blur'},
+            {type: 'regex', reg: /[+]{0,1}(\d+)/, info: '必须为正整数'}
           ],
-          userName: [
-            {type: 'require', trigger: 'blur'}
+          empName: [
+            {type: 'regexRvs', reg: /[+]{0,1}(\d+)/, info: '不能为正整数'}
           ]
         },
         data: null
@@ -66,18 +74,12 @@ export default {
       if (dlgBody) {
         this.tableData.height = document.body.offsetHeight - document.getElementsByClassName('table-body')[1].getBoundingClientRect().top + 8
       }
-    },
-    handleClose () {
-      this.$emit('handleClose')
-    },
-    handleSubmit () {
-      this.$emit('handleSubmit')
     }
   },
   watch: {
     data: {
       handler (data) {
-        if (data && data.hasOwnProperty(this.form.key)) {
+        if (data) { //  && data.hasOwnProperty(this.form.key)
           this.changeData()
         }
       },

@@ -30,3 +30,87 @@
   border-radius: 10px;
   overflow: hidden;
 }
+
+.module {
+  $menuW: 280px;
+  height: 100%;
+  display: flex;
+  flex-basis: 100%;
+  >.header {
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: relative;
+    background-color: #1A2D3E;
+    width: $menuW;
+    margin: -20px 0 -20px -20px;
+    padding: 20px;
+    >.module-img {
+      width: 100%;
+      height: $menuW / 2;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    $h: 50px;
+    $w: 15px;
+    >.hidden-button {
+      position: absolute;
+      width: 15px;
+      height: $h;
+      background-color: #1A2D3E;
+      left: $menuW;
+      top: calc(50% - #{$h} / 2);
+      border-radius: 0 #{$w * 2} #{$w * 2} 0 / #{$h};
+      cursor: pointer;
+
+      &:before,
+      &:after {
+        content: '';
+        display: block;
+        background: #fff;
+        position: absolute;
+        width: 1px;
+        height: 8px;
+        left: $w - 10px;
+      }
+
+      &:before {
+        transform: rotate(45deg);
+        top: $h / 2 - 6px;
+      }
+
+      &:after {
+        transform: rotate(-45deg);
+        top: $h / 2 - 1px;
+      }
+    }
+    &.hidden {
+      margin-left: 0 - $menuW - 20px;
+
+      >.hidden-button {
+        &:before {
+          transform: rotate(-45deg);
+        }
+
+        &:after {
+          transform: rotate(45deg);
+        }
+      }
+    }
+  }
+
+  >.body {
+    flex-grow: 1;
+    min-width: calc(100% - #{$menuW});
+    max-width: calc(100%);
+    margin-left: 20px;
+    >.header {
+    }
+    >.title {
+      height: 50px;
+      color: $gray-st;
+      line-height: 50px;
+      font-size: 20px;
+      text-align: left;
+    }
+  }
+}

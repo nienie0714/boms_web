@@ -2,7 +2,7 @@
   <div class="container drop-menu">
     <div v-for="(menu, index) in menuList" :key="index" :class="['menu container cross', activeIndex==index?'active':'']" @click="changeActive(index, menu)">
       <div class="img">
-        <img :src="require('@icon/' + menu.icon + '.png')"/>
+        <img :src="require('@icon/dropmenu/' + menu.icon + '.png')"/>
       </div>
       <div class="label">{{menu.label}}<i v-if="menu.hasOwnProperty('child')" class="iconfont icon-down"></i></div>
       <template v-if="menu.hasOwnProperty('child')">
@@ -38,22 +38,22 @@ export default {
         //   icon: 'icon_menu_sch'
         // },
         {
-          label: '航班信息查询',
-          router: '/flight',
+          label: '信息共享平台',
+          router: '/comprhsQuery',
           append: false,
-          icon: 'icon_flight_info'
+          icon: 'icon_comprhs_query'
         },
+        // {
+        //   label: '行李信息查询',
+        //   router: '/luggage',
+        //   append: false,
+        //   icon: 'icon_luggage_info'
+        // },
         {
-          label: '行李信息查询',
-          router: '/luggage',
+          label: '配置管理',
+          router: '/config',
           append: false,
-          icon: 'icon_luggage_info'
-        },
-        {
-          label: '基础信息管理',
-          router: '/resourceManage',
-          append: false,
-          icon: 'icon_menu_02'
+          icon: 'icon_config'
         }
       ],
       activeIndex: 0

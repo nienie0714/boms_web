@@ -16,22 +16,37 @@ export default {
   props: ['data', 'type'],
   data () {
     return {
-      title: '角色管理',
+      title: '用户管理',
       form: {
-        key: 'ata',
+        key: 'empId',
         loading: false,
         queryParam: {},
         column: [
-          {key: 'name',  label: '角色名称', type: 'input'},
-          {key: 'description', label: '角色描述', type: 'textarea'},
-          {key: 'resource', label: '权限配置', type: 'input'},// todo: tree
+          {key: 'empId',  label: '员工编号', type: 'input'},
+          {key: 'empName',  label: '姓名', type: 'input'},
+          {key: 'gender',  label: '性别', type: 'radio', radioOptions: [{value: '男'}, {value: '女'}], width: '191'},
+          {key: 'deptName', label: '单位/部门', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          {key: 'post',  label: '职务名称', type: 'input'},
+          {key: 'phone',  label: '联系方式', type: 'input'},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
-          name: [
+          empName: [
+            {type: 'require', trigger: 'blur'}
+          ],
+          gender: [
+            {type: 'require', trigger: 'blur'}
+          ],
+          deptName: [
+            {type: 'require', trigger: 'blur'}
+          ],
+          post: [
+            {type: 'require', trigger: 'blur'}
+          ],
+          phone: [
             {type: 'require', trigger: 'blur'}
           ]
         },
@@ -49,6 +64,9 @@ export default {
     }
   },
   methods: {
+    changeRadio(data) {
+      console.log(data)
+    },
     changeData () {
       this.$nextTick(() => {
         this.changeWindowSize()

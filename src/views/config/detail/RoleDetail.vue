@@ -16,35 +16,27 @@ export default {
   props: ['data', 'type'],
   data () {
     return {
-      title: '用户管理',
+      title: '角色管理',
       form: {
-        key: 'deptId',
+        key: 'ata',
         loading: false,
         queryParam: {},
         column: [
-          {key: 'deptId',  label: '部门编号', type: 'input'},
-          {key: 'phone',  label: '联系电话', type: 'input'},
-          {key: 'deptName',  label: '部门名称', type: 'input'},
-          {key: 'parentDeptName', label: '上级部门名称', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
-          {key: 'remark', label: '备注', type: 'textarea'},
+          {key: 'name',  label: '角色名称', type: 'input'},
+          {key: 'description', label: '角色描述', type: 'textarea'},
+          {key: 'resource', label: '权限配置', type: 'input'},// todo: tree
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
-          deptId: [
+          name: [
             {type: 'require', trigger: 'blur'}
           ],
-          phone: [
+          resource: [
             {type: 'require', trigger: 'blur'}
           ],
-          deptName: [
-            {type: 'require', trigger: 'blur'}
-          ],
-          parentDeptName: [
-            {type: 'require', trigger: 'blur'}
-          ]
         },
         data: null
       }
@@ -95,7 +87,7 @@ export default {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
-            } else if (type == 'update' || type == 'insert') {
+            } else if (type == 'update') {
               item.isHidden = true
             }
           }

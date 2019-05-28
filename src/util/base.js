@@ -93,3 +93,35 @@ export function queryAllClassify () {
     return response.data.data
   })
 }
+
+export function insert (url, data) {
+  return vue.axios({
+    url: url,
+    method: 'post',
+    data: data
+  })
+}
+
+export function update (url, data) {
+  return vue.axios({
+    url: url,
+    method: 'put',
+    data: data
+  })
+}
+
+export function remove (url, data) {
+  return vue.axios({
+    url: url,
+    method: 'delete',
+    data: data
+  })
+}
+
+export function query (url, data) {
+  return vue.axios({
+    url: url,
+    method: 'get',
+    params: data
+  })
+}

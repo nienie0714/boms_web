@@ -1,9 +1,10 @@
 <script>
-import { postData } from '@/util/base'
+import { postData, query } from '@/util/base'
 
 export default {
   data () {
     return {
+      baseUrl: '',
       // 请求路径
       queryUrl: '',
       // 请求的查询参数
@@ -63,42 +64,44 @@ export default {
     customAfterQuery () {},
     // 发送查询请求
     queryDataReq (status) {
-      this.tableData.loading = true
-      if (status != 1) {
-        this.getQueryData()
-        this.tableData.data = []
-      }
-      this.customQueryBefore()
-      this.axiosArr.push({
-        url: this.queryUrl,
-        method: 'post',
-        data: this.queryData
-      })
-      this.loading = true
-      postData(this.queryUrl, this.queryData).then(response => {
-        this.tableData.multSelection = []
-        if (response.data.code == 0) {
-          if (response.data.data.hasOwnProperty('rows')) {
-            this.tableData.data = response.data.data.rows
-          } else {
-            this.tableData.data = response.data.data.slice(0,10)// todo
-          }
-          this.customAfterQuery()
-          /* this.$msg.success({
-            info: '获取列表数据失败 !'
-          }) */
-        } else {
-          this.$msg.error({
-            info: '获取列表数据失败 !',
-            tip: '请重新尝试 !'
-          })
+      if (!this.loading) {
+        this.tableData.loading = true
+        if (status != 1) {
+          this.getQueryData()
+          this.tableData.data = []
         }
-        this.tableData.loading = false
-        this.loading = false
-      }).catch(() => {
-        this.tableData.loading = false
-        this.loading = false
-      })
+        this.customQueryBefore()
+        this.axiosArr.push({
+          url: this.queryUrl,
+          method: 'get',
+          params: this.queryData
+        })
+        this.loading = true
+        query(this.queryUrl, this.queryData).then(response => {
+          this.tableData.multSelection = []
+          if (response.data.code == 0) {
+            if (response.data.data.hasOwnProperty('rows')) {
+              this.tableData.data = response.data.data.rows
+            } else {
+              this.tableData.data = response.data.data
+            }
+            this.customAfterQuery()
+            /* this.$msg.success({
+              info: '获取列表数据失败 !'
+            }) */
+          } else {
+            this.$msg.error({
+              info: '获取列表数据失败 !',
+              tip: '请重新尝试 !'
+            })
+          }
+          this.tableData.loading = false
+          this.loading = false
+        }).catch(() => {
+          this.tableData.loading = false
+          this.loading = false
+        })
+      }
     },
   },
   destroyed () {

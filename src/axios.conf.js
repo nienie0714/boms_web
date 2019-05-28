@@ -8,7 +8,7 @@ const CancelToken = axios.CancelToken
 let pending = []
 let removePending = (ever) => {
   for(let p in pending){
-    if ((pending[p].url == ever.url) && (pending[p].method == ever.method) && (pending[p].data == ever.data)) {
+    if ((pending[p].url == ever.url) && (pending[p].method == ever.method) && ((pending[p].data == ever.data) || (pending[p].params == ever.params))) {
     // if(pending[p].u === ever.url + '&' + ever.method + '&' + ever.data) { //当当前请求在数组中存在时执行函数体
       pending[p].f() //执行取消操作
       pending.splice(p, 1) //把这条记录从数组中移除
@@ -25,12 +25,21 @@ function request (request) {
   // }
   removePending(request)
   request.cancelToken = new CancelToken((c) => {
-    pending.push({
-      url: request.url,
-      method: request.method,
-      data: request.data,
-      f: c
-    })
+    if (request.data) {
+      pending.push({
+        url: request.url,
+        method: request.method,
+        data: request.data,
+        f: c
+      })
+    } else {
+      pending.push({
+        url: request.url,
+        method: request.method,
+        params: request.params,
+        f: c
+      })
+    }
       // u: request.url + '&' + request.method + '&' + request.data, f: c})
   })
   return request
@@ -47,11 +56,19 @@ function requestError (error) {
 }
 
 function response (response) {
-  removePending({
-    url: response.config.url,
-    method: response.config.method,
-    data: response.config.data
-  })
+  if (response.config.data) {
+    removePending({
+      url: response.config.url,
+      method: response.config.method,
+      data: response.config.data
+    })
+  } else {
+    removePending({
+      url: response.config.url,
+      method: response.config.method,
+      params: response.config.params
+    })
+  }
   if (response.data.code == -1 && response.data.msg == 'diffToken') {
     router.push({path: '/'})
     return Promise.reject(response.data.msg)

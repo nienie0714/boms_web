@@ -1,6 +1,6 @@
 <template>
   <my-dialog v-bind="$attrs" v-on="$listeners" :title="title + typeName" :close="close" :header="header" :submit="submit"
-  :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @handleSubmit="handleSubmit">
+  :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @submitDialog="handleSubmit">
     <template>
       <div class="form" v-if="'column' in form">
         <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
@@ -192,8 +192,7 @@ export default {
           }
         }
       })
-      console.log(this.data)
-      this.$emit('handleSubmit', this.data)
+      this.$emit('handleSubmit', {data: this.data, type: this.type})
     },
     handleError (obj, value) {
       let key = obj.key
@@ -207,9 +206,43 @@ export default {
               this.$set(this.errors, key, '必填')
               break
             }
-          } else if (item.type == 'regex') {
+          } else if (item.type == 'unique') {
+            if (value || value === 0) {
+              let url = item.url + '/exist'
+              let data = {}
+              let k = item.hasOwnProperty('key') ? item['key'] : key
+              this.$set(data, k, value)
+              queryAll(url, data).then(res => {
+                if (res.data.code == 0 && res.data.data.hasOwnProperty('exist')) {
+                  if (res.data.data.exist > 0) {
+                    this.$set(this.errors, key, '数据已存在')
+                  }
+                } else {
+                  this.$msg.error({
+                    info: '请求失败 !'
+                  })
+                }
+              }).catch(err => {
+                this.$msg.error({
+                  info: '请求异常 !',
+                  tip: err
+                })
+              })
+            }
+          } else if (item.type == 'regex') { // 匹配
             let reg = item.reg
-            this.errors.push
+            if (!reg.test(value)) {
+              let info = item.hasOwnProperty('info') ? item['info'] : '数据格式有误'
+              this.$set(this.errors, key, info)
+              break
+            }
+          } else if (item.type == 'regexRvs') { // 不匹配
+            let reg = item.reg
+            if (reg.test(value)) {
+              let info = item.hasOwnProperty('info') ? item['info'] : '数据格式有误'
+              this.$set(this.errors, key, info)
+              break
+            }
           } else if (item.type == 'method') {
             let method = item.method
             method(value, param => {

@@ -36,28 +36,26 @@ var router = new Router({
       // },
       children: [
         {
-          path: 'comprhsQuery',
-          component: r => require.ensure([], () => r(require('@/views/home/ComprhsQuery'), 'ComprhsQuery')),
-          redirect: to => {
-            return {path: '/flight'}
-          },
-          children: [
-            {
-              path: '/flight',
-              name: '航班信息查询',
-              component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Flights'), 'Flights'))
-            },
-            {
-              path: '/luggage',
-              name: '行李信息查询',
-              component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Luggages'), 'Luggages')),
-            }
-          ]
+          path: '/comprhsQuery',
+          name: '信息共享平台',
+          component: r => require.ensure([], () => r(require('@/views/home/module/ComprhsQuery'), 'ComprhsQuery')),
+          // children: [
+          //   {
+          //     path: '/flight',
+          //     name: '航班信息查询',
+          //     component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Flights'), 'Flights'))
+          //   },
+          //   {
+          //     path: '/luggage',
+          //     name: '行李信息查询',
+          //     component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Luggages'), 'Luggages')),
+          //   }
+          // ]
         },
         {
-          path: '/resourceManage',
-          name: '基础信息',
-          component: r => require.ensure([], () => r(require('@/views/home/ResourceManage'), 'ResourceManage')),
+          path: '/config',
+          name: '配置管理',
+          component: r => require.ensure([], () => r(require('@/views/home/module/Config'), 'Config')),
           children: [
             {
               path: '/config',
@@ -102,14 +100,15 @@ router.beforeEach((to, from, next) => {
     // if (token && token != '') {
       // if (store.getters.getFirstTime) {
         // var type = []
-        var all = []
+        /* var all = []
         postData('/base/classifyCode/queryAll', {}).then(response => {
           store.commit('createEnum', response.data.data)
           postData('/base/sysParam/queryAll', {}).then(res => {
             store.commit('setConfigs', res.data.data)
             next()
           })
-        })
+        }) */
+        next()
         // store.dispatch('changeInsTime')
       } else {
         next()
