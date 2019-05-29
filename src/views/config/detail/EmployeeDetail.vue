@@ -47,7 +47,8 @@ export default {
             {type: 'require', trigger: 'blur'}
           ],
           phone: [
-            {type: 'require', trigger: 'blur'}
+            {type: 'require', trigger: 'blur'},
+            {type: 'regex', reg: /^(\d{3}-\d{8}|\d{4}-\{7,8}|((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8})?$/, info: '该号码格式或位数有误'}
           ]
         },
         data: null

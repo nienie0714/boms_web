@@ -37,13 +37,16 @@ export default {
             {type: 'require', trigger: 'blur'}
           ],
           userName: [
-            {type: 'require', trigger: 'blur'}
+            {type: 'require', trigger: 'blur'},
+            {type: 'regex', reg: /^[a-zA-Z0-9-]*$/, info: '必须为数字字母组合'}
           ],
           deptName: [
             {type: 'require', trigger: 'blur'}
           ],
           password: [
-            {type: 'require', trigger: 'blur'}// 数字字母组合，区分大小写，不支持汉字
+            {type: 'require', trigger: 'blur'},// 数字字母组合，区分大小写，不支持汉字
+            {type: 'regex', reg: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]$/, info: '必须为数字字母组合'},
+            {type: 'regexRvs', reg: /[\u4E00-\u9FA5]/g, info: '不支持汉字'}
           ],
           name: [
             {type: 'require', trigger: 'blur'}

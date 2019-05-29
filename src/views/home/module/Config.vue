@@ -1,9 +1,9 @@
 <template>
   <div class="config module container">
-    <div class="header">
+    <div :class="['header', hidden ? 'hidden' : '']">
       <div class="module-img"></div>
       <second-menu @skipPath="skipPath"></second-menu>
-      <div class="hidden-button"></div>
+      <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
     <div class="body container cross">
       <div class="title">{{title}}</div>
@@ -23,7 +23,8 @@ export default {
   data () {
     return {
       name: '',
-      title: '配置管理'
+      title: '配置管理',
+      hidden: false
     }
   },
   mounted () {
