@@ -68,12 +68,6 @@ export default {
       })
       this.form.data = this.data
       this.visible = true
-    },
-    changeWindowSize () {
-      let dlgBody = document.getElementsByClassName('table-body')[1]
-      if (dlgBody) {
-        this.tableData.height = document.body.offsetHeight - document.getElementsByClassName('table-body')[1].getBoundingClientRect().top + 8
-      }
     }
   },
   watch: {

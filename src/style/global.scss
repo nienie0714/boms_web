@@ -15,6 +15,7 @@ $black-shadow: rgb(115, 134, 153);
 $yellow-shadow: rgb(247, 159, 45);
 $green-shadow: rgb(2, 182, 116);
 $red-shadow: rgb(247, 84, 103);
+$gray-border: rgb(221, 230, 237);
 /* 遮罩 */
 $opt: rgba(0, 0, 0, .6);
 @mixin heightMix ($rowHeight) {

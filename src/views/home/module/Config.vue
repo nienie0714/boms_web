@@ -5,8 +5,11 @@
       <second-menu @skipPath="skipPath"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
-    <div class="body container cross">
-      <div class="title">{{title}}</div>
+    <div :class="['body container', ['Department', 'Employee'].includes(name) ? 'tree' : 'cross']">
+      <div class="title">
+        <div class="icon"></div>
+        <div>{{title}}</div>
+      </div>
       <component :is="name"></component>
     </div>
   </div>

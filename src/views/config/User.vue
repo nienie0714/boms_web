@@ -101,11 +101,6 @@ export default {
   mounted () {
   },
   methods: {
-    openDetail (type, row) {
-      this.detail.type = type
-      this.detail.data = row
-      this.detail.visible = true
-    },
     tabItemClick (key) {
       this.selectKey = key
       this.queryDataReq(1)

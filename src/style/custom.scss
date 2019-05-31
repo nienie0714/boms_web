@@ -134,7 +134,8 @@ button[name=loading] {
 button:hover {
   opacity: 0.8;
 }
-input, textarea {
+input, textarea, select {
+  -webkit-appearance: none;
   height: 38px;
   line-height: 38px;
   box-sizing: border-box;
@@ -151,6 +152,7 @@ input, textarea {
   }
 }
 input[disabled="disabled"],
+select[disabled="disabled"],
 textarea[disabled="disabled"] {
   background-color: rgba($color: #edf1f5, $alpha: .7);
 }

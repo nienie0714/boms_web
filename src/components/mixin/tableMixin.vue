@@ -1,5 +1,5 @@
 <script>
-import { postData, query } from '@/util/base'
+import { postData, pageQuery } from '@/util/base'
 
 export default {
   data () {
@@ -9,11 +9,19 @@ export default {
       queryUrl: '',
       // 请求的查询参数
       queryData: {},
+      pageData: {
+        num: 1,
+        size: 10,
+        total: 0
+      },
       axiosArr: [],
       loading: false
     }
   },
   created () {
+    if (!this.queryUrl) {
+      this.queryUrl = this.baseUrl + '/pageQuery'
+    }
     this.queryDataReq()
   },
   mounted () {
@@ -73,13 +81,14 @@ export default {
         this.customQueryBefore()
         this.axiosArr.push({
           url: this.queryUrl,
-          method: 'get',
-          params: this.queryData
+          method: 'post',
+          data: this.queryData
         })
         this.loading = true
-        query(this.queryUrl, this.queryData).then(response => {
+        pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
           this.tableData.multSelection = []
           if (response.data.code == 0) {
+            this.pageData.total = response.data.data.total
             if (response.data.data.hasOwnProperty('rows')) {
               this.tableData.data = response.data.data.rows
             } else {
@@ -103,6 +112,15 @@ export default {
         })
       }
     },
+    openDetail ({type, row}) {
+      this.detail.type = type
+      this.detail.data = row
+      this.detail.visible = true
+    },
+    openDelete (row) {
+      console.log(row)
+    },
+    openExport () {}
   },
   destroyed () {
     this.axiosArr.forEach(ever => {

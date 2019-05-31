@@ -50,7 +50,13 @@
               :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               +`color: ${item.color};`">
-                <template v-if="item.type!='slot'">
+                <template v-if="item.type=='opr'">
+                  <div class="table-opr update" @click="openDetail('update', row)"></div>
+                  <div class="table-opr delete" @click="openDelete(row)"></div>
+                  <div class="table-opr reset" @click="openDetail('reset', row)"></div>
+                  <div class="table-opr detail" @click="openDetail('detail', row)"></div>
+                </template>
+                <template v-else-if="item.type!='slot'">
                   <template v-if="item.type=='mult'">
                     <div :class="~require('lodash').findIndex(tableData.multSelection, [tableData.key, row[tableData.key]])?'radio is-checked':'radio'" @click="selectRow(row)"></div>
                   </template>
@@ -195,6 +201,9 @@ export default {
     },
     handleDblClick (row) {
       this.$emit('handleDblClick', row)
+    },
+    openDetail (type, row) {
+      this.$emit('openDetail', {type, row})
     }
   },
   watch: {
@@ -258,7 +267,7 @@ $rowHeight: 40px;
 .table {
   height: 100%;
   background-color: #FAFBFC;
-  box-shadow: 4px -4px 12px #E5EAEF;
+  // box-shadow: 4px -4px 12px #E5EAEF;
   overflow: hidden;
   table {
     border-collapse: collapse;
@@ -374,7 +383,8 @@ $rowHeight: 40px;
     box-sizing: border-box;
   }
   th {
-    border-bottom: 1px solid $gray-rs;
+    background-color: rgba($color: $gray-border, $alpha: .2);
+    border-bottom: 1px solid $gray-border;
     font-weight: normal;
     font-size: 14px;
     color: #90A3B6;
@@ -402,6 +412,7 @@ $rowHeight: 40px;
 }
 .table-header {
   @include heightMix ($rowHeight);
+  border-top: 1px solid $gray-border;
   // .row_height_1 {
   //   max-height: $rowHeight;
   //   height: $rowHeight;
@@ -434,5 +445,53 @@ $rowHeight: 40px;
   position: relative;
   // z-index: ;
   box-shadow: -4px 0 30px rgba($color: $white-shadow, $alpha: .1);
+
+  td {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    >.table-opr {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 16px;
+      }
+
+      &.detail {
+        background-image: url(~@icon/table/icon_detail.png);
+
+        &:hover {
+          background-image: url(~@icon/table/icon_detail_hover.png);
+        }
+      }
+
+      &.delete {
+        background-image: url(~@icon/table/icon_delete.png);
+
+        &:hover {
+          background-image: url(~@icon/table/icon_delete_hover.png);
+        }
+      }
+
+      &.reset {
+        background-image: url(~@icon/table/icon_reset.png);
+
+        &:hover {
+          background-image: url(~@icon/table/icon_reset_hover.png);
+        }
+      }
+
+      &.update {
+        background-image: url(~@icon/table/icon_update.png);
+
+        &:hover {
+          background-image: url(~@icon/table/icon_update_hover.png);
+        }
+      }
+    }
+  }
 }
 </style>

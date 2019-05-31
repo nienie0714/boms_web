@@ -9,14 +9,23 @@
             <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
           </div>
           <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
-            <input v-if="['datalist', 'inputlist'].includes(item.type)" v-model.trim="data[item.key]" :list="item.key" style="width: inherit;" :placeholder="'请输入'+item.label"
+            <inputs v-if="item.type == 'input'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
+            :placeholder="'请输入'+item.label" :disabled="item.disabled"
+            @change="handleChange(item, data[item.key])"></inputs>
+            <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel"
+            @change="handleChange(item, data[item.key])"></tab-button>
+            <input-list v-else-if="item.type == 'inputlist'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel"></input-list>
+            <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options"></selects>
+            <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
+            :placeholder="'请输入'+item.label" :disabled="item.disabled" :rows="item.rows" :cols="item.cols"
+            @change="handleChange(item, data[item.key])"></textarea>
+            <!-- <input v-if="['datalist', 'inputlist'].includes(item.type)" v-model.trim="data[item.key]" :list="item.key" style="width: inherit;" :placeholder="'请输入'+item.label"
             :disabled="item.disabled"
-            @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)" @focus="handleFocus(item, $event)" @blur="handleBlur(item, $event)"/>  
-            <Radio v-if="item.type == 'radio'" :dataSource="item" @change="checkRadio($event)"></Radio>
-            <component v-if="item.type != 'radio'" :is="item.type" :id="item.key" v-model.trim="data[item.key]" :value="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max"
+            @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)" @focus="handleFocus(item, $event)" @blur="handleBlur(item, $event)"/>
+            <component :is="item.type" :id="item.key" v-model.trim="data[item.key]" :value="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max"
             class="value-component" :placeholder="'请输入'+item.label" :disabled="item.disabled"
             :itemKey="item.key" :options="item.options" :itemValue="item.itemValue" :label="item.itemLabel" :input="data[item.key]"
-            @blur="item.toUpper&&toUpper(item, $event)" @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)"
+            @blur="item.toUpper&&toUpper(item, $event)" @change="handleChange(item, $event.target.value)" @keyup.enter.stop="handleEnter(item, $event)"
             @select="selectList">
               <template v-if="item.type=='datalist'">
                 <option v-for="(opt, idx) in item.options" :key="idx" :value="(opt.constructor==Object)?opt[item.itemValue]:opt">{{(opt.constructor==Object)?opt[item.itemLabel]:opt}}</option>
@@ -28,7 +37,7 @@
                   <option v-for="opt in item.options" :key="opt[item.itemKey]" :value="opt[item.itemKey]">{{opt[item.itemLabel]}}</option>
                 </template>
               </component>
-            </template>
+            </template> -->
             <!-- <inputlist v-if="item.type == 'inputlist'" :options="item.options" :value="item.itemValue" :label="item.itemLabel" :input="data[item.key]"></inputlist> -->
           </div>
         </div>
@@ -38,8 +47,10 @@
 </template>
 
 <script>
-import Inputlist from '@view/Inputlist/Inputlist'
-import Radio from '@view/Radio/Radio'
+import Inputs from '@view/Inputs/Inputs'
+import TabButton from '@view/TabButton/TabButton'
+import InputList from '@view/InputList/InputList'
+import Selects from '@view/Selects/Selects'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
@@ -47,11 +58,13 @@ import _ from 'lodash'
 
 export default {
   components: {
-    Inputlist,
-    Radio
+    Inputs,
+    TabButton,
+    InputList,
+    Selects
   },
   mixins: [utilMixin],
-  props: ['form', 'type', 'title', 'close', 'position', 'header'],
+  props: ['form', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
   data () {
     return {
       typeName: '',
@@ -102,23 +115,10 @@ export default {
         event.target.parentElement.parentElement.style.visibility = 'hidden'
       }
     },
-    handleChange (item, event) {
-      if (['datalist', 'inputlist'].includes(item.type)) {
-        let value = event.target.value.trim().toUpperCase()
-        if (value && _.isString(value)) {
-          let obj = _.find(item.options, (obj) => {
-            return obj[item.itemValue].includes(value)
-          })
-          this.data[item.key] = obj ? obj[item.itemValue] : ''
-        } else if (_.isInteger(value)) {
-          let obj = _.find(item.options, [obj[item.itemValue], value])
-          this.data[item.key] = obj ? obj[item.itemValue] : null
-        }
-      } else {
-        if (event.target.value) {
-          this.data[item.key] = event.target.value.trim()
-        }
-        this.handleError(item, event.target.value)
+    handleChange (item, val) {
+      let value = val.toString().trim()
+      if (item.hasOwnProperty('toUpper') && item.toUpper) {
+        value = value.toUpperCase()
       }
       if (item.hasOwnProperty('method')) {
         let method = item.method
@@ -134,40 +134,8 @@ export default {
           }
         })
       }
-    },
-    checkRadio({ret, $event}) {
-      if (ret) {
-        this.data[ret.key] = ret.value
-      }
-    },
-    handleEnter (item, event) {
-      if (item.toUpper) {
-        this.toUpper(item, event)
-      }
-      this.$emit('handleEnter')
-    },
-    handleFocus (item, event) {
-      if (item.type == 'inputlist') {
-        event.target.nextElementSibling.style.visibility = 'visible'
-        let height = window.innerHeight - event.target.getBoundingClientRect().top
-        event.target.nextElementSibling.style.width = event.target.offsetWidth + 'px'
-        if (height < 0) {
-          event.target.nextElementSibling.style.bottom = event.target.innerHeight
-        }
-      }
-    },
-    handleBlur (item, event) {
-      if (item.type == 'inputlist') {
-        event.target.nextElementSibling.style.visibility = 'hidden'
-      }
-    },    
-    // handleChange(item, index) {
-    //   this.$emit('handleRadio', item, index);
-    // },
-    toUpper (item, event) {
-      let value = item.value.trim().toUpperCase()
-      event.target.value = value
-      this.$set(item, 'value', item.value.trim().toUpperCase())
+      this.handleError(item, value)
+      this.$emit('changeData', {data: this.data, type: this.type})
     },
     handleClose () {
       this.$emit('handleClose')
@@ -192,7 +160,11 @@ export default {
           }
         }
       })
-      this.$emit('handleSubmit', {data: this.data, type: this.type})
+      if (this.errors.length > 0) {
+        return
+      } else {
+        this.$emit('handleSubmit', {data: this.data, type: this.type})
+      }
     },
     handleError (obj, value) {
       let key = obj.key
@@ -319,7 +291,7 @@ export default {
         }
         >.value {
           input, textarea {
-            max-width: calc(100% - 20px);
+            // max-width: calc(100% - 20px);
             border: 1px solid rgba($color: $blue-shadow, $alpha: 0.8);
           }
           

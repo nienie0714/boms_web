@@ -6,25 +6,46 @@
       <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
     <div class="body container cross">
-      <div class="title">{{title}}</div>
+      <div class="title">
+        <div class="icon"></div>
+        <div>{{title}}</div>
+      </div>
+      <input-tag v-model="value" :prepend="'测试'" :type="'inputlist'" :options="options" :id="'key'" :label="'label'"></input-tag>{{value}}
       <component :is="name"></component>
     </div>
   </div>
 </template>
 
 <script>
+import InputTag from '@view/InputTag/InputTag'
 import SecondMenu from '../SecondMenu'
 import * as component from '@/views/comprhsQuery'
 
 export default {
   components: {
-    SecondMenu
+    SecondMenu,
+    InputTag
   },
   data () {
     return {
       name: '',
       title: '信息查询',
-      hidden: false
+      hidden: false,
+      value: '',
+      options: [
+        {
+          key: 'XIY',
+          label: '西安'
+        },
+        {
+          key: 'INC',
+          label: '银川'
+        },
+        {
+          key: 'XNN',
+          label: '西宁'
+        }
+      ]
     }
   },
   mounted () {

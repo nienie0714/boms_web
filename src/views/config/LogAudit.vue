@@ -7,6 +7,15 @@
       </div>
     </div>
     <div class="table-cont container cross">
+      <div class="table-title">
+        <div class="left">
+          <span class="label">查询结果</span>
+          <span class="info">共{{pageData.total}}条</span>
+        </div>
+        <div class="right">
+          <pagination v-model="pageData.num" :size="pageData.size" :total="pageData.total"></pagination>
+        </div>
+      </div>
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
@@ -21,6 +30,7 @@
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
+import Pagination from '@view/Pagination/Pagination'
 import Tables from '@view/Table/Table'
 import Detail from './detail/LogAuditDetail'
 import tableMixin from '@mixin/tableMixin'
@@ -31,6 +41,7 @@ import _ from 'lodash'
 export default {
   components: {
     QueryRow,
+    Pagination,
     Tables,
     Detail
   },
@@ -105,11 +116,6 @@ export default {
   mounted () {
   },
   methods: {
-    openDetail (type, row) {
-      this.detail.type = type
-      this.detail.data = row
-      this.detail.visible = true
-    },
     tabItemClick (key) {
       this.selectKey = key
       this.queryDataReq(1)

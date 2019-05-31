@@ -29,6 +29,37 @@
 .table-cont {
   border-radius: 10px;
   overflow: hidden;
+
+  .table-title {
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+
+    >.left {
+      margin-left: 20px;
+      font-size: 16px;
+
+      >.label {
+        color: $gray-st;
+        font-weight: bold;
+      }
+
+      >.info {
+        margin-left: 12px;
+        color: $gray-nd;
+      }
+    }
+
+    >.right {
+      margin-right: 20px;
+      display: inline-flex;
+    }
+
+    >div {
+      margin: auto 0;
+    }
+  }
 }
 
 .module {
@@ -103,14 +134,55 @@
     min-width: calc(100% - #{$menuW});
     max-width: calc(100%);
     margin-left: 20px;
+
+    &.tree {
+      >.title {
+        color: #fff;
+        width: 100%;
+        background-image: url(~@img/bg/bg_tree_title.png);
+      }
+
+      >div {
+        position: relative;
+
+        >.left-tree {
+          position: absolute;
+          top: 80px;
+          left: -260px;
+          right: calc(100% + 20px);
+        }
+
+        &:last-child {
+          margin-left: 20px;
+          width: calc(100% - 260px);
+        }
+      }
+    }
+
     >.header {
     }
     >.title {
-      height: 50px;
+      height: 80px;
       color: $gray-st;
-      line-height: 50px;
-      font-size: 20px;
+      font-size: 28px;
+      font-weight: bold;
       text-align: left;
+      margin-left: -20px;
+      margin-top: -20px;
+      padding: 0 0 0 20px;
+      display: inline-flex;
+      align-items: center;
+
+      >div {
+        line-height: 28px;
+      }
+      >.icon {
+        margin-right: 16px;
+        width: 6px;
+        height: 30px;
+        background: linear-gradient(0deg,rgba(105,107,255,1),rgba(80,185,240,1));
+        border-radius:2px;
+      }
     }
   }
 }

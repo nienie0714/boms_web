@@ -97,17 +97,6 @@ export default {
   mounted () {
   },
   methods: {
-    checkRadio(event) {
-      console.log(event)
-      // if (ret) {
-      //   this.dataSource[ret.key] = ret.value
-      // }
-    },
-    openDetail (type, row) {
-      this.detail.type = type
-      this.detail.data = row
-      this.detail.visible = true
-    },
     tabItemClick (key) {
       this.selectKey = key
       this.queryDataReq(1)

@@ -62,60 +62,7 @@ export default {
             }
           ]
         }
-      ],
-      data: [
-        {
-          id: 1,
-          label: '节点一'
-        },
-        {
-          id: 2,
-          label: '节点二'
-        },
-        {
-          id: 3,
-          label: '节点三',
-          children: [
-            {
-              id: 301,
-              label: '子节点一'
-            },
-            {
-              id: 302,
-              label: '子节点二',
-              children: [
-                {
-                  id: 30201,
-                  label: '子节点1',
-                  children: [
-                    {
-                      id: 3020101,
-                      label: '子节点1'
-                    },
-                    {
-                      id: 3020102,
-                      label: '子节点2'
-                    }
-                  ]
-                },
-                {
-                  id: 30202,
-                  label: '子节点2'
-                }
-              ]
-            },
-            {
-              id: 303,
-              label: '子节点三'
-            }
-          ]
-        },
-        {
-          id: 4,
-          label: '节点四'
-        }
-      ],
-      selectNodeId: []
+      ]
     }
   },
   mounted () {

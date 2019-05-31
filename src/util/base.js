@@ -71,17 +71,6 @@ export function downloadFile (url) {
   })
 }
 
-export function queryAll (url, data) {
-  if (!data) {
-    data = {}
-  }
-  return vue.axios({
-    url: url,
-    method: 'post',
-    data: data
-  })
-}
-
 export function queryClassifyType () {
   postData('basicdata/classifyCode/queryAllClassify', null).then(response => {
     return response.data.data
@@ -118,10 +107,37 @@ export function remove (url, data) {
   })
 }
 
+export function queryAll (url, data) {
+  if (!data) {
+    data = {}
+  }
+  return vue.axios({
+    url: url,
+    method: 'post',
+    data: data
+  })
+}
+
 export function query (url, data) {
   return vue.axios({
     url: url,
-    method: 'get',
-    params: data
+    method: 'post',
+    data: {
+      pageNum: -1,
+      pageSize: 0,
+      data: data
+    }
+  })
+}
+
+export function pageQuery (url, data, pageData) {
+  return vue.axios({
+    url: url,
+    method: 'post',
+    data: {
+      pageNum: pageData.num,
+      pageSize: pageData.size,
+      data: data
+    }
   })
 }

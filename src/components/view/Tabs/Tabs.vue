@@ -59,10 +59,10 @@ export default {
       color: $gray-rd;
       cursor: pointer;
       &.current-item {
-        color: #3392ff;
+        color: $blue;
       }
       &:hover {
-        color: #3392ff;
+        color: $blue;
       }
       &:not(:last-child)>div {
         border-right: 1px solid $gray-rs;

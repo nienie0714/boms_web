@@ -11,17 +11,17 @@ export default {
   },
   mounted () {
     if (!this.insertUrl) {
-      this.insertUrl = this.baseUrl + '/insert'
+      this.insertUrl = this.baseUrl
     }
     if (!this.updateUrl) {
-      this.updateUrl = this.baseUrl + '/update'
+      this.updateUrl = this.baseUrl
     }
     if (!this.deleteUrl) {
-      this.deleteUrl = this.baseUrl + '/delete'
+      this.deleteUrl = this.baseUrl
     }
   },
   methods: {
-    handleSubmit (data, type) {
+    handleSubmit ({data, type}) {
       data = this.submitBefore(data, type)
       if (data) {
         switch (type) {
@@ -38,6 +38,10 @@ export default {
           this.$msg.success({
             info: '保存成功 !'
           })
+          this.handleClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.queryDataReq()
+          }
         } else {
           this.$msg.error({
             info: '保存失败 !'
@@ -56,6 +60,10 @@ export default {
           this.$msg.success({
             info: '保存成功 !'
           })
+          this.handleClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.queryDataReq()
+          }
         } else {
           this.$msg.error({
             info: '保存失败 !'
