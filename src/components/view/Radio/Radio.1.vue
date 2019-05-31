@@ -1,11 +1,12 @@
 <template>
   <div class="wt-radio">
     <ul>
-      <li v-for="(item, index) in opts" :key="index" :class="{'disable': item.disable}">
-        <div class="radio" :class="{'is-checked': index === value ? 'is-checked' : '', 'disable': item.disable}"></div>
+      <li v-for="(item, index) in dataSource && dataSource.radioOptions" :key="index"  @click='change(item, index, $event)' :class="{'disable': item.disable}">
+        <div v-if="showBtn" :class="{'radio is-checked': index === isActive, 'radio':showBtn, 'disable': item.disable}"></div>
         <div class="item-inner">
-          <div class="title normal">{{item.label}}</div>
+          <div class="title" :class="{'normal':showBtn}">{{item.label}}</div>
         </div>
+        <div v-if="!showBtn" :class="{'radio is-checked': index === isActive}"></div>
       </li>
     </ul>
   </div>
@@ -14,40 +15,22 @@
 export default {
   name: 'wt-radio-group',
   props: {
-    options: {
-      type: Array,
-      default: function () {return []}
+    dataSource: {
+      type: Object,
+      default: function () {
+        return {};
+      }
     },
-    itemKey: {
-      type: String,
-      default: ''
-    },
-    itemValue: {
-      type: String,
-      default: ''
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    input: {
-      type: String,
-      default: ''
-    },
-    disable: {
+    showBtn: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data () {
     return {
-      value: '',
-      opts: [],
-      filtOpts: []
+      isActive: '',
+      selected: null
     };
-  },
-  created() {
-    this.opts = this.options
   },
   methods: {
     change (item, index, $event) {
@@ -55,17 +38,10 @@ export default {
         return;
       }
       this.selected = item;
-      this.value = index;
+      this.isActive = index;
       let ret = {} 
       ret[this.dataSource.key] = this.selected.value
       this.$emit('change', {ret, $event});
-    }
-  },  
-  watch: {
-    input: {
-      handler (value) {
-        this.value = value
-      }
     }
   }
 };

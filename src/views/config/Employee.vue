@@ -17,6 +17,7 @@
       </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleClose="handleClose"></detail>
+    <Radio :options="dataSource.options" :value="dataSource.itemValue" :label="dataSource.itemLabel" :input="data[dataSource.key]"></Radio>
   </div>
 </template>
 
@@ -27,25 +28,21 @@ import Detail from './detail/EmployeeDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
+import Radio from '@view/Radio/Radio'
 import _ from 'lodash'
 
 export default {
   components: {
     QueryRow,
     Tables,
-    Detail
+    Detail,
+    Radio
   },
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      dataSource: [
-        {
-          title: '男'
-        },
-        {
-          title: '女'
-        }
-      ],
+      dataSource: {key: 'gender',  label: '性别', type: 'radio', options: [{label: '男', value: 'M'}, {label: '女', value: 'F'}], width: '191'},
+      data: {},
       axiosChildArr: [],
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
@@ -100,6 +97,12 @@ export default {
   mounted () {
   },
   methods: {
+    checkRadio(event) {
+      console.log(event)
+      // if (ret) {
+      //   this.dataSource[ret.key] = ret.value
+      // }
+    },
     openDetail (type, row) {
       this.detail.type = type
       this.detail.data = row
