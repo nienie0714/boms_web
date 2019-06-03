@@ -1,5 +1,8 @@
 <template>
   <div class="log-audit">
+    <div class="left-tree">
+      <tree :data="data" :activeId="activeId" @clickNode="clickNode"></tree>
+    </div>
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
@@ -7,46 +10,47 @@
       </div>
     </div>
     <div class="table-cont container cross">
-      <tables :tableData="tableData" :loading="tableData.loading">
-        <template v-slot:slot-body="{index, row, item}">
-          <template v-if="item.label=='操作'">
-            <button type="info" @click="openDetail('detail', row)">详情</button>
-            <button type="info" @click="openDetail('update', row)">编辑</button>
-          </template>
-        </template>
-      </tables>
+      <div class="table-title">
+        <div class="left">
+          <span class="label">查询结果</span>
+          <span class="info">共{{pageData.total}}条</span>
+        </div>
+        <div class="right">
+          <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
+          <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
+        </div>
+      </div>
+      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openDelete="openDelete"></tables>
     </div>
-    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleClose="handleClose"></detail>
-    <Radio :options="dataSource.options" :value="dataSource.itemValue" :label="dataSource.itemLabel" :input="data[dataSource.key]"></Radio>
+    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>
 </template>
 
 <script>
+import Tree from '@view/Tree/Tree'
 import QueryRow from '@view/QueryRow/QueryRow'
+import Pagination from '@view/Pagination/Pagination'
+import Toolbar from '@view/Toolbar/Toolbar'
 import Tables from '@view/Table/Table'
 import Detail from './detail/EmployeeDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
-import Radio from '@view/Radio/Radio'
 import _ from 'lodash'
 
 export default {
   components: {
+    Tree,
     QueryRow,
+    Pagination,
+    Toolbar,
     Tables,
-    Detail,
-    Radio
+    Detail
   },
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      dataSource: {key: 'gender',  label: '性别gender', type: 'radio', options: [{label: '男', value: 'M'}, {label: '女', value: 'F'}], width: '191'},
-      data: {},
-      axiosChildArr: [],
-      // 请求路径
-      queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
-      queryParam: [
+      baseUrl: '/organization/department',      queryParam: [
         {
           key: 'empName',
           label: '姓名',
@@ -82,7 +86,7 @@ export default {
           ],
           // right
           [
-            {label: '操作', type: 'slot', width: 220}
+            {label: '操作', type: 'opr', width: 220}
           ]
         ],
         data: []
@@ -91,79 +95,77 @@ export default {
         visible: false,
         type: 'detail',
         data: null
-      }
+      },
+      data: [
+        {
+          id: 1,
+          label: '节点一'
+        },
+        {
+          id: 2,
+          label: '节点二'
+        },
+        {
+          id: 3,
+          label: '节点三',
+          children: [
+            {
+              id: 301,
+              label: '子节点一'
+            },
+            {
+              id: 302,
+              label: '子节点二',
+              children: [
+                {
+                  id: 30201,
+                  label: '子节点1',
+                  children: [
+                    {
+                      id: 3020101,
+                      label: '子节点1'
+                    },
+                    {
+                      id: 3020102,
+                      label: '子节点2'
+                    }
+                  ]
+                },
+                {
+                  id: 30202,
+                  label: '子节点2'
+                }
+              ]
+            },
+            {
+              id: 303,
+              label: '子节点三'
+            }
+          ]
+        },
+        {
+          id: 4,
+          label: '节点四'
+        }
+      ],
+      activeId: []
     }
   },
   mounted () {
   },
   methods: {
-    tabItemClick (key) {
-      this.selectKey = key
-      this.queryDataReq(1)
+    clickNode (node) {
+      this.queryDataReq()
     },
     customQueryBefore () {
-      this.$set(this.queryData, 'inOutFlag', this.selectKey)
-    },
-    changeComp (comp, row) {
-      this.axiosChildArr.forEach(ever => {
-        this.removePending(ever)
-      })
-      this.axiosChildArr = []
-      this.showComp.is = comp
-      let idObj = {
-        dynamicFlightId: row[this.tableData.key]
-      }
-      this.showComp.row = {}
-      let url = this.showComp[comp + 'Url']
-      this.axiosChildArr.push({
-        url: url,
-        method: 'put',
-        params: idObj
-      })
-      queryAll(url, idObj).then(res => {
-        if (res.data.code == 0) {
-          let data
-          if (comp == 'lug') {
-            data = {
-              nodes: res.data.data
-            }
-          } else {
-            data = res.data.data
-          }
-          this.showComp.row = _.assign(row, data)
-        }
-      })
-    },
-    formatNum (row, item) {
-      let obj = _.get(row, item.key)
-      let value = '-/-'
-      if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
-        let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
-        value = (molecule || '-') + '/' + (denominator || '-')
-      }
-      return value
-    },
-    formatPro (row, item) {
-      let obj = _.get(row, item.key)
-      let value = 0
-      if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
-        let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
-        if (denominator) {
-          value = Math.floor(molecule / denominator * 100) / 100
-        }
-      }
-      return value
-    },
-    proColor (row, item) {
-      let value = this.formatPro(row, item)
-      if (value == 1) {
-        return 'linear-gradient(to right, #60cb6c, #01b674)'
-      } else if (value >= 0.5) {
-        return 'linear-gradient(to right, #46a6f9, #578cfe)'
+      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptParentId' })
+      if (~index) {
+        this.queryParam[index].value = this.activeId[0]
       } else {
-        return 'linear-gradient(to right, #f8b53f, #f58c24)'
+        this.queryParam.push({
+          key: 'deptParentId',
+          value: this.activeId[0]
+        })
       }
     }
   }
