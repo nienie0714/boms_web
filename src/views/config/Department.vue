@@ -1,7 +1,7 @@
 <template>
   <div class="log-audit">
     <div class="left-tree">
-      <tree :data="data" :selectNodeId="selectNodeId" @clickNode="clickNode"></tree>
+      <tree :data="data" :activeId="activeId" @clickNode="clickNode"></tree>
     </div>
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
@@ -20,14 +20,7 @@
           <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openDelete="openDelete">
-        <!-- <template v-slot:slot-body="{index, row, item}">
-          <template v-if="item.label=='操作'">
-            <button type="info" @click="openDetail('detail', row)">详情</button>
-            <button type="info" @click="openDetail('update', row)">编辑</button>
-          </template>
-        </template> -->
-      </tables>
+      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openDelete="openDelete"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>
@@ -57,7 +50,6 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      axiosChildArr: [],
       baseUrl: '/organization/department',
       queryParam: [
         {
@@ -157,83 +149,25 @@ export default {
           label: '节点四'
         }
       ],
-      selectNodeId: []
+      activeId: []
     }
   },
   mounted () {
   },
   methods: {
-    tabItemClick (key) {
-      this.selectKey = key
-      this.queryDataReq(1)
+    clickNode (node) {
+      this.queryDataReq()
     },
     customQueryBefore () {
-      this.$set(this.queryData, 'inOutFlag', this.selectKey)
-    },
-    changeComp (comp, row) {
-      this.axiosChildArr.forEach(ever => {
-        this.removePending(ever)
-      })
-      this.axiosChildArr = []
-      this.showComp.is = comp
-      let idObj = {
-        dynamicFlightId: row[this.tableData.key]
-      }
-      this.showComp.row = {}
-      let url = this.showComp[comp + 'Url']
-      this.axiosChildArr.push({
-        url: url,
-        method: 'put',
-        params: idObj
-      })
-      queryAll(url, idObj).then(res => {
-        if (res.data.code == 0) {
-          let data
-          if (comp == 'lug') {
-            data = {
-              nodes: res.data.data
-            }
-          } else {
-            data = res.data.data
-          }
-          this.showComp.row = _.assign(row, data)
-        }
-      })
-    },
-    formatNum (row, item) {
-      let obj = _.get(row, item.key)
-      let value = '-/-'
-      if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
-        let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
-        value = (molecule || '-') + '/' + (denominator || '-')
-      }
-      return value
-    },
-    formatPro (row, item) {
-      let obj = _.get(row, item.key)
-      let value = 0
-      if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
-        let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
-        if (denominator) {
-          value = Math.floor(molecule / denominator * 100) / 100
-        }
-      }
-      return value
-    },
-    proColor (row, item) {
-      let value = this.formatPro(row, item)
-      if (value == 1) {
-        return 'linear-gradient(to right, #60cb6c, #01b674)'
-      } else if (value >= 0.5) {
-        return 'linear-gradient(to right, #46a6f9, #578cfe)'
+      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptParentId' })
+      if (~index) {
+        this.queryParam[index].value = this.activeId[0]
       } else {
-        return 'linear-gradient(to right, #f8b53f, #f58c24)'
+        this.queryParam.push({
+          key: 'deptParentId',
+          value: this.activeId[0]
+        })
       }
-    },
-    clickNode (node) {
-      // console.log(node)
     }
   }
 }

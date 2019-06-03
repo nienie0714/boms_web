@@ -1,10 +1,10 @@
 <template>
   <div class="tree" ref="tree">
-    <div v-for="(node, index) in tree" :key="index" @click="clickNode(node)" :class="['tree-node', (activeId.length > 0) && (activeId == node[nodeKey]) ? 'active' : '']">
+    <div v-for="(node, index) in tree" :key="index" @click.stop="clickNode(node)" :class="['tree-node', (activeId.length > 0) && (activeId == node[nodeKey]) ? 'active' : '']">
       <div class="tree-label">
-        <span @click="showChild(node)"
+        <span @click.stop="showChild(node)"
         :class="[node.hasOwnProperty(nodeChild) ? 'icon iconfont icon-next icon-button' : '', node.hasOwnProperty('open') && node.open ? 'open' : '']"></span>
-        <span v-if="selected" @click="selectCheckBox(node)"
+        <span v-if="selected" @click.stop="selectCheckBox(node)"
         :class="['checkbox', ~selectNodeId.indexOf(node[nodeKey]) ? 'is-checked' : (~halfSelectNodeId.indexOf(node[nodeKey]) ? 'is-half-checked' : '')]"></span><!-- {{selectNodeId.indexOf(node[nodeKey])}} -->
         <span>{{node[nodeLabel]}}</span>
       </div>
@@ -203,15 +203,30 @@ export default {
   
   &:not(.tree-child) {
     padding: 10px 0;
+
+    >.tree-node {
+      >.tree-label {
+        >span:last-child {
+          font-size: 16px;
+        }
+      }
+    }
   }
 
   &.tree-child {
-    padding: 5px 10px 5px 12px;
+    padding: 5px 10px 5px 20px;
+
+    >.tree-node {
+      >.tree-label {
+        >span:last-child {
+          font-size: 14px;
+        }
+      }
+    }
   }
 
   .tree-node {
-    font-size: 16px;
-    line-height: 20px;
+    line-height: 32px;
     width: 100%;
     color: $gray-st;
     position: relative;
@@ -225,21 +240,34 @@ export default {
     }
 
     >.tree-label {
-      padding: 3px 12px 3px 18px;
+      padding: 0 12px 0 30px;
+      height: 32px;
       >.checkbox {
         margin-right: 5px;
       }
 
       >span {
-        vertical-align: top;
+        vertical-align: middle;
+
+        &:last-child {
+          margin-left: 11px;
+        }
       }
 
       &>.icon-next {
         display: inline-block;
-        font-size: 18px;
-        color: $gray-st;
+        margin: 8px 0;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        text-align: center;
+        font-size: 6px;
+        font-weight: bold;
+        color: #fff;
+        border-radius: 50%;
+        background-color: rgba(100, 113, 127, 1);
         position: absolute;
-        left: 0;
+        left: 12px;
         &.open {
           transform: rotate(90deg);
         }

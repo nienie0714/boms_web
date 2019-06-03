@@ -51,13 +51,6 @@ export default {
     }
   },
   mounted () {
-    window.onresize = () => {
-      this.$nextTick(() => {
-        return (() => {
-          this.changeWindowSize()
-        })()
-      })
-    }
   },
   methods: {
     changeData () {

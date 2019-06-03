@@ -1,5 +1,5 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form" @handleSubmit="handleSubmit"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
 </template>
 
 <script>
@@ -57,33 +57,11 @@ export default {
     }
   },
   mounted () {
-    window.onresize = () => {
-      this.$nextTick(() => {
-        return (() => {
-          this.changeWindowSize()
-        })()
-      })
-    }
   },
   methods: {
     changeData () {
-      this.$nextTick(() => {
-        this.changeWindowSize()
-      })
       this.form.data = this.data
       this.visible = true
-    },
-    changeWindowSize () {
-      let dlgBody = document.getElementsByClassName('table-body')[1]
-      if (dlgBody) {
-        this.tableData.height = document.body.offsetHeight - document.getElementsByClassName('table-body')[1].getBoundingClientRect().top + 8
-      }
-    },
-    handleClose () {
-      this.$emit('handleClose')
-    },
-    handleSubmit () {
-      this.$emit('handleSubmit')
     }
   },
   watch: {
@@ -101,7 +79,7 @@ export default {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
-            } else if (type == 'update') {
+            } else if (type == 'update' || type == 'insert') {
               item.isHidden = true
             }
           }

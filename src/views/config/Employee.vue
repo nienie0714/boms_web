@@ -41,7 +41,7 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      dataSource: {key: 'gender',  label: '性别', type: 'radio', options: [{label: '男', value: 'M'}, {label: '女', value: 'F'}], width: '191'},
+      dataSource: {key: 'gender',  label: '性别gender', type: 'radio', options: [{label: '男', value: 'M'}, {label: '女', value: 'F'}], width: '191'},
       data: {},
       axiosChildArr: [],
       // 请求路径

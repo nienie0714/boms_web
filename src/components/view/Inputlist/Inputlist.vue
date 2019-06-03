@@ -98,8 +98,6 @@ export default {
         if (this.filtOpts.length > 0) {
           this.activeKey = this.id ? this.filtOpts[0][this.id] : this.filtOpts[0]
         }
-        console.log('text' + this.text)
-        console.log('value' + this.value)
       }
     },
     enter (val) {

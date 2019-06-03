@@ -8,7 +8,8 @@
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- colIndex==0?'left-table':(colIndex==1?'center-table':'right-table') -->
           <thead>
             <tr v-for="(col, cIndex) in column" :key="cIndex">
-              <th v-for="(item, itemIndex) in col" :key="itemIndex" :rowspan="item.rowspan" :colspan="item.colspan"
+              <th v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
+              :rowspan="item.rowspan" :colspan="item.colspan"
               :class="['row_height_'+(item.rowspan?item.rowspan:1), item.titleClass, item.class]"
               :style="`width:${item.width?(item.width+'px'):'auto'}; max-width:${item.width?(item.width+'px'):'auto'};`">
                 <template v-if="tableData.type=='mult' && itemIndex == 0">
@@ -45,8 +46,8 @@
           <tbody>
             <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
             @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
-              <td v-for="(item, itemIndex) in col" :key="itemIndex" :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false"
-              :class="item.class"
+              <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
+              :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false" :class="item.class"
               :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               +`color: ${item.color};`">
