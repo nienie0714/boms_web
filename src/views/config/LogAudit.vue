@@ -13,26 +13,22 @@
           <span class="info">共{{pageData.total}}条</span>
         </div>
         <div class="right">
-          <pagination v-model="pageData.num" :size="pageData.size" :total="pageData.total"></pagination>
+          <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
+          <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading">
-        <template v-slot:slot-body="{index, row, item}">
-          <template v-if="item.label=='操作'">
-            <button type="info" @click="openDetail('update', row)">详情</button>
-          </template>
-        </template>
-      </tables>
+      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
     </div>
-    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleClose="handleClose" @handleSubmit="handleSubmit"></detail>
+    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>
 </template>
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
 import Pagination from '@view/Pagination/Pagination'
+import Toolbar from '@view/Toolbar/Toolbar'
 import Tables from '@view/Table/Table'
-import Detail from './detail/LogAuditDetail'
+import Detail from './detail/UserDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
@@ -48,25 +44,20 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      axiosChildArr: [],
       // 请求路径
-      queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
+      baseUrl: '/sys/log', // /integrated/dynamicFlight/queryAllStat
       queryParam: [
         {
-          key: 'flightNo',
+          key: 'userName',
           label: '用户名',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         },
         {
-          key: 'terminalStation',
+          key: 'empName',
           label: '员工',
-          type: 'datalist',
+          type: 'input',
           width: 120,
-          itemValue: 'airportIata',
-          itemLabel: 'briefC',
-          url: '/base/airport/queryAll',
           toUpper: true
         },
         {
@@ -83,18 +74,16 @@ export default {
         height: 600,
         multSelection: [],
         loading: false,
-        key: 'dynamicFlightId',
-        type: 'single',
+        key: 'logId',
         column: [
           // left
           [
-            // {type: 'mult', width: 50},
-            {key: 'flightNoAlias',  label: '用户名', width: 120, class: 'bold'},
-            {key: 'execDate', label: '姓名', width: 120, format: [0, 10]},
-            {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},
-            {key: 'aircraftType',  label: '操作模块', width: 250},
-            {key: 'routeCn',  label: '内容', width: 600, title: true},
-            {key: 'execDate',  label: '操作时间', width: 180, format: [0, 16]}
+            {key: 'logUser',  label: '用户名', width: 355},
+            {key: 'empName', label: '姓名', width: 355},
+            {key: 'logType',  label: '操作类型', width: 150, enumKey: 'attr'},
+            {key: 'logModule',  label: '操作模块', width: 355},
+            {key: 'logDetail',  label: '操作内容', width: 355},
+            {key: 'logTime',  label: '操作时间', width: 355},
           ],
           // center
           [

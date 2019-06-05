@@ -20,6 +20,7 @@
       <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
+    <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ import Pagination from '@view/Pagination/Pagination'
 import Toolbar from '@view/Toolbar/Toolbar'
 import Tables from '@view/Table/Table'
 import Detail from './detail/RoleDetail'
+import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
@@ -40,7 +42,8 @@ export default {
     Pagination,
     Toolbar,
     Tables,
-    Detail
+    Detail,
+    ConfirmTip
   },
   mixins: [tableMixin, formMixin],
   data () {

@@ -21,6 +21,7 @@
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
+    <confirm-tip :visible="reset.visible" :data="reset.data" @handleSubmit="handleReset" @handleClose="handleResetClose"></confirm-tip>
   </div>
 </template>
 
@@ -33,7 +34,7 @@ import Detail from './detail/UserDetail'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
-import { queryAll } from '@/util/base'
+import { queryAll, reset } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -98,6 +99,11 @@ export default {
         ],
         data: []
       },
+      reset: {
+        visible: false,
+        url: 'sys/sysUser/resetPassword',
+        data: null
+      }
     }
   },
   mounted () {
@@ -106,11 +112,43 @@ export default {
     openDetail ({type, row}) {
       if (type == 'reset') {
         // debugger
+        this.reset.data = row
+        this.reset.visible = true
+      } else {
+        this.detail.type = type
+        this.$set(this.detail, 'data', row || null)
+        this.detail.visible = true
       }
-      this.detail.type = type
-      this.$set(this.detail, 'data', row || null)
-      this.detail.visible = true
     },
+    handleReset(row) {
+      let data = {
+        userId: row.userId
+      }
+      reset(this.reset.url, data).then(res => {
+        if (res.data.code == 0) {
+          this.$msg.success({
+            info: '重置密码成功 !'
+          })
+          this.reset.visible = false
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '重置密码失败 !',
+            tip: res.data.msg
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
+        console.log(err)
+      })
+    },
+    handleResetClose() {
+      this.reset.visible = false
+    }
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <my-dialog v-bind="$attrs" v-on="$listeners" :title="title" :close="close" :height="height" @submitDialog="handleSubmit" @handleClose="handleClose"
+  <my-dialog v-bind="$attrs" v-on="$listeners" :title="title" :height="height" @submitDialog="handleSubmit" @handleClose="handleClose"
   :position="position" class="confirm-dialog">
     <template>
       <div>{{info}}</div>
