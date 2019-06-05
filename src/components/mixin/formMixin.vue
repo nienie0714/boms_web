@@ -6,7 +6,7 @@ export default {
       baseUrl: '',
       insertUrl: '',
       updateUrl: '',
-      deleteUrl: ''
+      removeUrl: ''
     }
   },
   mounted () {
@@ -16,8 +16,8 @@ export default {
     if (!this.updateUrl) {
       this.updateUrl = this.baseUrl
     }
-    if (!this.deleteUrl) {
-      this.deleteUrl = this.baseUrl
+    if (!this.removeUrl) {
+      this.removeUrl = this.baseUrl
     }
   },
   methods: {

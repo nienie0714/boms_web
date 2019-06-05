@@ -53,7 +53,7 @@
               +`color: ${item.color};`">
                 <template v-if="item.type=='opr'">
                   <div class="table-opr update" @click="openDetail('update', row)"></div>
-                  <div class="table-opr delete" @click="openDelete(row)"></div>
+                  <div class="table-opr remove" @click="openRemove(row)"></div>
                   <div class="table-opr reset" @click="openDetail('reset', row)"></div>
                   <div class="table-opr detail" @click="openDetail('detail', row)"></div>
                 </template>
@@ -205,6 +205,9 @@ export default {
     },
     openDetail (type, row) {
       this.$emit('openDetail', {type, row})
+    },
+    openRemove (row) {
+      this.$emit('openRemove', row)
     }
   },
   watch: {
@@ -469,7 +472,7 @@ $rowHeight: 40px;
         }
       }
 
-      &.delete {
+      &.remove {
         background-image: url(~@icon/table/icon_delete.png);
 
         &:hover {

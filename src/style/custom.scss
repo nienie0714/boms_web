@@ -214,11 +214,8 @@ textarea[disabled="disabled"] {
   justify-content: flex-start;
   align-items: center;
 }
-.dialog[position=right] {
-  margin: 10px 10px 10px auto !important;
-  left: auto !important;
+.dialog {
   >.header {
-    height: 50px !important;
     >.tabs-parent {
       position: absolute;
       top: 20px;
@@ -226,6 +223,13 @@ textarea[disabled="disabled"] {
       right: 0;
       margin: auto;
     }
+  }
+  &[position=right] {
+    margin: 10px 10px 10px auto !important;
+    left: auto !important;
+  }
+  &[position=center] {
+    margin: auto;
   }
 }
 /* 滚动条 */

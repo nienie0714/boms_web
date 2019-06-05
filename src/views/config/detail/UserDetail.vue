@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Detail from '@/views/home/Detail'
+import Detail from '@/views/home/common/Detail'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll } from '@/util/base'
 import _ from 'lodash'
@@ -18,7 +18,7 @@ export default {
     return {
       title: '用户管理',
       form: {
-        key: 'ata',
+        key: 'userId',
         loading: false,
         queryParam: {},
         column: [

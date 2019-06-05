@@ -20,7 +20,7 @@
           <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openDelete="openDelete"></tables>
+      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>

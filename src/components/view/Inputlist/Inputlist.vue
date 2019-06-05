@@ -7,7 +7,7 @@
     <div class="input-list-ul">
       <ul>
         <li v-for="(item, index) in filtOpts" :key="index" :class="['input-list-li', activeKey == (id ? item[id] : item) ? 'active' : '']"
-        @mousedown="handleSelect(item)">{{label ? item[label] : (id ? item[id] : item)}}</li>
+        @mousedown.stop="handleSelect(item)">{{label ? item[label] : (id ? item[id] : item)}}</li>
         <li v-if="filtOpts.length <= 0">无搜索结果</li>
       </ul>
     </div>
@@ -225,7 +225,12 @@ export default {
 
   &:focus-within {
     .input-list-ul {
-      visibility: visible;
+      // visibility: visible;
+      display: block;
+
+      li {
+        pointer-events: visiblePainted;
+      }
     }
     
     &:before {
@@ -251,7 +256,8 @@ export default {
     border: 1px solid rgba(60, 166, 200, 0.5);
     width: 100%;
     background-color: #fff;
-    visibility: hidden;
+    // visibility: hidden;
+    display: none;
     max-height: 380px;
     min-height: 38px;
     height: fit-content;

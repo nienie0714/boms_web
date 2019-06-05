@@ -4,7 +4,7 @@
       <div class="icon"></div>
       <div class="label">导出</div>
     </div>
-    <!-- <div class="tool-button delete">
+    <!-- <div class="tool-button remove">
       <div class="icon"></div>
       <div class="label">删除</div>
     </div> -->

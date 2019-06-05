@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Detail from '@/views/home/Detail'
+import Detail from '@/views/home/common/Detail'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll } from '@/util/base'
 import _ from 'lodash'

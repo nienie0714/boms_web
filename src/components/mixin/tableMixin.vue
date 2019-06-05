@@ -1,5 +1,6 @@
 <script>
-import { postData, pageQuery } from '@/util/base'
+import { postData, pageQuery, remove } from '@/util/base'
+import _ from 'lodash'
 
 export default {
   data () {
@@ -17,6 +18,10 @@ export default {
       detail: {
         visible: false,
         type: 'insert',
+        data: null
+      },
+      remove: {
+        visible: false,
         data: null
       },
       axiosArr: [],
@@ -121,8 +126,48 @@ export default {
       this.$set(this.detail, 'data', row || null)
       this.detail.visible = true
     },
-    openDelete (row) {
-      console.log(row)
+    openRemove (row) {
+      this.remove.data = row
+      this.remove.visible = true
+    },
+    getRemove (row) {
+      let data = []
+      if (row) {
+        data.push(this.tableData.key ? row[this.tableData.key] : row)
+      } else {
+        let arr = this.tableData.key ? _.map(this.tableData.multSelection, this.tableData.key) : this.tableData.multSelection
+        data.splice(0, 0, ...arr)
+      }
+      return data
+    },
+    handleRemove (row) {
+      let data = {
+        ids: this.getRemove(row)
+      }
+      remove(this.removeUrl, data).then(res => {
+        if (res.data.code == 0) {
+          this.$msg.success({
+            info: '删除成功 !'
+          })
+          this.handleRemoveClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '删除失败 !',
+            tip: res.data.msg
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
+        console.log(err)
+      })
+    },
+    handleRemoveClose () {
+      this.remove.visible = false
     },
     openExport () {}
   },

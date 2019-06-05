@@ -144,22 +144,6 @@ export default {
       this.errors = {}
       _.forEach(this.form.rules, (arr, key) => {
         this.handleError(key, this.data[key])
-        /* for (let i = 0; i < arr.length; i++) {
-          let item = arr[i]
-          if (item.type == 'require') {
-            if (!this.data[key] && this.data[key] !== 0) {
-              this.$set(this.errors, key, '必填')
-              break
-            }
-          } else if (item.type == 'regex') {
-            let reg = item.reg
-            this.errors.push
-          } else if (item.type == 'method') {
-            let method = item.method
-            method(this.data[key], param => {
-            })
-          }
-        } */
       })
       if (!_.isEmpty(this.errors)) {
         return
