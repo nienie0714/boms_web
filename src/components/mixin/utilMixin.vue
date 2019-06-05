@@ -30,7 +30,7 @@ export default {
         } else {
           value = _.get(row, item.key) || value
         }
-      } else if (_.get(row, item.key) == 0) {
+      } else if (_.get(row, item.key) === 0) {
         value = 0
       }
       return value

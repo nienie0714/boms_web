@@ -24,8 +24,8 @@ export default {
         column: [
           {key: 'empId',  label: '员工编号', type: 'input'},
           {key: 'empName',  label: '姓名', type: 'input'},
-          {key: 'gender',  label: '性别', type: 'radio', radioOptions: [{value: '男'}, {value: '女'}], width: '191'},
-          {key: 'deptName', label: '单位/部门', type: 'inputlist', enumKey: 'inOutFlag', itemValue: 'airportIata', itemLabel: 'briefC', url: '/base/airport/queryAll', toUpper: true},
+          {key: 'gender',  label: '性别', type: 'tab', enumKey: 'gender', itemId: 'code', itemLabel: 'name', maxlength: 50},
+          {key: 'deptId', label: '单位/部门', saveKey: 'deptId', type: 'inputlist', itemId: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
           {key: 'post',  label: '职务名称', type: 'input'},
           {key: 'phone',  label: '联系方式', type: 'input'},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
@@ -40,7 +40,7 @@ export default {
           gender: [
             {type: 'require', trigger: 'blur'}
           ],
-          deptName: [
+          deptId: [
             {type: 'require', trigger: 'blur'}
           ],
           post: [
@@ -66,9 +66,7 @@ export default {
   watch: {
     data: {
       handler (data) {
-        if (data && data.hasOwnProperty(this.form.key)) {
-          this.changeData()
-        }
+        this.changeData()
       },
       immediate: true
     },

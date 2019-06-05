@@ -33,18 +33,22 @@ export function compareSort (sortKey, sortMeth) {
 
 // 深度平铺MAP
 export function flattenDeep (arr, tmpArr, pNode) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].hasOwnProperty('children') && (arr[i].children != null) && (arr[i].children.length > 0)) {
-      let obj = JSON.parse(JSON.stringify(arr[i]))
-      obj.pNode = pNode || null
-      delete obj.children
-      tmpArr.push(obj)
-      flattenDeep(arr[i].children, tmpArr, arr[i])
-    } else {
-      let obj = JSON.parse(JSON.stringify(arr[i]))
-      obj.pNode = pNode || null
-      tmpArr.push(obj)
+  if (arr && !_.isEmpty(arr)) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].hasOwnProperty('children') && (arr[i].children != null) && (arr[i].children.length > 0)) {
+        let obj = JSON.parse(JSON.stringify(arr[i]))
+        obj.pNode = pNode || null
+        delete obj.children
+        tmpArr.push(obj)
+        flattenDeep(arr[i].children, tmpArr, arr[i])
+      } else {
+        let obj = JSON.parse(JSON.stringify(arr[i]))
+        obj.pNode = pNode || null
+        tmpArr.push(obj)
+      }
     }
+  } else {
+    tmpArr = []
   }
 }
 

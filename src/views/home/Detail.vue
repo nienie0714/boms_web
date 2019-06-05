@@ -10,35 +10,21 @@
           </div>
           <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
             <inputs v-if="item.type == 'input'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
-            :placeholder="'请输入'+item.label" :disabled="item.disabled"
-            @change="handleChange(item, data[item.key])"></inputs>
-            <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel"
-            @change="handleChange(item, data[item.key])"></tab-button>
-            <input-list v-else-if="item.type == 'inputlist'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel"></input-list>
-            <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options"></selects>
+            :placeholder="item.label" :disabled="item.disabled"
+            @change="handleChange(item, $event)"></inputs>
+            <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel" :disabled="item.disabled"
+            @change="handleChange(item, $event)"></tab-button>
+            <input-list v-else-if="item.type == 'inputlist'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
+            :id="item.itemId" :label="item.itemLabel"
+            @change="handleChange(item, $event)"></input-list>
+            <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
+            @change="handleChange(item, $event)"></selects>
             <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
             :placeholder="'请输入'+item.label" :disabled="item.disabled" :rows="item.rows" :cols="item.cols"
-            @change="handleChange(item, data[item.key])"></textarea>
-            <!-- <input v-if="['datalist', 'inputlist'].includes(item.type)" v-model.trim="data[item.key]" :list="item.key" style="width: inherit;" :placeholder="'请输入'+item.label"
-            :disabled="item.disabled"
-            @change="handleChange(item, $event)" @keyup.enter.stop="handleEnter(item, $event)" @focus="handleFocus(item, $event)" @blur="handleBlur(item, $event)"/>
-            <component :is="item.type" :id="item.key" v-model.trim="data[item.key]" :value="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max"
-            class="value-component" :placeholder="'请输入'+item.label" :disabled="item.disabled"
-            :itemKey="item.key" :options="item.options" :itemValue="item.itemValue" :label="item.itemLabel" :input="data[item.key]"
-            @blur="item.toUpper&&toUpper(item, $event)" @change="handleChange(item, $event.target.value)" @keyup.enter.stop="handleEnter(item, $event)"
-            @select="selectList">
-              <template v-if="item.type=='datalist'">
-                <option v-for="(opt, idx) in item.options" :key="idx" :value="(opt.constructor==Object)?opt[item.itemValue]:opt">{{(opt.constructor==Object)?opt[item.itemLabel]:opt}}</option>
-              </template>
-            </component>
-            <template v-if="item.type == 'select'">
-              <component :is="item.type" v-model="data[item.key]" :type="item.inputType" :min="item.min" :max="item.max" class="value-component" :disabled="item.disabled">
-                <template v-if="item.type=='select'">
-                  <option v-for="opt in item.options" :key="opt[item.itemKey]" :value="opt[item.itemKey]">{{opt[item.itemLabel]}}</option>
-                </template>
-              </component>
-            </template> -->
-            <!-- <inputlist v-if="item.type == 'inputlist'" :options="item.options" :value="item.itemValue" :label="item.itemLabel" :input="data[item.key]"></inputlist> -->
+            @change="handleChange(item, $event)"></textarea>
+            <tree v-else-if="item.type == 'tree'" :data="item.options" :selected="true" :disabled="item.disabled"
+            :allSelectNodeId="data[item.saveKey ? item.saveKey : item.key]"
+            :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree>
           </div>
         </div>
       </div>
@@ -51,8 +37,9 @@ import Inputs from '@view/Inputs/Inputs'
 import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
 import Selects from '@view/Selects/Selects'
+import Tree from '@view/Tree/Tree'
 import utilMixin from '@mixin/utilMixin'
-import { queryAll } from '@/util/base'
+import { queryAll, queryAllGet } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
 import _ from 'lodash'
 
@@ -61,7 +48,8 @@ export default {
     Inputs,
     TabButton,
     InputList,
-    Selects
+    Selects,
+    Tree
   },
   mixins: [utilMixin],
   props: ['form', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
@@ -88,16 +76,31 @@ export default {
     updateData () {
       this.errors = {}
       this.dataHis = []
-      this.dataHis = JSON.parse(JSON.stringify(this.form.column))
+      this.dataHis = _.cloneDeep(this.form.column)
       
       this.dataHis.forEach(item => {
+        if (this.type == 'insert') {
+          this.$set(this.data, item.key, item.hasOwnProperty('default') ? item.default : null)
+        } else if (!this.data.hasOwnProperty(item.key)) {
+          this.$set(this.data, item.key, null)
+        }
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
         }
         if (item.hasOwnProperty('url')) {
-          queryAll(item.url, item.param || {}).then(res => {
+          let https = queryAll
+          if (item.hasOwnProperty('urlType')) {
+            switch (item.urlType) {
+              case 'get': https = queryAllGet
+              break
+              case 'post': https = queryAll
+              break
+            }
+          }
+          https(item.url, item.param || {}).then(res => {
             if (res.data.code == 0) {
-              this.$set(item, 'options', res.data.data)
+              this.$set(item, 'options', [])
+              item.options = res.data.data
             } else {
               this.$msg.error({
                 info: '获取' + item.label + '失败 !'
@@ -109,16 +112,13 @@ export default {
         }
       })
     },
-    selectList ({value, key}) {
-      if (key) {
-        this.data[key] = value
-        event.target.parentElement.parentElement.style.visibility = 'hidden'
-      }
-    },
     handleChange (item, val) {
-      let value = val.toString().trim()
-      if (item.hasOwnProperty('toUpper') && item.toUpper) {
-        value = value.toUpperCase()
+      let value = val
+      if (_.isNumber(value) || _.isString(value)) {
+        value = value.toString().trim()
+        if (item.hasOwnProperty('toUpper') && item.toUpper) {
+          value = value.toUpperCase()
+        }
       }
       if (item.hasOwnProperty('method')) {
         let method = item.method
@@ -134,7 +134,7 @@ export default {
           }
         })
       }
-      this.handleError(item, value)
+      this.handleError(item.key, value)
       this.$emit('changeData', {data: this.data, type: this.type})
     },
     handleClose () {
@@ -143,7 +143,8 @@ export default {
     handleSubmit () {
       this.errors = {}
       _.forEach(this.form.rules, (arr, key) => {
-        for (let i = 0; i < arr.length; i++) {
+        this.handleError(key, this.data[key])
+        /* for (let i = 0; i < arr.length; i++) {
           let item = arr[i]
           if (item.type == 'require') {
             if (!this.data[key] && this.data[key] !== 0) {
@@ -158,16 +159,15 @@ export default {
             method(this.data[key], param => {
             })
           }
-        }
+        } */
       })
-      if (this.errors.length > 0) {
+      if (!_.isEmpty(this.errors)) {
         return
       } else {
         this.$emit('handleSubmit', {data: this.data, type: this.type})
       }
     },
-    handleError (obj, value) {
-      let key = obj.key
+    handleError (key, value) {
       this.$delete(this.errors, key)
       if (this.form.rules.hasOwnProperty(key)) {
         let arr = this.form.rules[key]
@@ -227,9 +227,7 @@ export default {
   watch: {
     'form.data': {
       handler (data) {
-        if (data) {
-          this.$set(this, 'data', data)
-        }
+        this.$set(this, 'data', JSON.parse(JSON.stringify(data)))
       },
       immediate: true
     },
@@ -241,6 +239,10 @@ export default {
           break
           case 'insert': this.typeName = '新增'
           this.submit = true
+          if (this.form.key) {
+            this.data = {}
+            this.$set(this.data, this.form.key, null)
+          }
           break
           case 'update': this.typeName = '编辑'
           this.submit = true

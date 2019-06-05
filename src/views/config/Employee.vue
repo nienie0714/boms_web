@@ -50,7 +50,8 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      baseUrl: '/organization/department',      queryParam: [
+      baseUrl: '/organization/employee',
+      queryParam: [
         {
           key: 'empName',
           label: '姓名',
@@ -58,24 +59,23 @@ export default {
           width: 120
         },
         {
-          key: 'deptName',
+          key: 'deptId',
           label: '部门',
           type: 'datalist',
           width: 120,
-          itemValue: 'airportIata',
-          itemLabel: 'briefC',
-          url: '/base/airport/queryAll'
+          itemValue: 'deptId',
+          itemLabel: 'deptName',
+          url: '/organization/department/queryAll'
         }
       ],
       tableData: {
         height: 600,
         multSelection: [],
         loading: false,
-        key: 'dynamicFlightId',
+        key: 'empId',
         column: [
           // left
           [
-            {type: 'mult', width: 50},
             {key: 'deptName',  label: '单位/部门', width: 355},
             {key: 'empName', label: '姓名', width: 355},
             {key: 'post',  label: '职务名称', width: 355},
@@ -90,11 +90,6 @@ export default {
           ]
         ],
         data: []
-      },
-      detail: {
-        visible: false,
-        type: 'detail',
-        data: null
       },
       data: [
         {

@@ -1,6 +1,6 @@
 <template>
   <div class="inputs">
-    <input :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder ? ('请输入'+ placeholder) : ''"
+    <input :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" :disabled="disabled"
     @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)"/>
   </div>
 </template>
@@ -37,6 +37,10 @@ export default {
     minlength: {
       type: Number,
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     value: {
       type: [String, Number, Object],

@@ -118,6 +118,13 @@ export function queryAll (url, data) {
   })
 }
 
+export function queryAllGet (url) {
+  return vue.axios({
+    url: url,
+    method: 'get'
+  })
+}
+
 export function query (url, data) {
   return vue.axios({
     url: url,

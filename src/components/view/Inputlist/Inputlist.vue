@@ -1,6 +1,6 @@
 <template>
   <div class="input-list">
-    <input :value="text" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" @input="input($event.target.value)"
+    <input :value="text" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" @input="input($event.target.value)" :disabled="disabled"
     @change="change($event.target.value)" @keyup.enter="enter($event.target.value)"
     @keyup.up="keyUp($event.target.value)" @keyup.down="keyDown($event)"
     @compositionstart="compositionstart($event)" @compositionend="compositionend()"/>
@@ -42,6 +42,10 @@ export default {
     placeholder: {
       type: String,
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     value: {
       type: [String, Number, Object],

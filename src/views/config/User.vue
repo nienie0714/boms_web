@@ -45,7 +45,7 @@ export default {
   mixins: [tableMixin, formMixin],
   data () {
     return {
-      baseUrl: '/organization/department',
+      baseUrl: 'sys/sysUser',
       queryParam: [
         {
           key: 'userName',
@@ -62,13 +62,13 @@ export default {
           toUpper: true
         },
         {
-          key: 'terminalStation',
+          key: 'roleId',
           label: '角色',
           type: 'datalist',
-          width: 120,
-          itemValue: 'airportIata',
-          itemLabel: 'briefC',
-          url: '/base/airport/queryAll'
+          width: 140,
+          itemValue: 'roleId',
+          itemLabel: 'name',
+          url: '/sys/sysRole/queryAll'
         }
       ],
       tableData: {
@@ -79,11 +79,10 @@ export default {
         column: [
           // left
           [
-            {type: 'mult', width: 50},
             {key: 'userName',  label: '用户名', width: 355},
             {key: 'empName', label: '姓名', width: 355},
             {key: 'deptName',  label: '部门', width: 355},
-            {key: 'name',  label: '角色', width: 355},
+            {key: 'roleDescs',  label: '角色', width: 355},
             // {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},, format: [0, 10]  , title: true
           ],
           // center
@@ -96,16 +95,19 @@ export default {
         ],
         data: []
       },
-      detail: {
-        visible: false,
-        type: 'detail',
-        data: null
-      }
     }
   },
   mounted () {
   },
   methods: {
+    openDetail ({type, row}) {
+      if (type == 'reset') {
+        // debugger
+      }
+      this.detail.type = type
+      this.$set(this.detail, 'data', row || null)
+      this.detail.visible = true
+    },
   }
 }
 </script>

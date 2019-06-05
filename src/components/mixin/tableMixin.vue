@@ -14,6 +14,11 @@ export default {
         size: 10,
         total: 0
       },
+      detail: {
+        visible: false,
+        type: 'insert',
+        data: null
+      },
       axiosArr: [],
       loading: false
     }
@@ -38,7 +43,6 @@ export default {
         })
       }
     }
-    
   },
   methods: {
     changeTableHeight(table) {
@@ -114,7 +118,7 @@ export default {
     },
     openDetail ({type, row}) {
       this.detail.type = type
-      this.detail.data = row
+      this.$set(this.detail, 'data', row || null)
       this.detail.visible = true
     },
     openDelete (row) {

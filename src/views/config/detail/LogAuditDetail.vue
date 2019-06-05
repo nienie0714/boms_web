@@ -73,9 +73,7 @@ export default {
   watch: {
     data: {
       handler (data) {
-        if (data) { //  && data.hasOwnProperty(this.form.key)
-          this.changeData()
-        }
+        this.changeData()
       },
       immediate: true
     },

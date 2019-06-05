@@ -148,7 +148,7 @@
         >.left-tree {
           padding-top: 20px;
           position: absolute;
-          height: 100%;
+          height: calc(100% - 60px);
           top: 60px;
           left: -280px;
           right: calc(100% + 20px);

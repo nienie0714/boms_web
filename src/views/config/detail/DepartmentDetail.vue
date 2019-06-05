@@ -24,8 +24,8 @@ export default {
         column: [
           {key: 'deptId',  label: '部门编号', type: 'input', maxlength: 20},
           {key: 'phone',  label: '联系电话', type: 'input', maxlength: 15},
-          {key: 'deptName',  label: '部门名称', type: 'tab', options: [1, 2], maxlength: 50},
-          {key: 'pDeptName', label: '上级部门', saveKey: 'deptParentId', type: 'inputlist', itemId: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
+          {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 50},
+          {key: 'deptParentId', label: '上级部门', type: 'inputlist', itemId: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
           {key: 'remark', label: '备注', type: 'textarea', rows: 2, maxlength: 100},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
@@ -42,7 +42,7 @@ export default {
           deptName: [
             {type: 'require', trigger: 'blur'}
           ],
-          parentDeptName: [
+          pDeptName: [
             {type: 'require', trigger: 'blur'}
           ]
         },
@@ -61,9 +61,7 @@ export default {
   watch: {
     data: {
       handler (data) {
-        if (data && data.hasOwnProperty(this.form.key)) {
-          this.changeData()
-        }
+        this.changeData()
       },
       immediate: true
     },

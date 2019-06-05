@@ -1,6 +1,6 @@
 <template>
   <div class="tab-button">
-    <div v-for="(item, index) in options" :key="index" :class="['tab-button-item', value == (id ? item[id] : item) ? 'select' : '']" @click="clickButton(item)">{{label ? item[label] : item}}</div>
+    <div v-for="(item, index) in options" :key="index" :class="['tab-button-item', value == (id ? item[id] : item) ? 'select' : '']" @click="!disabled&&clickButton(item)">{{label ? item[label] : item}}</div>
   </div>
 </template>
 
@@ -26,6 +26,10 @@ export default {
     defaultVal: {
       type: [String, Number, Object],
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     value: {
       type: [String, Number, Object],

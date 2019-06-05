@@ -76,11 +76,6 @@ export default {
         ],
         data: []
       },
-      detail: {
-        visible: false,
-        type: 'detail',
-        data: null
-      },
     }
   },
   mounted () {

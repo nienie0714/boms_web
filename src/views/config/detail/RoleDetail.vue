@@ -25,11 +25,11 @@ export default {
           {key: 'roleId',  label: 'id', width: 2, isHidden: true},
           {key: 'name',  label: '角色名称', type: 'input'},
           {key: 'description', label: '角色描述', type: 'textarea'},
-          {key: 'resource', label: '权限配置', type: 'input'},// todo: tree
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
-          {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
+          {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true},
+          {key: 'resource', label: '权限配置', type: 'tree', itemId: 'id', itemLabel: 'text', itemChild: 'children', url: '/sys/sysRole/resourceTree', urlType: 'get'}// todo: tree
         ],
         rules: {
           name: [
@@ -54,9 +54,7 @@ export default {
   watch: {
     data: {
       handler (data) {
-        if (data && data.hasOwnProperty(this.form.key)) {
-          this.changeData()
-        }
+        this.changeData()
       },
       immediate: true
     },

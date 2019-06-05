@@ -56,15 +56,13 @@ export default {
           key: 'deptName',
           label: '部门名称',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         },
         {
           key: 'phone',
           label: '联系电话',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         }
       ],
       tableData: {
@@ -91,11 +89,6 @@ export default {
           ]
         ],
         data: []
-      },
-      detail: {
-        visible: false,
-        type: 'detail',
-        data: null
       },
       data: [
         {

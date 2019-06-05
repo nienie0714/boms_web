@@ -4,13 +4,14 @@
       <div class="tree-label">
         <span @click.stop="showChild(node)"
         :class="[node.hasOwnProperty(nodeChild) ? 'icon iconfont icon-next icon-button' : '', node.hasOwnProperty('open') && node.open ? 'open' : '']"></span>
-        <span v-if="selected" @click.stop="selectCheckBox(node)"
+        <span v-if="selected" @click.stop="!disabled && selectCheckBox(node)"
         :class="['checkbox', ~selectNodeId.indexOf(node[nodeKey]) ? 'is-checked' : (~halfSelectNodeId.indexOf(node[nodeKey]) ? 'is-half-checked' : '')]"></span><!-- {{selectNodeId.indexOf(node[nodeKey])}} -->
         <span>{{node[nodeLabel]}}</span>
       </div>
       <tree v-if="node.hasOwnProperty(nodeChild)" v-show="node.hasOwnProperty('open') && node.open" ref="treeChild" class="tree-child"
-      :data="node[nodeChild]" :selected="selected" :nodeKey="nodeKey" :nodeLabel="nodeLabel" :nodeChild="nodeChild"
-      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId" @clickNode="clickNode" @selectCheckBox="selectChildCheckBox"></tree>
+      :data="node[nodeChild]" :selected="selected" :disabled="disabled || (node.hasOwnProperty(disabledKey) ? node[disabledKey] : false)" :nodeKey="nodeKey" :nodeLabel="nodeLabel" :nodeChild="nodeChild"
+      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId"
+      @clickNode="clickNode" @selectCheckBox="selectChildCheckBox"></tree>
     </div>
   </div>
 </template>
@@ -29,6 +30,14 @@ export default {
     selected: {
       type: Boolean,
       default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    disabledKey: {
+      type: String,
+      default: 'disabled'
     },
     nodeKey: {
       type: String,
@@ -50,6 +59,10 @@ export default {
       type: Array,
       default: function () {return []}
     },
+    allSelectNodeId: {
+      type: Array,
+      default: function () {return []}
+    },
     selectNode: {
       type: Array,
       default: function () {return []}
@@ -66,8 +79,6 @@ export default {
     }
   },
   mounted () {
-    this.tree = JSON.parse(JSON.stringify(this.data))
-    flattenDeep(this.tree, this.deepData)
   },
   methods: {
     selectCheckBox (node) {
@@ -113,6 +124,8 @@ export default {
           this.halfSelectNodeId.splice(indexHalf, 1)
         }
       }
+      let all = [...this.selectNodeId, ...this.halfSelectNodeId]
+      this.allSelectNodeId.splice(0, this.allSelectNodeId.length, ...new Set(all))
       this.$emit('selectCheckBox', node)
     },
     selectChildCheckBox (node) {
@@ -189,6 +202,16 @@ export default {
       } else {
         this.$set(node, 'open', true)
       }
+    }
+  },
+  watch: {
+    data: {
+      handler (data) {
+        this.tree = JSON.parse(JSON.stringify(data))
+        flattenDeep(this.tree, this.deepData)
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

@@ -19,6 +19,12 @@ export default {
       options: [
         {code: 0, name: '启用'},
         {code: 1, name: '禁用'}
+      ]},
+      {key: 'gender',
+      classify: '性别',
+      options: [
+        {code: 'M', name: '男'},
+        {code: 'F', name: '女'}
       ]}
     ]
   },

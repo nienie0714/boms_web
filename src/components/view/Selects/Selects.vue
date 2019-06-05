@@ -1,6 +1,6 @@
 <template>
   <div class="selects">
-    <select @change="change($event.target.value)">
+    <select @change="change($event.target.value)" :disabled="disabled">
       <option v-for="(item, index) in options" :key="index" :value="id ? item[id] : item">{{label ? item[label] : (id ? item[id] : item)}}</option>
     </select>
   </div>
@@ -30,6 +30,10 @@ export default {
     defaultVal: {
       type: [String, Number, Object],
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     value: {
       type: [String, Number, Object],

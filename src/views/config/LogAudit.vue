@@ -101,15 +101,10 @@ export default {
           ],
           // right
           [
-            {label: '操作', type: 'slot', width: 220}
+            {label: '操作', type: 'opr', width: 220}
           ]
         ],
         data: []
-      },
-      detail: {
-        visible: false,
-        type: 'detail',
-        data: null
       }
     }
   },
