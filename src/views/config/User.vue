@@ -111,7 +111,6 @@ export default {
   methods: {
     openDetail ({type, row}) {
       if (type == 'reset') {
-        // debugger
         this.reset.data = row
         this.reset.visible = true
       } else {

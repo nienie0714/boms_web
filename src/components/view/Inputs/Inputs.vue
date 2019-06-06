@@ -1,6 +1,6 @@
 <template>
   <div class="inputs">
-    <input :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" :disabled="disabled"
+    <input :type="type" :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" :disabled="disabled"
     @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)"/>
   </div>
 </template>
@@ -45,6 +45,10 @@ export default {
     value: {
       type: [String, Number, Object],
       default: ''
+    },
+    type: {
+      type: String,
+      default: 'text'
     }
   },
   mounted () {

@@ -38,6 +38,7 @@ export default {
   components: {
     QueryRow,
     Pagination,
+    Toolbar,
     Tables,
     Detail
   },
@@ -81,7 +82,6 @@ export default {
             {key: 'logUser',  label: '用户名', width: 355},
             {key: 'empName', label: '姓名', width: 355},
             {key: 'logType',  label: '操作类型', width: 150, enumKey: 'attr'},
-            {key: 'logModule',  label: '操作模块', width: 355},
             {key: 'logDetail',  label: '操作内容', width: 355},
             {key: 'logTime',  label: '操作时间', width: 355},
           ],

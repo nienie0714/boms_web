@@ -9,7 +9,7 @@
             <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
           </div>
           <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
-            <inputs v-if="item.type == 'input'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
+            <inputs v-if="item.type == 'input' || item.type == 'password'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :type="item.type"
             :placeholder="item.label" :disabled="item.disabled"
             @change="handleChange(item, $event)"></inputs>
             <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel" :disabled="item.disabled"
@@ -19,7 +19,7 @@
             @change="handleChange(item, $event)"></input-list>
             <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
             @change="handleChange(item, $event)"></selects>
-            <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="maxlength" :minlength="minlength"
+            <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength"
             :placeholder="'请输入'+item.label" :disabled="item.disabled" :rows="item.rows" :cols="item.cols"
             @change="handleChange(item, $event)"></textarea>
             <tree v-else-if="item.type == 'tree'" :data="item.options" :selected="true" :disabled="item.disabled"
@@ -42,6 +42,7 @@ import utilMixin from '@mixin/utilMixin'
 import { queryAll, queryAllGet } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
 import _ from 'lodash'
+import { debug } from 'util';
 
 export default {
   components: {
@@ -138,12 +139,22 @@ export default {
       this.$emit('changeData', {data: this.data, type: this.type})
     },
     handleClose () {
+      this.updateData()// 新增页面关闭后打开字段不清空。bug:编辑页面修改后取消 重新打开会保留上次错误信息
       this.$emit('handleClose')
     },
     handleSubmit () {
       this.errors = {}
+      let hiddenKeys = []
+      // 表单字段隐藏时不校验
+      this.dataHis.forEach((item, index) => {
+        if (item.hasOwnProperty('isHidden')) {
+          hiddenKeys.push(item.key)
+        }
+      })
       _.forEach(this.form.rules, (arr, key) => {
-        this.handleError(key, this.data[key])
+        if(!hiddenKeys.includes(key)) {
+          this.handleError(key, this.data[key])
+        }
       })
       if (!_.isEmpty(this.errors)) {
         return
@@ -153,6 +164,9 @@ export default {
     },
     handleError (key, value) {
       this.$delete(this.errors, key)
+      if (this.type == 'detail') {
+        return
+      }
       if (this.form.rules.hasOwnProperty(key)) {
         let arr = this.form.rules[key]
         for (let i = 0; i < arr.length; i++) {
