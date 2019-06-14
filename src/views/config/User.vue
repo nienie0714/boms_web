@@ -34,7 +34,7 @@ import Detail from './detail/UserDetail'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
-import { queryAll, reset } from '@/util/base'
+import { queryAll, update } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -55,8 +55,7 @@ export default {
           key: 'userName',
           label: '用户名',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         },
         {
           key: 'empName',
@@ -87,7 +86,6 @@ export default {
             {key: 'empName', label: '姓名', width: 355},
             {key: 'deptName',  label: '部门', width: 355},
             {key: 'roleDescs',  label: '角色', width: 355},
-            // {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},, format: [0, 10]  , title: true
           ],
           // center
           [
@@ -123,7 +121,7 @@ export default {
       let data = {
         userId: row.userId
       }
-      reset(this.reset.url, data).then(res => {
+      update(this.reset.url, data).then(res => {
         if (res.data.code == 0) {
           this.$msg.success({
             info: '重置密码成功 !'

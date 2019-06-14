@@ -22,12 +22,12 @@ export default {
         loading: false,
         queryParam: {},
         column: [
-          // {key: 'empName', label: '姓名', saveKey: 'empId', type: 'inputlist', itemId: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get'},
+          // {key: 'empName', label: '姓名', saveKey: 'empId', type: 'inputlist', itemId: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemId: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'password', maxlength: 255},
-          {key: 'roleDescs', label: '角色', type: 'inputlist', itemId: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},// roleIds
+          {key: 'roleId', label: '角色', saveKey: 'roleIds', type: 'inputlistmore', itemId: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
@@ -60,36 +60,35 @@ export default {
   },
   methods: {
     queryDept(value, callback) {
-      let deptInfo = {
-        key: 'deptName',
-        value: value
+      if (value) {
+        queryAll('/sys/sysUser/getDept', {"empId": value}).then(res => {
+          let deptInfo = {
+            key: 'deptName',
+            value: null
+          }
+          if (res.data.code == 0) {
+            if (!_.isNull(res.data.data)) {
+              this.$set(deptInfo, 'value', res.data.data['deptName'])
+              callback(deptInfo)
+              return null
+            } else {
+              this.$msg.error({
+                info: '获取部门信息失败 !',
+                tip: '请重新选择人员 !'
+              })
+              callback(deptInfo)
+              return null
+            }
+          } else {
+            this.$msg.error({
+              info: '获取部门信息失败 !',
+              tip: '请重新选择人员 !'
+            })
+            callback(deptInfo)
+            return null
+          }
+        })
       }
-      callback(deptInfo)
-      // todo: 根据empName获取deptName
-      // queryAll('/airportResource/aircraftStand/detail', value).then(res => {
-      //   let terminal = {
-      //     key: 'terminal',
-      //     value: null
-      //   }
-      //   if (res.data.code == 0) {
-      //     if (!_.isNull(res.data.data)) {
-      //       this.$set(terminal, 'value', res.data.data['terminalNo'])
-      //       this.setResource(res.data.data['terminalNo'], param => {
-      //         callback(terminal)
-      //       })
-      //       callback(terminal)
-      //       return null
-      //     } else {
-      //       this.showErrorCustom('该机位未设置航站楼', '请先为该机位设置航站楼 !')
-      //       callback(terminal)
-      //       return null
-      //     }
-      //   } else {
-      //     this.showError('通过机位获取航站楼信息', '请重新选择机位')
-      //     callback(terminal)
-      //     return null
-      //   }
-      // })
     },
     changeData () {
       this.form.data = this.data

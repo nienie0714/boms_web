@@ -42,7 +42,7 @@ export default {
           deptName: [
             {type: 'require', trigger: 'blur'}
           ],
-          pDeptName: [
+          deptParentId: [
             {type: 'require', trigger: 'blur'}
           ]
         },

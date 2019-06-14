@@ -1,7 +1,7 @@
 <template>
   <div class="log-audit">
     <div class="left-tree">
-      <tree :data="data" :activeId="activeId" @clickNode="clickNode"></tree>
+      <tree :data="data" :nodeLabel="'text'" :activeId="activeId" @clickNode="clickNode"></tree>
     </div>
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
@@ -54,6 +54,7 @@ export default {
   data () {
     return {
       baseUrl: '/organization/department',
+      deptTreeUrl: '/organization/department/queryDeptTreeByUserId',
       queryParam: [
         {
           key: 'deptName',
@@ -93,7 +94,7 @@ export default {
         ],
         data: []
       },
-      data: [
+      data1: [
         {
           id: 1,
           label: '节点一'
@@ -145,12 +146,22 @@ export default {
           label: '节点四'
         }
       ],
+      data: [],
       activeId: []
     }
   },
   mounted () {
+    this.getDeptTree()
   },
   methods: {
+    getDeptTree () {
+      queryAll(this.deptTreeUrl, {"empId": 714}).then(res => {
+        if (res.data.data.length) {
+          this.data = res.data.data
+        }
+      })
+      console.log(this.data)
+    },
     clickNode (node) {
       this.queryDataReq()
     },

@@ -17,6 +17,9 @@
             <input-list v-else-if="item.type == 'inputlist'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
             :id="item.itemId" :label="item.itemLabel"
             @change="handleChange(item, $event)"></input-list>
+             <input-list-more v-else-if="item.type == 'inputlistmore'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
+            :id="item.itemId" :label="item.itemLabel"
+            @change="handleChange(item, $event)"></input-list-more>
             <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
             @change="handleChange(item, $event)"></selects>
             <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength"
@@ -36,6 +39,7 @@
 import Inputs from '@view/Inputs/Inputs'
 import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
+import InputListMore from '@view/InputListMore/InputListMore'
 import Selects from '@view/Selects/Selects'
 import Tree from '@view/Tree/Tree'
 import utilMixin from '@mixin/utilMixin'
@@ -49,6 +53,7 @@ export default {
     Inputs,
     TabButton,
     InputList,
+    InputListMore,
     Selects,
     Tree
   },
@@ -156,6 +161,8 @@ export default {
           this.handleError(key, this.data[key])
         }
       })
+      debugger
+      console.log(this.data)
       if (!_.isEmpty(this.errors)) {
         return
       } else {

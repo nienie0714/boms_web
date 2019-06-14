@@ -99,14 +99,6 @@ export function update (url, data) {
   })
 }
 
-export function reset (url, data) {
-  return vue.axios({
-    url: url,
-    method: 'put',
-    data: data
-  })
-}
-
 export function remove (url, data) {
   return vue.axios({
     url: url,
