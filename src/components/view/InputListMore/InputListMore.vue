@@ -1,15 +1,14 @@
 <template>
   <div class="input-list">
-    <input :value="text" :placeholder="placeholder ? ('请选择'+ placeholder) : ''" @input="input($event.target.value)" :disabled="disabled"
+    <input :value="text" readonly="readonly" :placeholder="placeholder ? ('请选择'+ placeholder) : ''" @input="input($event.target.value)" :disabled="disabled"
     @change="change($event.target.value)" @keyup.enter="enter($event.target.value)"
     @keyup.up="keyUp($event.target.value)" @keyup.down="keyDown($event)"
-    @compositionstart="compositionstart($event)" @compositionend="compositionend()"/>
+    @compositionstart="compositionstart($event)" @compositionend="compositionend()" @focus="focus()"/>
     <div class="input-list-ul">
       <ul>
-        <li v-for="(item, index) in filtOpts" :key="index" :class="['input-list-li', activeKey.includes(id ? item[id] : item) ? 'active' : '']"
+        <li v-for="(item, index) in filtOpts" :key="index" :class="['input-list-li', activeKey.includes(id ? item[id] : item) ? 'active' : '', hoverKey == (id ? item[id] : item) ? 'hover' : '']"
         @mousedown.stop="handleSelect(item)">{{label ? item[label] : (id ? item[id] : item)}}</li>
         <li v-if="filtOpts.length <= 0">无搜索结果</li>
-        
       </ul>
     </div>
   </div>
@@ -63,6 +62,7 @@ export default {
       filtOpts: [],
       text: [],
       activeKey: [],
+      hoverKey: null,
       composition: false,
       selected: false,
     }
@@ -71,6 +71,9 @@ export default {
     this.setDefaultValue()
   },
   methods: {
+    focus (event) {
+      this.hoverKey = null
+    },
     compositionstart (event) {
       this.composition = true
     },
@@ -105,24 +108,30 @@ export default {
     },
     input (val) {
       if (!this.composition) {
-        let value = val.toString().trim().toUpperCase()
-        this.text = value
-        this.filtOpts = this.filterOpt(value, this.opts, this.id, this.label)
-        if (this.filtOpts.length > 0) {
-          this.activeKey = this.id ? this.filtOpts[0][this.id] : this.filtOpts[0]
-        }
+        // readOnly.todo:filter
+        // let value = ''
+        // if (_.isString(val)) {
+        //   value = val.toString().trim().toUpperCase()
+        // } else if (_.isArray(val)) {
+        //   value = _.last(val)
+        // }
+        // this.text.push(value)
+        // this.filtOpts = this.filterMoreOpt(value, this.opts, this.id, this.label)
+        // if (this.filtOpts.length > 0) {
+        //   this.activeKey = this.id ? this.filtOpts[0][this.id] : this.filtOpts[0]
+        // }
       }
     },
     enter (val) {
-      if (this.activeKey) {
-        this.change(this.activeKey)
+      if (this.hoverKey) {
+        this.change(this.hoverKey)
       } else {
         this.change(val)
       }
     },
     change (val) {
-      let value = val.toString().trim().toUpperCase()
-      if (value) {
+      let value = _.cloneDeep(val)
+      if (_.isString(value)) {
         let obj = _.find(this.opts, (obj) => {
           if (this.id && this.label) {
             return obj[this.id].toString().includes(value) || obj[this.label].toString().includes(value)
@@ -133,21 +142,36 @@ export default {
         if (obj) {
           let id = this.id ? obj[this.id] : obj
           let text = this.label ? obj[this.label] : obj
-          this.$emit('change', id)
-          this.text = text
-          this.activeKey = id
+          
+          let i = _.findIndex(this.activeKey, (o) => {
+            return o == value
+          })
+          if (i == -1) {
+            this.text.push(text)
+            this.activeKey.push(id)
+          } else {
+            this.text.splice(i, 1)
+            this.activeKey.splice(i, 1)
+          }
+          this.$emit('change', this.activeKey)
+          this.hoverKey = id
         } else {
-          this.$emit('change', null)
-          this.activeKey = null
-          this.input('')
+          this.$emit('change', [])
+          this.activeKey = []
         }
+      } else if (_.isArray(value)) {
+        // 编辑初始化下拉多选菜单
+        if (this.activeKey.length == 0) {
+          this.activeKey = this.activeKey.length == 0 ? value : this.activeKey
+        }        
+        this.$emit('change', this.activeKey)
       }
     },
     keyUp (val) {
       if (this.filtOpts.length > 0) {
         let index = this.filtOpts.length - 1
-        if (this.activeKey.length) {
-          let value = this.activeKey
+        if (this.hoverKey) {
+          let value = this.hoverKey
           index = _.findIndex(this.filtOpts, (obj) => {
             if (this.id && this.label) {
               return (obj[this.id] == value) || (obj[this.label] == value)
@@ -162,14 +186,14 @@ export default {
           }
         }
         event.target.parentElement.querySelectorAll('.input-list-li')[index].scrollIntoView(false)
-        this.activeKey = this.id ? this.filtOpts[index][this.id] : this.filtOpts[index]
+        this.hoverKey = this.id ? this.filtOpts[index][this.id] : this.filtOpts[index]
       }
     },
     keyDown (event) {
       if (this.filtOpts.length > 0) {
         let index = 0
-        if (this.activeKey.length) {
-          let value = this.activeKey
+        if (this.hoverKey) {
+          let value = this.hoverKey
           index = _.findIndex(this.filtOpts, (obj) => {
             if (this.id && this.label) {
               return (obj[this.id] == value) || (obj[this.label] == value)
@@ -184,7 +208,7 @@ export default {
           }
         }
         event.target.parentElement.querySelectorAll('.input-list-li')[index].scrollIntoView(false)
-        this.activeKey = this.id ? this.filtOpts[index][this.id] : this.filtOpts[index]
+        this.hoverKey = this.id ? this.filtOpts[index][this.id] : this.filtOpts[index]
       }
     }
   },
@@ -193,13 +217,13 @@ export default {
       handler (opt) {
         this.opts = []
         this.opts = opt
-        this.filtOpts = _.cloneDeep(this.opts)
+        this.filtOpts = this.filterMoreOpt(this.value, this.opts, this.id, this.label)
       },
       immediate: true
     },
     value: {
       handler (value) {
-        if (value.length) {
+        if (value && value.length) {
           if (!this.selected) {
             this.change(value)
           } else {
@@ -208,7 +232,19 @@ export default {
         }
       },
       immediate: true
+    },
+    opts: {
+      handler (arr) {
+        // 编辑 初始化输入框内容
+        arr.forEach((item, index) => {
+          if (this.activeKey.includes(item[this.id])) {
+            this.text.push(item[this.label])
+          }
+        })
+      },
+      immediate: true
     }
+
   }
 }
 </script>
@@ -291,6 +327,19 @@ export default {
 
         &.active {
           background-color: rgba($color: $blue-shadow, $alpha: 0.5);
+        }
+
+        &.active:after {
+          position: absolute;
+          right: 20px;
+          content: "\2714";
+          font-size: 14px;
+          font-weight: 700;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        &.hover {
+          background-color: rgba($color: $blue-shadow, $alpha: 0.3);
         }
       }
     }

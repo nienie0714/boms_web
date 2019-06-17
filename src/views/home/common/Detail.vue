@@ -161,8 +161,6 @@ export default {
           this.handleError(key, this.data[key])
         }
       })
-      debugger
-      console.log(this.data)
       if (!_.isEmpty(this.errors)) {
         return
       } else {

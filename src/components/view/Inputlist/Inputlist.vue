@@ -185,6 +185,11 @@ export default {
         this.opts = []
         this.opts = opt
         this.filtOpts = this.filterOpt(this.value, this.opts, this.id, this.label)
+         opt.forEach((item, index) => {
+          if (this.activeKey == item[this.id]) {
+            this.text = item[this.label]
+          }
+        })
       },
       immediate: true
     },

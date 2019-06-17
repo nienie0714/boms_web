@@ -61,8 +61,7 @@ export default {
           key: 'empName',
           label: '姓名',
           type: 'input',
-          width: 120,
-          toUpper: true
+          width: 120
         },
         {
           key: 'roleId',
@@ -85,7 +84,7 @@ export default {
             {key: 'userName',  label: '用户名', width: 355},
             {key: 'empName', label: '姓名', width: 355},
             {key: 'deptName',  label: '部门', width: 355},
-            {key: 'roleDescs',  label: '角色', width: 355},
+            {key: 'roleNames',  label: '角色', width: 355},
           ],
           // center
           [
