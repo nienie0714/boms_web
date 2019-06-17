@@ -1,7 +1,9 @@
 <template>
   <div class="comprhs-query module container">
     <div :class="['header', hidden ? 'hidden' : '']">
-      <div class="module-img"></div>
+      <div class="module-img">
+        <div class="title">{{title}}</div>
+      </div>
       <second-menu @skipPath="skipPath"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
@@ -10,7 +12,7 @@
         <div class="icon"></div>
         <div>{{title}}</div>
       </div>
-      <input-tag v-model="value" :prepend="'测试'" :type="'inputlist'" :options="options" :id="'key'" :label="'label'"></input-tag>{{value}}
+      <!-- <input-tag v-model="value" :prepend="'测试'" :type="'inputlist'" :options="options" :id="'key'" :label="'label'"></input-tag>{{value}} -->
       <component :is="name"></component>
     </div>
   </div>
@@ -72,7 +74,9 @@ export default {
 .comprhs-query {
   >.header {
     >.module-img {
-      background-color: $blue-shadow;
+      background-image: url(~@img/img/img_comprhs.png);
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
     }
   }
 }

@@ -104,17 +104,25 @@ export default {
   },
   mounted () {
     this.spliceData.index = 0 + this.spliceData.length
-    _.forEach(this.tableData.column, (column) => {
-      this.columnData.push(flattenDeepChild(column, 'child'))
-      this.columnHeaderData.push(flattenDeepSort(column, 'child', 0))
-    })
+    this.changeColumn(this.tableData.column)
     this.getTableWidth()
     this.$nextTick(() => {
       this.scrollTable()
     })
   },
   methods: {
+    changeColumn (column) {
+      this.columnData = []
+      this.columnHeaderData = []
+      _.forEach(column, (col) => {
+        this.columnData.push(flattenDeepChild(col, 'child'))
+        this.columnHeaderData.push(flattenDeepSort(col, 'child', 0))
+      })
+    },
     getTableWidth () {
+      this.leftWidth = 0
+      this.centerWidth = 0
+      this.rightWidth = 0
       _.forEach(this.columnData, (column, index) => {
         if (index==this.columnData.length-1) {
           _.forEach(column, (o) => {
@@ -211,6 +219,13 @@ export default {
     }
   },
   watch: {
+    'tableData.column': {
+      handler (column) {
+        this.changeColumn(column)
+        this.getTableWidth()
+      },
+      deep: true
+    },
     'tableData.data': {
       handler (data) {
         this.changeData()

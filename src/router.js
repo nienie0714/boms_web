@@ -11,9 +11,9 @@ var router = new Router({
     {
       path: '/',
       name: '登录',
-      // redirect: to => {
-      //   return { path: '/home' }
-      // },
+      redirect: to => {
+        return { path: '/home' }
+      },
       component: r => require.ensure([], () => r(require('@/views/home/Login'), 'Login'))
     },
     {

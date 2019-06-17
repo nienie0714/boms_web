@@ -49,6 +49,7 @@ export default {
   mixins: [tableMixin],
   data () {
     return {
+      queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/luggage/queryAll',
       selectKey: 'D',
@@ -66,10 +67,10 @@ export default {
           key: 'A',
           label: '进港行李'
         },
-        {
-          key: 'E',
-          label: '中转行李'
-        }
+        // {
+        //   key: 'E',
+        //   label: '中转行李'
+        // }
       ],
       queryParam: [
         {
@@ -167,6 +168,27 @@ export default {
             },
             toUpper: true
           })
+          this.$set(this.tableData.column, 1, [
+            {key: 'seatNo',  label: '座位号', width: 90, title: true},
+            {key: 'boardNo',  label: '登机号', width: 60, title: true},
+            // {key: 'idcardType',  label: '证件类型', width: 70},
+            {key: 'idcardNo',  label: '证件类型/证件号', width: 135, type: 'slot', title: true},
+            {key: 'originCn',  label: '始发站', width: 80, title: true},
+            {key: 'destCn',  label: '目的站', width: 80, title: true},
+            {key: 'transferCn',  label: '中转站', width: 80, title: true},
+            // {key: 'contact',  label: '联系人', width: 80},
+            {key: 'phone',  label: '联系人/联系方式', width: 110, type: 'slot', title: true},
+            {key: 'terminal',  label: '交运航站楼', width: 85},
+            {key: 'belt',  label: '行李转盘', width: 70, title: true},
+            {key: 'truck',  label: '行李容器', width: 70, title: true},
+            {key: 'cargopos',  label: '货舱位置', width: 70},
+            {key: 'progressStatusCn',  label: '行李状态', width: 70, color: '#3392ff'},
+            {key: 'isCancel',  label: '拉减', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isAddition',  label: '追加', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isLookfor',  label: '挑找', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isVip',  label: 'VIP', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'markingNum',  label: '标记次数', width: 70}
+          ])
         } else {
           this.queryParam.push({
             key: 'chute',
@@ -181,6 +203,28 @@ export default {
             },
             toUpper: true
           })
+          this.$set(this.tableData.column, 1, [
+            {key: 'seatNo',  label: '座位号', width: 90, title: true},
+            {key: 'boardNo',  label: '登机号', width: 60, title: true},
+            // {key: 'idcardType',  label: '证件类型', width: 70},
+            {key: 'idcardNo',  label: '证件类型/证件号', width: 135, type: 'slot', title: true},
+            {key: 'originCn',  label: '始发站', width: 80, title: true},
+            {key: 'destCn',  label: '目的站', width: 80, title: true},
+            {key: 'transferCn',  label: '中转站', width: 80, title: true},
+            // {key: 'contact',  label: '联系人', width: 80},
+            {key: 'phone',  label: '联系人/联系方式', width: 110, type: 'slot', title: true},
+            {key: 'terminal',  label: '交运航站楼', width: 85},
+            {key: 'counter',  label: '交运柜台', width: 70},
+            {key: 'chute',  label: '行李滑槽', width: 70, title: true},
+            {key: 'truck',  label: '行李容器', width: 70, title: true},
+            {key: 'cargopos',  label: '货舱位置', width: 70},
+            {key: 'progressStatusCn',  label: '行李状态', width: 70, color: '#3392ff'},
+            {key: 'isCancel',  label: '拉减', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isAddition',  label: '追加', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isLookfor',  label: '挑找', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'isVip',  label: 'VIP', width: 70, enumKey: 'isYOrN', type: 'slot'},
+            {key: 'markingNum',  label: '标记次数', width: 70}
+          ])
         }
       }
       this.selectKey = key

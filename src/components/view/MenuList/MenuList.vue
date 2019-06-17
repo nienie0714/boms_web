@@ -12,9 +12,11 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   name: 'child',
-  props: ['data', 'index'],
+  props: ['data', 'index', 'defaults'],
   data () {
     return {
       selectIndex: null,
@@ -26,6 +28,7 @@ export default {
   },
   mounted () {
     document.addEventListener('click', this.hiddenMenu)
+    this.handleClick(this.defaults)
   },
   destroyed () {
     document.removeEventListener('click', this.hiddenMenu)
@@ -35,6 +38,9 @@ export default {
       this.selectIndex = null
     },
     handleClick (item, index) {
+      if (item && _.isUndefined(index)) {
+        index = _.findIndex(this.data, ['path', item.path])
+      }
       this.selectIndex = index
       if (!item.hasOwnProperty('children')) {
         this.$emit('skipPath', item)

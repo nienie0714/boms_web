@@ -1,5 +1,5 @@
 <script>
-import { postData, pageQuery, remove } from '@/util/base'
+import { postData, pageQuery, nopageQuery, remove } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -81,7 +81,7 @@ export default {
     customAfterQuery () {},
     // 发送查询请求
     queryDataReq (status) {
-      if (!this.loading) {
+      // if (!this.loading) {
         this.tableData.loading = true
         if (status != 1) {
           this.getQueryData()
@@ -94,32 +94,60 @@ export default {
           data: this.queryData
         })
         this.loading = true
-        pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
-          this.tableData.multSelection = []
-          if (response.data.code == 0) {
-            this.pageData.total = response.data.data.total
-            if (response.data.data.hasOwnProperty('rows')) {
-              this.tableData.data = response.data.data.rows
+        if (this.queryType == 'nopage') {
+          nopageQuery(this.queryUrl, this.queryData).then(response => {
+            this.tableData.multSelection = []
+            if (response.data.code == 0) {
+              this.pageData.total = response.data.data.total
+              if (response.data.data.hasOwnProperty('rows')) {
+                this.tableData.data = response.data.data.rows
+              } else {
+                this.tableData.data = response.data.data
+              }
+              this.customAfterQuery()
+              /* this.$msg.success({
+                info: '获取列表数据失败 !'
+              }) */
             } else {
-              this.tableData.data = response.data.data
+              this.$msg.error({
+                info: '获取列表数据失败 !',
+                tip: '请重新尝试 !'
+              })
             }
-            this.customAfterQuery()
-            /* this.$msg.success({
-              info: '获取列表数据失败 !'
-            }) */
-          } else {
-            this.$msg.error({
-              info: '获取列表数据失败 !',
-              tip: '请重新尝试 !'
-            })
-          }
-          this.tableData.loading = false
-          this.loading = false
-        }).catch(() => {
-          this.tableData.loading = false
-          this.loading = false
-        })
-      }
+            this.tableData.loading = false
+            this.loading = false
+          }).catch(() => {
+            this.tableData.loading = false
+            this.loading = false
+          })
+        } else {
+          pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
+            this.tableData.multSelection = []
+            if (response.data.code == 0) {
+              this.pageData.total = response.data.data.total
+              if (response.data.data.hasOwnProperty('rows')) {
+                this.tableData.data = response.data.data.rows
+              } else {
+                this.tableData.data = response.data.data
+              }
+              this.customAfterQuery()
+              /* this.$msg.success({
+                info: '获取列表数据失败 !'
+              }) */
+            } else {
+              this.$msg.error({
+                info: '获取列表数据失败 !',
+                tip: '请重新尝试 !'
+              })
+            }
+            this.tableData.loading = false
+            this.loading = false
+          }).catch(() => {
+            this.tableData.loading = false
+            this.loading = false
+          })
+        }
+      // }
     },
     openDetail ({type, row}) {
       this.detail.type = type

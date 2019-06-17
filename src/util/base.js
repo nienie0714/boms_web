@@ -148,3 +148,11 @@ export function pageQuery (url, data, pageData) {
     }
   })
 }
+
+export function nopageQuery (url, data) {
+  return vue.axios({
+    url: url,
+    method: 'post',
+    data: data
+  })
+}

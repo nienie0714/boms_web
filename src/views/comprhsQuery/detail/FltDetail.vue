@@ -1,6 +1,6 @@
 <template>
   <div>
-    <my-dialog :visible="visible" :footer="false" :position="'right'" class="flt-detail-dialog under-head-dialog" @handleClose="handleClose">
+    <my-dialog :visible="visible" :footer="false" :width="680" :position="'right'" class="flt-detail-dialog under-head-dialog" @handleClose="handleClose">
       <template v-slot:header>
         <tabs :tabsData="tabsData" :defaultKey="isComp" @tabItemClick="tabItemClick"></tabs>
       </template>
@@ -123,7 +123,9 @@
               <div v-for="(col, index) in item" :key="index" :class="'col col-' + (col&&col.colWidth>0?col.colWidth:item.length)">
                 <div v-if="col" class="label">{{col.label}}</div>
                 <div v-if="col && col.key=='lugTotal'"></div>
-                <div v-if="col" :class="['text', col.class]" :style="`color: ${col.color};`" :title="(['lugTotalNoAddtion', 'lugLoadTruckTotal', 'lugLoadAircraftTotal'].includes(col.key))?formatTotal(row, col):showValue(row, col)">{{(['lugTotalNoAddtion', 'lugLoadTruckTotal', 'lugLoadAircraftTotal'].includes(col.key))?formatTotal(row, col):showValue(row, col)}}</div>
+                <div v-if="col" :class="['text', col.class]" :style="`color: ${col.color};`"
+                :title="(['lugTotalNoAddition', 'lugLoadTruckTotal', 'lugLoadAircraftTotal', 'lugUnloadAircraftTotal', 'lugUploadTotal'].includes(col.key))?formatTotal(row, col):showValue(row, col)"
+                >{{(['lugTotalNoAddition', 'lugLoadTruckTotal', 'lugLoadAircraftTotal', 'lugUnloadAircraftTotal', 'lugUploadTotal'].includes(col.key))?formatTotal(row, col):showValue(row, col)}}</div>
               </div>
             </div>
           </div>
@@ -140,7 +142,7 @@
             <div v-if="row&&row['nodes']" class="container">
               <div v-for="(item, index) in row['nodes']" :key="index" class="container node">
                 <canvas :id="'node'+index" width="100" height="100"></canvas>
-                <div class="font-pro">{{formatPro(item) * 100 + '%'}}</div>
+                <div class="font-pro">{{Math.floor(formatPro(item) * 100) + '%'}}</div>
                 <div v-if="index < (row['nodes'].length - 1)" class="img"></div>
               </div>
             </div>
@@ -242,7 +244,7 @@ export default {
           label: '航班行李信息',
           list: [
             [
-              {key: 'lugTotalNoAddtion', label: '行李总数', class: 'bold'},
+              {key: 'lugTotalNoAddition', label: '行李总数', class: 'bold'},
               {key: 'alreadyCancelTotal', label: '已拉减数'},
               {key: 'lugLoadTruckTotal', label: '已分拣数'},
               {key: 'lugLoadAircraftTotal', label: '已装机数'},
@@ -277,10 +279,10 @@ export default {
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李号', width: 100, class: 'bold', title: true},
+            {key: 'lugNo',  label: '行李号', width: 110, class: 'bold', title: true},
             {key: 'inOutFlag', label: '行李类型', width: 70, enumKey: 'inOutFlag'},
-            {key: 'destCn',  label: '目的站', width: 75, title: true},
-            {key: 'originCn',  label: '始发站', width: 75, title: true},
+            {key: 'destCn',  label: '目的站', width: 90, title: true},
+            {key: 'originCn',  label: '始发站', width: 90, title: true},
             {key: 'progressStatusCn',  label: '进展状态', width: 70, color: '#3392ff'},
             {key: 'truck',  label: '容器', width: 80, title: true},
             {key: 'isCancel',  label: '拉减', width: 35, enumKey: 'isYOrN', type: 'slot'},
@@ -306,7 +308,7 @@ export default {
     formatPro (obj) {
       let value = 0
       if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
+        let denominator = (obj['totalNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         if (denominator) {
           value = Math.floor(molecule / denominator * 100) / 100
@@ -354,7 +356,7 @@ export default {
               ctxNum.font = '24px DINPRO-BOLD'
               ctxNum.textAlign = 'center'
               ctxNum.fillStyle = '#3d424c'
-              ctxNum.fillText((node['totalNum'] || 0) + (node['totalAdditionNum'] || 0), 50, 74)
+              ctxNum.fillText((node['totalNum'] || 0) + (node['nodeAdditionNum'] || 0), 50, 74)
             })
           })
         }
@@ -366,6 +368,29 @@ export default {
             this.tableData.data = res.data.data
           }
         })
+      } else {
+        if (this.row.inOutFlag == 'D') {
+          this.rowConf[1].list = [
+            [
+              {key: 'stand', label: '机位', class: 'bold'},
+              {key: 'checkinRegion', label: '值机区域'},
+              {key: 'chute', label: '行李滑槽', class: 'bold'},
+              {key: 'gate', label: '登机口'},
+              {key: 'checkinCounter', label: '值机柜台'}
+            ]
+          ]
+          this.rowConf[3].list[0][2] = {key: 'lugLoadTruckTotal', label: '已分拣数'}
+          this.rowConf[3].list[0][3] = {key: 'lugLoadAircraftTotal', label: '已装机数'}
+        } else {
+          this.rowConf[1].list = [
+            [
+              {key: 'stand', label: '机位', class: 'bold'},
+              {key: 'belt', label: '行李转盘', class: 'bold'}
+            ]
+          ]
+          this.rowConf[3].list[0][2] = {key: 'lugUnloadAircraftTotal', label: '已卸机数'}
+          this.rowConf[3].list[0][3] = {key: 'lugUploadTotal', label: '已卸车数'}
+        }
       }
       this.visible = true
     },
@@ -421,18 +446,24 @@ export default {
     formatTotal (row, col) {
       let str = ''
       let keys = [null, null]
-      if (col.key == 'lugTotalNoAddtion') {
-        keys[0] = 'lugTotalNoAddtion'
+      if (col.key == 'lugTotalNoAddition') {
+        keys[0] = 'lugTotalNoAddition'
         keys[1] = 'lugAdditionTotal'
       } else if (col.key == 'lugLoadTruckTotal') {
         keys[0] = 'lugLoadTruckTotal'
-        keys[1] = 'lugLoadTruckAddtionTotal'
-      } else {
+        keys[1] = 'lugLoadTruckAdditionTotal'
+      } else if (col.key == 'lugLoadAircraftTotal') {
         keys[0] = 'lugLoadAircraftTotal'
         keys[1] = 'lugLoadAricraftAdditionTotal'
+      } else if (col.key == 'lugUnloadAircraftTotal') {
+        keys[0] = 'lugUnloadAircraftTotal'
+        keys[1] = 'lugUnloadAircraftAdditionTotal'
+      } else if (col.key == 'lugUploadTotal') {
+        keys[0] = 'lugUploadTotal'
+        keys[1] = 'lugUploadAdditionTotal'
       }
-      str += (row[keys[0]] != null) ? row[keys[0]] : '/'
-      str += (row[keys[1]] != 0) ? ((row[keys[1]] == null) ? ' + /' : ` + ${row[keys[1]]}`) : ''
+      str += ((row[keys[0]] === null) || (row[keys[0]] === undefined)) ? '/' : row[keys[0]]
+      str += (row[keys[1]] !== 0) ? ((row[keys[1]] == null) ? ' + /' : ` + ${row[keys[1]]}`) : ''
       return str
     }
   },

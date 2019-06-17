@@ -54,6 +54,7 @@ export default {
   data () {
     return {
       axiosChildArr: [],
+      queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
       selectKey: 'D',
@@ -139,7 +140,7 @@ export default {
             {key: 'gate',  label: '登机口', rowspan: 2, width: 60},
             {key: 'chute',  label: '滑槽', rowspan: 2, width: 60, title: true},
             {key: 'vipFlag',  label: 'VIP', rowspan: 2, width: 60, enumKey: 'isYOrN'},
-            {key: 'lugTotal',  label: '总数', rowspan: 2, width: 60},
+            {key: 'lugTotal',  label: '总数', rowspan: 2, width: 60, format: this.formatTotalAdd},
             {key: 'lugCancelTotal',  label: '拉减', rowspan: 2, width: 60},
             {
               label: '分拣',
@@ -182,6 +183,95 @@ export default {
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
     },
+    customAfterQuery () {
+      if (this.selectKey == 'D') {
+        this.$set(this.tableData.column, 1, [
+          {key: 'routeCn',  label: '航线', rowspan: 2, width: 120, title: true},
+          {
+            label: '起飞时间',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'std', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
+              {key: 'etd', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
+              {key: 'atd', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'}
+            ]
+          },
+          {key: 'progressStatusCn',  label: '进展状态', rowspan: 2, width: 70, title: true},
+          {key: 'abnormalStatusCn',  label: '异常状态', rowspan: 2, width: 70, title: true},
+          {key: 'terminal',  label: '航站楼', rowspan: 2, width: 60},
+          {key: 'stand',  label: '机位', rowspan: 2, width: 60},
+          {key: 'checkinCounter',  label: '值机柜台', rowspan: 2, width: 80, title: true},
+          {key: 'gate',  label: '登机口', rowspan: 2, width: 60},
+          {key: 'chute',  label: '滑槽', rowspan: 2, width: 60, title: true},
+          {key: 'vipFlag',  label: 'VIP', rowspan: 2, width: 60, enumKey: 'isYOrN'},
+          {key: 'lugTotal',  label: '总数', rowspan: 2, width: 60, format: this.formatTotalAdd},
+          {key: 'lugCancelTotal',  label: '拉减', rowspan: 2, width: 60},
+          {
+            label: '分拣',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
+              {key: 'N-LOAD-TRUCK.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
+              {key: 'N-LOAD-TRUCK.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'}
+            ]
+          },
+          {
+            label: '装机',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
+              {key: 'N-LOAD-AIRCRAFT.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
+              {key: 'N-LOAD-AIRCRAFT.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'}
+            ]
+          }
+        ])
+      } else if (this.selectKey == 'A') {
+        this.$set(this.tableData.column, 1, [
+          {key: 'routeCn',  label: '航线', rowspan: 2, width: 120, title: true},
+          {
+            label: '到达时间',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'sta', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
+              {key: 'eta', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
+              {key: 'ata', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'}
+            ]
+          },
+          {key: 'progressStatusCn',  label: '进展状态', rowspan: 2, width: 70, title: true},
+          {key: 'abnormalStatusCn',  label: '异常状态', rowspan: 2, width: 70, title: true},
+          {key: 'terminal',  label: '航站楼', rowspan: 2, width: 60},
+          {key: 'stand',  label: '机位', rowspan: 2, width: 60},
+          {key: 'belt',  label: '转盘', rowspan: 2, width: 80, title: true},
+          {key: 'vipFlag',  label: 'VIP', rowspan: 2, width: 60, enumKey: 'isYOrN'},
+          {key: 'lugTotal',  label: '总数', rowspan: 2, width: 60, format: this.formatTotalAdd},
+          {key: 'lugCancelTotal',  label: '拉减', rowspan: 2, width: 60},
+          {
+            label: '卸机',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'N-UNLOAD-AIRCRAFT', label: '已卸机/总数', width: 120, type: 'slot', class: 'col-child-title'},
+              {key: 'N-UNLOAD-AIRCRAFT.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
+              {key: 'N-UNLOAD-AIRCRAFT.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'}
+            ]
+          },
+          {
+            label: '卸车',
+            colspan: 3,
+            titleClass: 'th-col-title',
+            child: [
+              {key: 'N-UPLOAD', label: '已卸车/总数', width: 120, type: 'slot', class: 'col-child-title'},
+              {key: 'N-UPLOAD.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
+              {key: 'N-UPLOAD.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'}
+            ]
+          }
+        ])
+      }
+    },
     changeComp (comp, row) {
       this.axiosChildArr.forEach(ever => {
         this.removePending(ever)
@@ -212,11 +302,14 @@ export default {
         }
       })
     },
+    formatTotalAdd ({row, item}) {
+      return row[item.key]
+    },
     formatNum (row, item) {
       let obj = _.get(row, item.key)
       let value = '-/-'
       if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
+        let denominator = (obj['totalNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         value = (molecule || '-') + '/' + (denominator || '-')
       }
@@ -226,7 +319,7 @@ export default {
       let obj = _.get(row, item.key)
       let value = 0
       if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
+        let denominator = (obj['totalNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         if (denominator) {
           value = Math.floor(molecule / denominator * 100) / 100

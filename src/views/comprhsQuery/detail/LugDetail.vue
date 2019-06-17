@@ -49,12 +49,12 @@
               <div v-if="node.lstLugMarkingVO&&node.lstLugMarkingVO.length>0" class="pic-list">
                 <div v-for="(pic, pIdx) in picConf" :key="pIdx">
                   <template v-if="node.lstLugMarkingVO[0][pic]">
-                    <img :src="dfs + node.lstLugMarkingVO[0][pic]" @click="showImg = true"/>
-                    <div v-if="showImg" class="show-img" @click="showImg = false">
-                      <img :src="dfs + node.lstLugMarkingVO[0][pic]"/>
-                    </div>
+                    <img :src="dfs + node.lstLugMarkingVO[0][pic]" @click="clickShowImg(dfs + node.lstLugMarkingVO[0][pic])"/>
                   </template>
                 </div>
+              </div>
+              <div v-if="showImg" class="show-img" @click="showImg = false">
+                <img :src="showImgPath"/>
               </div>
             </div>
           </div>
@@ -112,14 +112,37 @@ export default {
         {key: 'lstLugMarkingVO[0].classifyCn', label: '标记类型：', colWidth: 3, class: 'bold', color: '#f79f2d'}
       ],
       picConf: ['photo1', 'photo2', 'photo3'],
-      showImg: false
+      showImg: false,
+      showImgPath: ''
     }
   },
   mounted () {
     this.dfs = this.$store.getters.getConfigValue('dfs')
   },
   methods: {
+    clickShowImg (path) {
+      this.showImgPath = path
+      this.showImg = true
+    },
     changeData () {
+      if (this.row.luggage.inOutFlag == 'D') {
+        this.rowConf.splice(1, 1, [
+          {key: 'luggage.counter', label: '值机柜台'},
+          {key: 'luggage.chute', label: '行李滑槽'},
+          {key: 'luggage.gate', label: '登机口'},
+          {key: 'luggage.stand', label: '机位'},
+          {key: 'luggage.truck', label: '行李容器'}
+        ])
+        // this.$set(this.rowConf, 1, )
+      } else if (this.row.luggage.inOutFlag == 'A') {
+        this.rowConf.splice(1, 1, [
+          {key: 'luggage.belt', label: '行李转盘', colWidth: 5},
+          {key: 'luggage.stand', label: '机位', colWidth: 5},
+          {key: 'luggage.truck', label: '行李容器', colWidth: 5}
+        ])
+        // this.$set(this.rowConf, 1, [
+        // ])
+      }
       this.visible = true
     },
     handleClose () {

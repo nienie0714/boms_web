@@ -16,10 +16,9 @@ export default {
           if (item.format.constructor == Array) {
             value = this.formatSubstr(_.get(row, item.key), item.format)
           } else {
+            // this.runMethod(row, item)
             let method = item.format
-            method({row: row, item: item}, val => {
-              value = val
-            })
+            value = method({row: row, item: item})
           }
         } else if (item.hasOwnProperty('enumKey')) {
           let obj = {

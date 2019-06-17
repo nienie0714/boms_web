@@ -26,7 +26,7 @@ export default {
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemId: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
-          {key: 'password',  label: '密码', type: 'password', maxlength: 255},
+          {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},
           {key: 'roleIds', label: '角色', type: 'inputlistmore', itemId: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},

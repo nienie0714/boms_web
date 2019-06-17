@@ -1,6 +1,6 @@
 <template>
   <div class="second-menu">
-    <menu-list :data="menuData" @skipPath="skipPath"></menu-list>
+    <menu-list :data="menuData" :defaults="defaults" @skipPath="skipPath"></menu-list>
     <!-- <tree :data="data" :selected="true" :selectNodeId="selectNodeId" @clickNode="clickNode"></tree> -->
   </div>
 </template>
@@ -62,10 +62,11 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      defaults: null
     }
   },
-  mounted () {
+  created () {
     if (this.$route.path == '/config') {
       this.menuData = [
         {
@@ -126,6 +127,9 @@ export default {
           disabled: false
         }
       ]
+    }
+    if (this.menuData && this.menuData.length > 0) {
+      this.defaults = this.menuData[0]
     }
   },
   methods: {

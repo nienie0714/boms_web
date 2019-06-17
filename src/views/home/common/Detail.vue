@@ -9,7 +9,7 @@
             <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
           </div>
           <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
-            <inputs v-if="item.type == 'input' || item.type == 'password'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :type="item.type"
+            <inputs v-if="item.type == 'input'" :type="item.inputType" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength"
             :placeholder="item.label" :disabled="item.disabled"
             @change="handleChange(item, $event)"></inputs>
             <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel" :disabled="item.disabled"

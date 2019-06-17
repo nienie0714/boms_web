@@ -63,7 +63,7 @@
 }
 
 .module {
-  $menuW: 280px;
+  $menuW: 218px;
   height: 100%;
   display: flex;
   flex-basis: 100%;
@@ -80,51 +80,64 @@
       height: $menuW / 2;
       border-radius: 8px;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      >.title {
+        margin: 20px 0;
+        width: calc(100% - 40px);
+        font-size: 18px;
+        font-family: MicrosoftYaHei-Bold;
+        font-weight: bold;
+        color: #fff;
+        line-height: 56px;
+      }
     }
-    $h: 50px;
-    $w: 15px;
+    $h: 68px;
+    $w: 12px;
     >.hidden-button {
       position: absolute;
-      width: 15px;
+      width: $w;
       height: $h;
-      background-color: #1A2D3E;
+      background-image: url(~@img/img/img_menu_close.png);
       left: $menuW;
       top: calc(50% - #{$h} / 2);
       border-radius: 0 #{$w * 2} #{$w * 2} 0 / #{$h};
       cursor: pointer;
+      // &:before,
+      // &:after {
+      //   content: '';
+      //   display: block;
+      //   background: #fff;
+      //   position: absolute;
+      //   width: 1px;
+      //   height: 8px;
+      //   left: $w - 10px;
+      // }
 
-      &:before,
-      &:after {
-        content: '';
-        display: block;
-        background: #fff;
-        position: absolute;
-        width: 1px;
-        height: 8px;
-        left: $w - 10px;
-      }
+      // &:before {
+      //   transform: rotate(45deg);
+      //   top: $h / 2 - 6px;
+      // }
 
-      &:before {
-        transform: rotate(45deg);
-        top: $h / 2 - 6px;
-      }
-
-      &:after {
-        transform: rotate(-45deg);
-        top: $h / 2 - 1px;
-      }
+      // &:after {
+      //   transform: rotate(-45deg);
+      //   top: $h / 2 - 1px;
+      // }
     }
     &.hidden {
       margin-left: 0 - $menuW - 20px;
 
       >.hidden-button {
-        &:before {
-          transform: rotate(-45deg);
-        }
+        background-image: url(~@img/img/img_menu_open.png);
+        // &:before {
+        //   transform: rotate(-45deg);
+        // }
 
-        &:after {
-          transform: rotate(45deg);
-        }
+        // &:after {
+        //   transform: rotate(45deg);
+        // }
       }
     }
   }
