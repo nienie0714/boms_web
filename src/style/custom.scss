@@ -201,12 +201,15 @@ textarea[disabled="disabled"] {
 /* 全屏图片设置结束 */
 .query-top {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  .query-row {
-    margin-top: -20px;
-  }
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0px 4px 8px 0px rgba(104,129,153,0.1);
+  border-radius: 8px;
+  // .query-row {
+  //   margin-top: -20px;
+  // }
 }
 .toolbar {
   display: flex;

@@ -1,5 +1,5 @@
 <script>
-import { postData, pageQuery, nopageQuery, remove } from '@/util/base'
+import { postData, pageQuery, nopageQuery, remove, download } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -8,6 +8,8 @@ export default {
       baseUrl: '',
       // 请求路径
       queryUrl: '',
+      // 下载路径
+      exportUrl: '',
       // 请求的查询参数
       queryData: {},
       pageData: {
@@ -32,6 +34,9 @@ export default {
     if (!this.queryUrl) {
       this.queryUrl = this.baseUrl + '/pageQuery'
     }
+    if (!this.exportUrl || this.exportUrl == '') {
+      this.exportUrl = this.baseUrl + '/exportExcel'
+    }
     this.queryDataReq()
   },
   mounted () {
@@ -51,7 +56,7 @@ export default {
   },
   methods: {
     changeTableHeight(table) {
-      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 20
+      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 36
     },
     // 获取查询参数
     getQueryData (arr) {
@@ -197,7 +202,44 @@ export default {
     handleRemoveClose () {
       this.remove.visible = false
     },
-    openExport () {}
+    openExport (total) {
+      if (!_.isEmpty(total)) {
+        download(this.exportUrl, this.queryData, total).then(response => {
+          debugger
+          this.$msg.success({
+            info: '导出成功 !'
+          })
+          // this.downFile(response, this.fileName)
+          this.downFile(response, this.fileName)
+        })
+      } else {
+        download(this.exportUrl, this.queryData, this.pageData ? this.pageData.total : 1).then(response => {
+          this.$msg.success({
+            info: '导出成功 !'
+          })
+          // this.downFile(response, this.fileName)
+          this.downFile(response, '导出')
+        })
+      }
+    },
+    // Blob文件转换下载
+    downFile (result, fileName, fileType) {
+      var data = result.data
+      let type
+      if (fileType) {
+        type = fileType
+      } else {
+        type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+      var blob = new Blob([data], { type: type })
+      var objectUrl = URL.createObjectURL(blob)
+      var a = document.createElement('a')
+      a.setAttribute('style', 'display:none')
+      a.setAttribute('href', objectUrl)
+      a.setAttribute('download', fileName)
+      a.click()
+      URL.revokeObjectURL(objectUrl)
+    }
   },
   destroyed () {
     this.axiosArr.forEach(ever => {

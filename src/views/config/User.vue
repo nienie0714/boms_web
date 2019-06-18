@@ -66,7 +66,7 @@ export default {
         {
           key: 'roleId',
           label: '角色',
-          type: 'datalist',
+          type: 'inputlist',
           width: 140,
           itemValue: 'roleId',
           itemLabel: 'name',
@@ -81,10 +81,10 @@ export default {
         column: [
           // left
           [
-            {key: 'userName',  label: '用户名', width: 355},
-            {key: 'empName', label: '姓名', width: 355},
-            {key: 'deptName',  label: '部门', width: 355},
-            {key: 'roleNames',  label: '角色', width: 355},
+            {key: 'userName',  label: '用户名', width: 365},
+            {key: 'empName', label: '姓名', width: 365},
+            {key: 'deptName',  label: '部门', width: 365},
+            {key: 'roleNames',  label: '角色', width: 365},
           ],
           // center
           [

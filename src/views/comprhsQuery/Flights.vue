@@ -87,7 +87,7 @@ export default {
         {
           key: 'terminalStation',
           label: '目的站',
-          type: 'datalist',
+          type: 'inputlist',
           width: 120,
           itemValue: 'airportIata',
           itemLabel: 'briefC',
@@ -97,7 +97,7 @@ export default {
         {
           key: 'stand',
           label: '机位',
-          type: 'datalist',
+          type: 'inputlist',
           width: 120,
           itemValue: 'standNo',
           itemLabel: 'standNo',

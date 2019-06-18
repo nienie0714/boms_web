@@ -437,10 +437,10 @@ $transWidth: 0;
               max-height: 150px;
               border-radius: 8px;
               overflow: hidden;
-              cursor: pointer;
               width: auto;
               height: auto;
               max-width: 100%;
+              cursor: zoom-in;
             }
           }
         }

@@ -49,12 +49,12 @@ export default {
         //   append: false,
         //   icon: 'icon_luggage_info'
         // },
-        // {
-        //   label: '配置管理',
-        //   router: '/config',
-        //   append: false,
-        //   icon: 'icon_config'
-        // }
+        {
+          label: '配置管理',
+          router: '/config',
+          append: false,
+          icon: 'icon_config'
+        }
       ],
       activeIndex: 0
     }

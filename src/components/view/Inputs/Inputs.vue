@@ -1,7 +1,7 @@
 <template>
   <div class="inputs">
-    <input :type="type" :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder ? ('请输入'+ placeholder) : ''" :disabled="disabled"
-    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)"/>
+    <input :type="type" :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder" :disabled="disabled"
+    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" :max="max" :min="min" :format="format"/>
   </div>
 </template>
 
@@ -49,6 +49,18 @@ export default {
     type: {
       type: String,
       default: ''
+    },
+    max: {
+      type: String,
+      default: null
+    },
+    min: {
+      type: String,
+      default: null
+    },
+    format: {
+      type: String,
+      default: 'yyyy-MM-dd HH:mm'
     }
   },
   mounted () {
@@ -65,6 +77,18 @@ export default {
       } else {
         this.$emit('click', this.defaultVal)
       }
+    }
+  },
+  watch: {
+    'value': {
+      handler (data) {
+        if (this.type == 'datetime-local') { // 2019-12-31T23:59 // yyyy-mm-ddThh:mm 12小时制
+          console.log(typeof this.value)
+        } else if (this.type == 'date') { // 2019-12-31
+          console.log(this.value)
+        }
+      },
+      immediate: true
     }
   }
 }
@@ -85,5 +109,10 @@ export default {
       box-shadow: 0 0 0 2px rgba($color: $blue-shadow, $alpha: .3);
     }
   }
+}
+::-webkit-inner-spin-button {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%)
 }
 </style>

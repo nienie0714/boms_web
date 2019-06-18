@@ -2,9 +2,9 @@
   <div class="input-tag">
     <div v-if="prepend" class="prepend">{{prepend}}</div>
     <div class="value">
-      <inputs v-if="type == 'input'" v-model="currentValue" :defaultVal="defaultVal"></inputs>
+      <inputs v-if="type == 'input' || type == 'datetime-local' || type == 'time'" :type="type" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder"></inputs>
       <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal"></tab-button>
-      <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal"></input-list>
+      <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder"></input-list>
       <selects v-else-if="type == 'select'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal"></selects>
     </div>
     <div v-if="append" class="append">{{append}}</div>
@@ -35,7 +35,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: ''
+      default: '请输入'
     },
     prepend: {
       type: String,
@@ -94,7 +94,7 @@ export default {
 
 <style lang="scss">
 .input-tag {
-  display: inline-block;
+  display: inline-flex;
   width: fit-content;
   border-radius: 6px;
   border: 1px solid rgba($color: $gray-border, $alpha: 1);
@@ -106,6 +106,7 @@ export default {
   >.prepend, >.append {
     display: inline-block;
     color: $gray-nd;
+    line-height: 38px;
     padding: 0 12px;
     background-color: rgba($color: $gray-border, $alpha: .4);
   }
@@ -151,5 +152,13 @@ export default {
     border: 1px solid rgba(63, 153, 255, 0.8);
     box-shadow: 0 0 0 2px rgba($color: $blue-shadow, $alpha: .3);
   }
+}
+
+input::-ms-input-placeholder {
+    text-align: center;
+}
+
+input::-webkit-input-placeholder {
+    text-align: center;
 }
 </style>

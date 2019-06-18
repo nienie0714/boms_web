@@ -19,7 +19,7 @@
 export default {
   methods: {
     openExport () {
-      this.$emit('openExport')
+      this.$emit('openExport', {})
     },
     openDetail () {
       this.$emit('openDetail', {type: 'insert'})

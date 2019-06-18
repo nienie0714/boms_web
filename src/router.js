@@ -100,14 +100,13 @@ router.beforeEach((to, from, next) => {
     // if (token && token != '') {
       // if (store.getters.getFirstTime) {
         // var type = []
-        /* var all = []
         postData('/base/classifyCode/queryAll', {}).then(response => {
           store.commit('createEnum', response.data.data)
           postData('/base/sysParam/queryAll', {}).then(res => {
             store.commit('setConfigs', res.data.data)
             next()
           })
-        }) */
+        })
         next()
         // store.dispatch('changeInsTime')
       } else {

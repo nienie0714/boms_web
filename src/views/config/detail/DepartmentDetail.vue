@@ -24,7 +24,7 @@ export default {
         column: [
           {key: 'deptId',  label: '部门编号', type: 'input', maxlength: 20},
           {key: 'phone',  label: '联系电话', type: 'input', maxlength: 15},
-          {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 50},
+          {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 20},
           {key: 'deptParentId', label: '上级部门', type: 'inputlist', itemId: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
           {key: 'remark', label: '备注', type: 'textarea', rows: 2, maxlength: 100},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},

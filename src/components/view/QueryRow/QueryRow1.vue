@@ -1,22 +1,34 @@
 <template>
   <div class="query-row">
-    <div v-for="(item, index) in dataHis" :key="item.key" class="query-item">
-      <input-tag v-model="item.value" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
-      :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
-      @change="handleChange($event, $value, item, index)"></input-tag>
+    <div v-for="(item, index) in data" :key="item.key" class="query-item">
+      <div class="label">{{ item.label }}</div>
+      <div class="value" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
+        <input v-if="item.type == 'datalist'" v-model="item.value" :list="item.key" style="width: inherit;" :placeholder="'请输入'+item.label" @keyup.enter.stop="handleEnter(item, $event)"/>
+        <component :is="item.type" :id="item.key" v-model="item.value" :type="item.inputType" :min="item.min" :max="item.max"
+        class="value-component" :placeholder="'请输入'+item.label"
+        @blur="item.toUpper&&toUpper(item, $event)"
+        @change="handleChange(index, $event)" @keyup.enter.stop="handleEnter(item, $event)">
+          <template v-if="item.type=='datalist'">
+            <option v-for="(opt, idx) in item.options" :key="idx" :value="(opt.constructor==Object)?opt[item.itemValue]:opt">{{(opt.constructor==Object)?opt[item.itemLabel]:opt}}</option>
+          </template>
+        </component>
+        <template v-if="item.type == 'select'">
+          <component :is="item.type" v-model="item.value" :type="item.inputType" :min="item.min" :max="item.max" class="value-component">
+            <template v-if="item.type=='select'">
+              <option v-for="opt in item.options" :key="opt[item.itemKey]" :value="opt[item.itemKey]">{{opt[item.itemLabel]}}</option>
+            </template>
+          </component>
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import InputTag from '@view/InputTag/InputTag'
 import { queryAll } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
 
 export default {
-  components: {
-    InputTag
-  },
   props: {
     data: {
       type: Array
@@ -68,11 +80,11 @@ export default {
             this.$set(item, 'options', this.$store.getters.getOptions(item.enumKey))
           }
         })
-        this.$set(this, 'dataHis', _.partition(this.data, 'type')[0])
+        this.dataHis = JSON.parse(JSON.stringify(this.data))
       }
     },
-    handleChange (value, a, b) {
-      this.$emit('change', value)
+    handleChange (index, event) {
+      this.$options.propsData.data[index].value = event.target.value.trim()
     },
     handleEnter (item, event) {
       if (item.toUpper) {
@@ -94,6 +106,7 @@ export default {
           if (arr.length > 0) {
             this.updateData(arr)
           }
+          this.dataHis = JSON.parse(JSON.stringify(this.data))
         } else {
           this.updateData()
         }
@@ -131,5 +144,12 @@ export default {
       visibility: visible;
     }
   }
+}
+.label {
+  padding: 0 5px 0 0;
+}
+.value-component {
+  width: inherit;
+  box-sizing: border-box;
 }
 </style>

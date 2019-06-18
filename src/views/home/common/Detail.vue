@@ -3,7 +3,12 @@
   :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @submitDialog="handleSubmit">
     <template>
       <div class="form" v-if="'column' in form">
-        <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
+       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
+          <input-tag v-model="item.value" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
+          :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
+          @change="handleChange($event, $value, item, index)"></input-tag>
+        </div>
+        <!-- <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
           <div class="label">
             <div class="info">{{ item.label }}</div>
             <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
@@ -29,7 +34,7 @@
             :allSelectNodeId="data[item.saveKey ? item.saveKey : item.key]"
             :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree>
           </div>
-        </div>
+        </div> -->
       </div>
     </template>
   </my-dialog>
@@ -42,6 +47,7 @@ import InputList from '@view/InputList/InputList'
 import InputListMore from '@view/InputListMore/InputListMore'
 import Selects from '@view/Selects/Selects'
 import Tree from '@view/Tree/Tree'
+import InputTag from '@view/InputTag/InputTag'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll, queryAllGet } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
@@ -50,12 +56,13 @@ import { debug } from 'util';
 
 export default {
   components: {
-    Inputs,
-    TabButton,
-    InputList,
-    InputListMore,
-    Selects,
-    Tree
+    // Inputs,
+    // TabButton,
+    // InputList,
+    // InputListMore,
+    // Selects,
+    // Tree
+    InputTag
   },
   mixins: [utilMixin],
   props: ['form', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
@@ -260,54 +267,86 @@ export default {
 </script>
 
 <style lang="scss">
+// .form-dialog {
+//   .body {
+//     overflow: hidden;
+
+//     .form {
+//       height: 100%;
+//       overflow-x: hidden;
+//       display: flex;
+//       flex-wrap: wrap;
+//       align-content: flex-start;
+
+//       .form-item {
+//         $top: 5px;
+//         $left: 20px;
+//         $size: 14px;
+//         width: calc(50% - 2 * #{$left});
+//         padding: $top $left;
+//         text-align: left;
+
+//         >.label {
+//           font-size: $size;
+//           margin: 5px;
+
+//           >.info {
+//             color: $gray-nd;
+//             display: inline;
+//           }
+
+//           >.error {
+//             color: $red;
+//             margin-left: 10px;
+//             display: inline;
+//           }
+//         }
+//         >.value {
+//           input, textarea {
+//             // max-width: calc(100% - 20px);
+//             border: 1px solid rgba($color: $blue-shadow, $alpha: 0.8);
+//           }
+          
+//           &.error {
+//             input, textarea {
+//               border: 1px solid rgba($color: $red-shadow, $alpha: 0.8);
+//               box-shadow: 0 0 0 2px rgba($color: $red-shadow, $alpha: 0.3);
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 .form-dialog {
   .body {
     overflow: hidden;
-
-    .form {
-      height: 100%;
-      overflow-x: hidden;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: flex-start;
-
-      .form-item {
-        $top: 5px;
-        $left: 20px;
-        $size: 14px;
-        width: calc(50% - 2 * #{$left});
-        padding: $top $left;
-        text-align: left;
-
-        >.label {
-          font-size: $size;
-          margin: 5px;
-
-          >.info {
-            color: $gray-nd;
-            display: inline;
-          }
-
-          >.error {
-            color: $red;
-            margin-left: 10px;
-            display: inline;
-          }
-        }
-        >.value {
-          input, textarea {
-            // max-width: calc(100% - 20px);
-            border: 1px solid rgba($color: $blue-shadow, $alpha: 0.8);
-          }
-          
-          &.error {
-            input, textarea {
-              border: 1px solid rgba($color: $red-shadow, $alpha: 0.8);
-              box-shadow: 0 0 0 2px rgba($color: $red-shadow, $alpha: 0.3);
-            }
-          }
-        }
-      }
+  }
+}
+.form {
+  flex-wrap: wrap;
+}
+.form-row, .form-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.form-item {
+  flex-wrap: nowrap;
+  flex-direction: column;
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+  >.label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: $blue;
+    align-self: flex-start;
+    visibility: hidden;
+  }
+  &:hover, &:focus-within {
+    >.label {
+      visibility: visible;
     }
   }
 }

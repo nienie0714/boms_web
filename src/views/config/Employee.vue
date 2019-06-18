@@ -65,7 +65,7 @@ export default {
         {
           key: 'deptId',
           label: '部门',
-          type: 'datalist',
+          type: 'inputlist',
           width: 120,
           itemValue: 'deptId',
           itemLabel: 'deptName',
