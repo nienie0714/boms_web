@@ -60,13 +60,13 @@ export default {
           key: 'deptName',
           label: '部门名称',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'phone',
           label: '联系电话',
           type: 'input',
-          width: 120
+          width: 214
         }
       ],
       tableData: {
@@ -166,12 +166,12 @@ export default {
       this.queryDataReq()
     },
     customQueryBefore () {
-      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptParentId' })
+      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptId' })
       if (~index) {
         this.queryParam[index].value = this.activeId[0]
       } else {
         this.queryParam.push({
-          key: 'deptParentId',
+          key: 'deptId',
           value: this.activeId[0]
         })
       }

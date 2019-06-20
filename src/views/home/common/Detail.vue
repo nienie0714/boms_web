@@ -3,10 +3,18 @@
   :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @submitDialog="handleSubmit">
     <template>
       <div class="form" v-if="'column' in form">
-       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
-          <input-tag v-model="item.value" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
-          :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
-          @change="handleChange($event, $value, item, index)"></input-tag>
+       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '']">
+          <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
+          <!-- <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">
+            <div class="info">{{ item.label }}</div>
+            <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
+          </div> -->
+          <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
+          <div v-else-if="item.type == 'tree'" class="tree-wrapper"><tree :data="item.options" :selected="true" :disabled="item.disabled" :allSelectNodeId="data[item.saveKey ? item.saveKey : item.key]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree></div>
+          <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
+          :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
+          @change="handleChange(item, $event)"></input-tag>
+          <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
         </div>
         <!-- <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
           <div class="label">
@@ -56,12 +64,7 @@ import { debug } from 'util';
 
 export default {
   components: {
-    // Inputs,
-    // TabButton,
-    // InputList,
-    // InputListMore,
-    // Selects,
-    // Tree
+    Tree,
     InputTag
   },
   mixins: [utilMixin],
@@ -73,7 +76,8 @@ export default {
       submit: false,
       data: {},
       errors: {},
-      dataHis: null
+      dataHis: null,
+      test: ''
     }
   },
   mounted () {
@@ -261,72 +265,33 @@ export default {
         this.updateData()
       },
       immediate: true
+    },
+    data: {
+      handler (data) {
+        console.log(data)
+      },
+      immediate: true
     }
   }
 }
 </script>
 
 <style lang="scss">
-// .form-dialog {
-//   .body {
-//     overflow: hidden;
-
-//     .form {
-//       height: 100%;
-//       overflow-x: hidden;
-//       display: flex;
-//       flex-wrap: wrap;
-//       align-content: flex-start;
-
-//       .form-item {
-//         $top: 5px;
-//         $left: 20px;
-//         $size: 14px;
-//         width: calc(50% - 2 * #{$left});
-//         padding: $top $left;
-//         text-align: left;
-
-//         >.label {
-//           font-size: $size;
-//           margin: 5px;
-
-//           >.info {
-//             color: $gray-nd;
-//             display: inline;
-//           }
-
-//           >.error {
-//             color: $red;
-//             margin-left: 10px;
-//             display: inline;
-//           }
-//         }
-//         >.value {
-//           input, textarea {
-//             // max-width: calc(100% - 20px);
-//             border: 1px solid rgba($color: $blue-shadow, $alpha: 0.8);
-//           }
-          
-//           &.error {
-//             input, textarea {
-//               border: 1px solid rgba($color: $red-shadow, $alpha: 0.8);
-//               box-shadow: 0 0 0 2px rgba($color: $red-shadow, $alpha: 0.3);
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
 .form-dialog {
   .body {
     overflow: hidden;
   }
 }
 .form {
+  height: 100%;
+  padding: 0 20px;
+  overflow-x: hidden;
+  display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
 }
 .form-row, .form-item {
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -334,30 +299,70 @@ export default {
 .form-item {
   flex-wrap: nowrap;
   flex-direction: column;
-  &:not(:last-child) {
-    margin-right: 10px;
+  &:nth-child(odd) {
+    margin-right: 16px; 
+  }
+
+  &.whole-width {
+    width: 100%;
+    margin-right: 0px;
+  }
+  &.error {
+    .input-tag {
+      border: 1px solid rgba($color: $red-shadow, $alpha: 0.8);
+      box-shadow: 0 0 0 2px rgba($color: $red-shadow, $alpha: 0.3);
+    }
+    textarea {
+      border: 1px solid rgba($color: $red-shadow, $alpha: 0.8);
+      box-shadow: 0 0 0 2px rgba($color: $red-shadow, $alpha: 0.3);
+    }
+  }
+  >.error {
+    color: $red;
+    font-size: 10px;
+    display: inline;
+
   }
   >.label {
     font-size: 12px;
     margin-bottom: 5px;
-    color: $blue;
+    color: $gray-nd;
     align-self: flex-start;
-    visibility: hidden;
   }
-  &:hover, &:focus-within {
-    >.label {
-      visibility: visible;
+
+  textarea {
+    border: 1px solid rgba($color: $gray-border, $alpha: 1);
+    border-radius: 6px;
+    // width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    margin-bottom: 20px;
+
+    &:focus, &:hover {
+      border: 1px solid rgba(63, 153, 255, 0.8);
+      box-shadow: 0 0 0 2px rgba($color: $blue-shadow, $alpha: .3);
     }
   }
-}
-</style>
 
-<style lang="scss" scoped>
-$bodyHead: 32px;
-.dialog {
-  width: 30px;
-  height: 50px;
+  .tree-wrapper {
+    border: 1px solid rgba($color: $gray-border, $alpha: 1);
+    border-radius: 6px;
+    width: 100%;
+  }
 }
-.body {
-}
+// >.label {
+//   font-size: $size;
+//   margin: 5px;
+
+//   >.info {
+//     color: $gray-nd;
+//     display: inline;
+//   }
+
+//   >.error {
+//     color: $red;
+//     margin-left: 10px;
+//     display: inline;
+//   }
+// }
 </style>

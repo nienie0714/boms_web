@@ -54,7 +54,7 @@ export default {
           key: 'name',
           label: '角色名称',
           type: 'input',
-          width: 120
+          width: 214
         }
       ],
       tableData: {

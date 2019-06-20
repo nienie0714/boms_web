@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { postData } from '@/util/base'
 export default {
   data () {
     return {
@@ -43,7 +44,13 @@ export default {
       if (this.userName && this.password) {
         this.loading = true
         this.$router.push({name: '首页'})
-        //
+        let obj = {
+          "username": this.userName,
+          "pasword": this.password
+        }
+        postData('auth', obj).then(res => {
+          // 
+        })
       } else {
         this.$msg.error({
           info: '用户名或密码不能为空',

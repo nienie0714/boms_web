@@ -24,8 +24,8 @@ export default {
         column: [
           {key: 'empId',  label: '员工编号', type: 'input', maxlength: 20},
           {key: 'empName',  label: '姓名', type: 'input', maxlength: 50},
-          {key: 'gender',  label: '性别', type: 'tab', enumKey: 'gender', itemId: 'code', itemLabel: 'name'},
-          {key: 'deptId', label: '单位/部门', saveKey: 'deptId', type: 'inputlist', itemId: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
+          {key: 'gender',  label: '性别', type: 'tab', enumKey: 'gender', itemValue: 'code', itemLabel: 'name'},
+          {key: 'deptId', label: '单位/部门', saveKey: 'deptId', type: 'inputlist', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
           {key: 'post',  label: '职务名称', type: 'input', maxlength: 30},
           {key: 'phone',  label: '联系方式', type: 'input', maxlength: 15},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},

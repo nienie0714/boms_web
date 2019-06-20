@@ -77,20 +77,20 @@ export default {
           key: 'flightNo',
           label: '航班号',
           type: 'input',
-          width: 120,
+          width: 214,
           toUpper: true
         },
         {
           key: 'lugNo',
           label: '行李号',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'chute',
           label: '滑槽号',
-          type: 'datalist',
-          width: 120,
+          type: 'inputlist',
+          width: 214,
           itemValue: 'resourceNo',
           itemLabel: 'terminalNo',
           url: '/base/terminalResource/queryAll',
@@ -158,7 +158,7 @@ export default {
           this.queryParam.push({
             key: 'belt',
             label: '转盘号',
-            type: 'datalist',
+            type: 'inputlist',
             width: 120,
             itemValue: 'resourceNo',
             itemLabel: 'terminalNo',
@@ -193,7 +193,7 @@ export default {
           this.queryParam.push({
             key: 'chute',
             label: '滑槽号',
-            type: 'datalist',
+            type: 'inputlist',
             width: 120,
             itemValue: 'resourceNo',
             itemLabel: 'terminalNo',

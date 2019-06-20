@@ -81,14 +81,14 @@ export default {
           key: 'flightNo',
           label: '航班号',
           type: 'input',
-          width: 120,
+          width: 214,
           toUpper: true
         },
         {
           key: 'terminalStation',
           label: '目的站',
           type: 'inputlist',
-          width: 120,
+          width: 214,
           itemValue: 'airportIata',
           itemLabel: 'briefC',
           url: '/base/airport/queryAll',
@@ -98,7 +98,7 @@ export default {
           key: 'stand',
           label: '机位',
           type: 'inputlist',
-          width: 120,
+          width: 214,
           itemValue: 'standNo',
           itemLabel: 'standNo',
           url: '/base/aircraftStand/queryAll'

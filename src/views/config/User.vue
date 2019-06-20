@@ -55,19 +55,19 @@ export default {
           key: 'userName',
           label: '用户名',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'empName',
           label: '姓名',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'roleId',
           label: '角色',
           type: 'inputlist',
-          width: 140,
+          width: 214,
           itemValue: 'roleId',
           itemLabel: 'name',
           url: '/sys/sysRole/queryAll'

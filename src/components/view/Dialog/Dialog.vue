@@ -109,7 +109,7 @@ export default {
   right: 0;
   bottom: 0;
   width: 640px;
-  $headerH: 50px;
+  $headerH: 72px;
   >.header {
     display: flex;
     justify-content: space-between;
@@ -119,8 +119,10 @@ export default {
     text-align: left;
     padding: 0 20px;
     >.title {
-      font-size: 14px;
-      color: $gray-nd;
+      font-size: 16px;
+      color: rgba(61,66,77,1);
+      font-weight: bold;
+      margin: 0 auto;
     }
     >.close {
       $wh: 20px;

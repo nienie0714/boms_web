@@ -154,8 +154,10 @@ input, textarea, select {
 input[disabled="disabled"],
 select[disabled="disabled"],
 textarea[disabled="disabled"] {
-  background-color: rgba($color: #edf1f5, $alpha: .7);
+  background-color: #f5f8fa;
+  color:rgba(137,157,178,1);
 }
+
 .row {
   display: flex;
   >.col {

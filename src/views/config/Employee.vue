@@ -60,13 +60,13 @@ export default {
           key: 'empName',
           label: '姓名',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'deptId',
           label: '部门',
           type: 'inputlist',
-          width: 120,
+          width: 214,
           itemValue: 'deptId',
           itemLabel: 'deptName',
           url: '/organization/department/queryAll'

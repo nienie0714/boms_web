@@ -1,7 +1,10 @@
 <template>
-  <div class="inputs">
-    <input :type="type" :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder" :disabled="disabled"
-    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" :max="max" :min="min" :format="format"/>
+  <div class="dates">
+    <input :type="type" :value="value.key1" :placeholder="placeholder" :disabled="disabled"
+    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" :max="max" :min="min"/>
+    <span>--</span>
+    <input :type="type" :value="value.key2" :placeholder="placeholder" :disabled="disabled"
+    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" :max="max" :min="min"/>
   </div>
 </template>
 
@@ -10,17 +13,13 @@ import _ from 'lodash'
 
 export default {
   props: {
-    options: {
-      type: Array,
-      default: function () {return []}
-    },
-    id: {
+    key1: {
       type: String,
-      default: 'key'
+      default: 'date'
     },
-    label: {
+    key2: {
       type: String,
-      default: 'label'
+      default: ''
     },
     defaultVal: {
       type: [String, Number, Object],
@@ -30,21 +29,13 @@ export default {
       type: String,
       default: ''
     },
-    maxlength: {
-      type: Number,
-      default: null
-    },
-    minlength: {
-      type: Number,
-      default: null
-    },
     disabled: {
       type: Boolean,
       default: false
     },
     value: {
-      type: [String, Number, Object],
-      default: ''
+      type: Object,
+      default: ()=>{}
     },
     type: {
       type: String,
@@ -57,10 +48,6 @@ export default {
     min: {
       type: String,
       default: null
-    },
-    format: {
-      type: String,
-      default: 'yyyy-MM-dd HH:mm'
     }
   },
   mounted () {
@@ -82,10 +69,7 @@ export default {
   watch: {
     'value': {
       handler (data) {
-        if (this.type == 'datetime-local') { // 2019-12-31T23:59 // yyyy-mm-ddThh:mm 12小时制
-        } else if (this.type == 'date') { // 2019-12-31
-          console.log(this.value)
-        }
+        console.log(data)
       },
       immediate: true
     }
@@ -94,7 +78,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.inputs {
+.dates {
   display: inline-block;
   width: fit-content;
   box-sizing: border-box;
@@ -102,7 +86,7 @@ export default {
   >input {
     border: 1px solid rgba($color: $gray-border, $alpha: 1);
     border-radius: 6px;
-    width: 100%;
+    width: 45%;
 
     &:focus, &:hover {
       border: 1px solid rgba(63, 153, 255, 0.8);

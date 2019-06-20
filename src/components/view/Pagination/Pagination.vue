@@ -1,7 +1,7 @@
 <template>
   <div class="pagination">
     <div class="page-options">
-      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options"></inputTag>
+      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options" :width="135"></inputTag>
     </div>
     <div class="page-list">
       <div :class="['prev', num <= 1 ? 'disabled' : '']" @click.self="(num > 1) && clickButton('prev')">上一页</div>
@@ -13,7 +13,7 @@
       <div :class="['next', num == list.length ? 'disabled' : '']" @click.self="(num < list.length) && clickButton('next')">下一页</div>
     </div>
     <div class="page-lists">
-      <inputTag v-model="currentNum" :prepend="'跳转至'" :type="'inputlist'" :options="list"></inputTag>
+      <inputTag v-model="currentNum" :prepend="'跳转至'" :type="'inputlist'" :options="list" :width="135"></inputTag>
     </div>
   </div>
 </template>
@@ -159,15 +159,24 @@ $h: 34px;
   .page-options,
   .page-lists {
 
-    >div {
+    >.input-tag {
+      box-sizing: border-box;
       height: $h;
       line-height: $h;
+      >.prepend {
+        line-height: $h;
+      }
+    }
+
+    .input-list, .selects {
+      width: 100%;
+      height: 31px;
+      line-height: 31px;
     }
 
     input, select {
-      width: 80px;
-      height: $h;
-      line-height: $h;
+      width: 100%;
+      height: 100%;
     }
   }
 

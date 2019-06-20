@@ -212,7 +212,7 @@ export default {
 <style lang="scss" scoped>
 .input-list {
   display: inline-block;
-  width: fit-content;
+  width: 100%;
   height: fit-content;
   box-sizing: border-box;
   position: relative;
@@ -247,7 +247,7 @@ export default {
     border: 1px solid rgba($color: $gray-border, $alpha: 1);
     border-radius: 6px;
     box-sizing: border-box;
-
+    width: 100%;
     &:focus, &:hover {
       border: 1px solid rgba(63, 153, 255, 0.8);
       box-shadow: 0 0 0 2px rgba($color: $blue-shadow, $alpha: .3);

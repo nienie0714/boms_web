@@ -52,26 +52,24 @@ export default {
       dataSS: '',
       queryParam: [
         {
-          key: 'userName',
+          key: 'logUser',
           label: '用户名',
           type: 'input',
-          width: 120
+          width: 214
         },
         {
           key: 'empName',
           label: '员工',
           type: 'input',
-          width: 120,
+          width: 214,
           toUpper: true
         },
         {
-          key: 'stand',
+          key: 'dateRange',
           label: '操作时间',
-          type: 'datetime-local', // datetime-local  date
-          width: 140,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          type: 'datepicker',
+          datetype: 'date',
+          width: 397
         }
       ],
       tableData: {
