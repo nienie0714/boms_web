@@ -22,8 +22,8 @@ export default {
         loading: false,
         queryParam: {},
         column: [
-          // {key: 'empName', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
-          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
+          {key: 'empName', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
+          // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},

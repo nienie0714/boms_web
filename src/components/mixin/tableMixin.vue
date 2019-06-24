@@ -205,7 +205,6 @@ export default {
     openExport (total) {
       if (!_.isEmpty(total)) {
         download(this.exportUrl, this.queryData, total).then(response => {
-          debugger
           this.$msg.success({
             info: '导出成功 !'
           })

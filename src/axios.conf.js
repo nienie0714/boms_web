@@ -20,9 +20,9 @@ axios.defaults.timeout = 100000
 axios.defaults.baseURL = forwardURL
 
 function request (request) {
-  // if (request.url != 'auth') {
-  //   request.headers.Authorization = localStorage.getItem('token')
-  // }
+  if (request.url != 'auth') {
+    request.headers.Authorization = localStorage.getItem('token')
+  }
   removePending(request)
   request.cancelToken = new CancelToken((c) => {
     if (request.data) {

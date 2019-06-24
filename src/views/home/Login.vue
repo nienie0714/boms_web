@@ -9,8 +9,8 @@
         <div class="title">行李运行管理平台</div>
         <div class="title-tip">用户登录</div>
         <div class="info">
-          <input v-model.trim="userName" placeholder="请输入用户名" @keyup.enter="login"/>
-          <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter="login"/>
+          <input v-model.trim="username" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter.native="login"/>
+          <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter.native="login"/>
         </div>
         <div class="remember">
           <div>
@@ -28,10 +28,11 @@
 </template>
 
 <script>
-import { postData } from '@/util/base'
+import { queryAll } from '@/util/base'
 export default {
   data () {
     return {
+      loginUrl: 'auth',
       remember: false,
       userName: '',
       password: '',
@@ -39,25 +40,73 @@ export default {
       loading: false
     }
   },
+  mounted () {
+    localStorage.setItem('token', '')
+    window.name = this.$route.name
+  },
   methods: {
+    getPasswordByUsername () {
+      let password = localStorage.getItem(this.username)
+      if (password) {
+        this.password = password
+      }
+    },
+    // login () {
+    //   if (this.userName && this.password) {
+    //     this.loading = true
+    //     this.$router.push({name: '首页'})
+    //     let obj = {
+    //       "username": this.userName,
+    //       "pasword": this.password
+    //     }
+    //     postData('auth', obj).then(res => {
+    //       // 
+    //     })
+    //   } else {
+    //     this.$msg.error({
+    //       info: '用户名或密码不能为空',
+    //       tip: '请填写用户名或密码'
+    //     })
+    //   }
+    // },
     login () {
-      if (this.userName && this.password) {
-        this.loading = true
-        this.$router.push({name: '首页'})
-        let obj = {
-          "username": this.userName,
-          "pasword": this.password
+      if (this.username && this.username != '') {
+        if (this.remember) {
+          localStorage.setItem(this.username, this.password)
         }
-        postData('auth', obj).then(res => {
-          // 
+        let data = {
+          username: this.username,
+          password: this.password
+        }
+        // postData
+        queryAll(this.loginUrl, data).then(res => {
+          if (res.data.code == 0) {
+            localStorage.setItem('token', res.data.data.token ? res.data.data.token : '')
+            localStorage.setItem('empName', res.data.data.empName ? res.data.data.empName : '')
+            // localStorage.setItem('teamName', res.data.data.teamName ? res.data.data.teamName : '')
+            // localStorage.setItem('deptName', res.data.data.deptName ? res.data.data.deptName : '')
+            localStorage.setItem('empId', res.data.data.empId ? res.data.data.empId : '')
+            this.$router.push('/home')
+          } else if (res.data.code == -1) {
+            this.$msg.error({
+              info: '登录失败',
+              tip: '用户名或密码错误 !'
+            })
+          } else {
+            this.$msg.error({
+              info: '登录失败',
+              tip: '请求失败，请检查网络 !'
+            })
+          }
         })
       } else {
         this.$msg.error({
-          info: '用户名或密码不能为空',
-          tip: '请填写用户名或密码'
+          info: '登录失败',
+          tip: '请输入用户名'
         })
       }
-    }
+    },
+    
   }
 }
 </script>

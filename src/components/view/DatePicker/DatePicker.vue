@@ -13,13 +13,9 @@ import _ from 'lodash'
 
 export default {
   props: {
-    key1: {
+    type: {
       type: String,
       default: 'date'
-    },
-    key2: {
-      type: String,
-      default: ''
     },
     defaultVal: {
       type: [String, Number, Object],
@@ -36,10 +32,6 @@ export default {
     value: {
       type: Object,
       default: ()=>{}
-    },
-    type: {
-      type: String,
-      default: ''
     },
     max: {
       type: String,
