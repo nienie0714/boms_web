@@ -59,17 +59,29 @@ export default {
         },
         {
           key: 'empName',
-          label: '员工',
+          label: '人员',
           type: 'input',
           width: 214,
           toUpper: true
         },
+        // {
+        //   key: 'dateRange',
+        //   label: '登录时间',
+        //   type: 'datepicker',
+        //   datetype: 'date',
+        //   width: 397
+        // },
         {
-          key: 'dateRange',
-          label: '操作时间',
-          type: 'datepicker',
-          datetype: 'date',
-          width: 397
+          key: 'beginDate',
+          label: '登录时间',
+          type: 'date',
+          width: 254
+        },
+        {
+          key: 'endDate',
+          label: '登录时间',
+          type: 'date',
+          width: 254
         }
       ],
       tableData: {

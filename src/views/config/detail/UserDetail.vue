@@ -20,9 +20,9 @@ export default {
       form: {
         key: 'userId',
         loading: false,
-        queryParam: {},
+        queryParam: {},                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         column: [
-          {key: 'empName', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
+          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
@@ -114,9 +114,9 @@ export default {
           }
           if (item.key == 'password') {
             if (type == 'update' || type == 'detail') {
-              item.isHidden = true
+              this.$set(item, 'isHidden', true)
             } else if (type == 'insert') {
-              item.isHidden = false
+              this.$delete(item, 'isHidden')
             }
           }
         })

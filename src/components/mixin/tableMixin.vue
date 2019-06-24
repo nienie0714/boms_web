@@ -196,29 +196,42 @@ export default {
         this.$msg.error({
           info: '请求异常 !'
         })
-        console.log(err)
       })
     },
     handleRemoveClose () {
       this.remove.visible = false
     },
+    // 下载
     openExport (total) {
       if (!_.isEmpty(total)) {
-        download(this.exportUrl, this.queryData, total).then(response => {
-          this.$msg.success({
-            info: '导出成功 !'
+        if (total) {
+          download(this.exportUrl, this.queryData, total).then(response => {
+            this.$msg.success({
+              info: '导出成功 !'
+            })
+            // this.downFile(response, this.fileName)
+            this.downFile(response, '导出')
           })
-          // this.downFile(response, this.fileName)
-          this.downFile(response, this.fileName)
-        })
+        } else {
+          this.$msg.error({
+            info: '导出失败，当前导出结果为空 !'
+          })
+        }
       } else {
-        download(this.exportUrl, this.queryData, this.pageData ? this.pageData.total : 1).then(response => {
-          this.$msg.success({
-            info: '导出成功 !'
+        let sum = this.pageData ? this.pageData.total : 1
+        if (sum) {
+          download(this.exportUrl, this.queryData, sum).then(response => {
+            this.$msg.success({
+              info: '导出成功 !'
+            })
+            // this.downFile(response, this.fileName)
+            this.downFile(response, '导出')
           })
-          // this.downFile(response, this.fileName)
-          this.downFile(response, '导出')
-        })
+        } else {
+          this.$msg.error({
+            info: '导出失败，当前导出结果为空 !'
+          })
+        }
       }
     },
     // Blob文件转换下载

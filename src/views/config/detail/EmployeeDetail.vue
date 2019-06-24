@@ -16,13 +16,13 @@ export default {
   props: ['data', 'type'],
   data () {
     return {
-      title: '员工管理',
+      title: '人员管理',
       form: {
         key: 'empId',
         loading: false,
         queryParam: {},
         column: [
-          {key: 'empId',  label: '员工编号', type: 'input', maxlength: 20},
+          {key: 'empNo',  label: '人员编号', type: 'input', maxlength: 20},
           {key: 'empName',  label: '姓名', type: 'input', maxlength: 50},
           {key: 'gender',  label: '性别', type: 'tab', enumKey: 'gender', itemValue: 'code', itemLabel: 'name'},
           {key: 'deptId', label: '单位/部门', saveKey: 'deptId', type: 'inputlist', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
@@ -34,6 +34,9 @@ export default {
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
+          empNo: [
+            {type: 'unique', url: '/organization/employee', trigger: 'blur'}
+          ],
           empName: [
             {type: 'require', trigger: 'blur'}
           ],

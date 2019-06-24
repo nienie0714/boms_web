@@ -194,19 +194,13 @@ export default {
             }
           } else if (item.type == 'unique') {
             if (value || value === 0) {
-              let url = item.url + '/exist'
+              let url = item.url + '/checkExist'
               let data = {}
               let k = item.hasOwnProperty('key') ? item['key'] : key
               this.$set(data, k, value)
               queryAll(url, data).then(res => {
                 if (res.data.code == 0 && res.data.data.hasOwnProperty('exist')) {
-                  if (res.data.data.exist > 0) {
-                    this.$set(this.errors, key, '数据已存在')
-                  }
-                } else {
-                  this.$msg.error({
-                    info: '请求失败 !'
-                  })
+                  this.$set(this.errors, key, '数据已存在')
                 }
               }).catch(err => {
                 this.$msg.error({
@@ -263,12 +257,6 @@ export default {
           break
         }
         this.updateData()
-      },
-      immediate: true
-    },
-    data: {
-      handler (data) {
-        console.log(data)
       },
       immediate: true
     }

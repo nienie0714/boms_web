@@ -28,8 +28,10 @@
 </template>
 
 <script>
+import webSocketMixin from '../../components/mixin/webSocketMixin'
 import { queryAll } from '@/util/base'
 export default {
+  mixins: [webSocketMixin],
   data () {
     return {
       loginUrl: 'auth',

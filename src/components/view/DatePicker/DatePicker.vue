@@ -61,7 +61,7 @@ export default {
   watch: {
     'value': {
       handler (data) {
-        console.log(data)
+        // console.log(data)
       },
       immediate: true
     }

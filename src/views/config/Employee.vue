@@ -61,16 +61,16 @@ export default {
           label: '姓名',
           type: 'input',
           width: 214
-        },
-        {
-          key: 'deptId',
-          label: '部门',
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'deptId',
-          itemLabel: 'deptName',
-          url: '/organization/department/queryAll'
         }
+        // ,{
+        //   key: 'deptId',
+        //   label: '部门',
+        //   type: 'inputlist',
+        //   width: 214,
+        //   itemValue: 'deptId',
+        //   itemLabel: 'deptName',
+        //   url: '/organization/department/queryAll'
+        // }
       ],
       tableData: {
         height: 600,
@@ -161,7 +161,6 @@ export default {
           this.data = res.data.data
         }
       })
-      console.log(this.data)
     },
     clickNode (node) {
       this.queryDataReq()

@@ -37,7 +37,8 @@ export default {
             {type: 'require', trigger: 'blur'}
           ],
           phone: [
-            {type: 'require', trigger: 'blur'}
+            {type: 'require', trigger: 'blur'},
+            {type: 'regex', reg: /^(\d{3}-\d{8}|\d{4}-\{7,8}|((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8})?$/, info: '该号码格式或位数有误'}
           ],
           deptName: [
             {type: 'require', trigger: 'blur'}
@@ -73,6 +74,13 @@ export default {
               item.isHidden = false
             } else if (type == 'update' || type == 'insert') {
               item.isHidden = true
+            }
+          }
+          if (item.key == 'deptId') {
+             if (type == 'update') {
+              this.$set(item, 'disabled', true)
+            } else if (type == 'insert') {
+              this.$delete(item, 'disabled')
             }
           }
         })

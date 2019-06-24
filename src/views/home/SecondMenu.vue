@@ -39,7 +39,7 @@ export default {
               disabled: false
             },
             {
-              label: '员工管理',
+              label: '人员管理',
               path: 'Employee',
               disabled: false
             },
@@ -85,7 +85,7 @@ export default {
           disabled: false
         },
         {
-          label: '员工管理',
+          label: '人员管理',
           path: 'Employee',
           disabled: false
         },

@@ -160,7 +160,6 @@ export default {
           this.data = res.data.data
         }
       })
-      console.log(this.data)
     },
     clickNode (node) {
       this.queryDataReq()
