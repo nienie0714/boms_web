@@ -1,49 +1,40 @@
 <script>
-var heartCheck = {
-    timeout: 1000,//60s  1s
-    timeoutObj: null,
-    reset: function(){
-        clearInterval(this.timeoutObj);
-        this.start();
-        console.log('reset')
-    },
-    start: function(){
-      this.timeoutObj = setInterval(function(){
-          if(websocket.readyState==1){
-              websocket.send("HeartBeat");
-          }
-      }, this.timeout)
-      console.log('reset')
-    }
-};
 export default {
   data () {
     return {
-      ws: null
+      ws: null,
+      timeoutObj: null,
+      timeout: 180000 // 3min
     }
   },
   created () {
+    this.reset()
+  },
+  mounted() {
     this.initWebSocket()
   },
   destroyed () {
+    this.reset()
     this.websocketClose('退出登录', true)
   },
   methods: {
     // 初始化websocket
     initWebSocket () {
-      this.$store.commit('setConfigValue', 'wsUrl')
-      const wsURL = this.$store.getters.getConfigValue
-      // let wsURL = 'ws://10.254.1.4:8989/boms/online/websocket'
-      this.ws = new WebSocket('ws://10.255.1.4:8989/boms/online/websocket')
-      this.ws.onopen = this.websocketOnOpen
-      this.ws.onerror = this.websocketOnError
-      this.ws.onmessage = this.websocketOnMessage
-      this.ws.onclose = this.websocketClose
+      const wsURL = this.$store.getters.getConfigValue('wsUrl')
+      this.ws = new WebSocket(`${wsURL}/${localStorage.getItem('username')}`)
+      if (wsURL != '') {
+        this.ws.onopen = this.websocketOnOpen
+        this.ws.onerror = this.websocketOnError
+        this.ws.onmessage = this.websocketOnMessage
+        this.ws.onclose = this.websocketClose
+        window.onbeforeunload = this.websocketClose
+      }      
     },
     // 连接websocket
     websocketOnOpen () {
+      clearInterval(this.timeoutObj);
       console.log('websocket连接成功！ws')
-      heartCheck.start()
+      this.websocketsend(`${localStorage.getItem('username')}--在线`);
     },
     // websocket错误
     websocketOnError (e) {
@@ -51,11 +42,8 @@ export default {
     },
     // websocket消息
     websocketOnMessage (e) {
-      var resData = JSON.parse(e.data)
-      console.log('消息更新')
-      this.customWsOnMessage(resData)
-      heartCheck.reset()
-      // todo 业务逻辑
+      var resData = e.data
+      console.log('消息更新', resData)
     },
     // 关闭websocket
     websocketClose (e, status) {
@@ -63,6 +51,18 @@ export default {
       if (!status) {
         this.initWebSocket()
       }
+    },
+    reset() {
+      clearInterval(this.timeoutObj)
+    },
+    websocketsend(Data){   
+      let that = this
+      this.timeoutObj = setInterval(function(){
+        if(that.ws.readyState==1){
+            that.ws.send(Data)
+            console.log('---------------发送数据成功-------------------')
+        }
+      }, this.timeout)
     }
   }
 }

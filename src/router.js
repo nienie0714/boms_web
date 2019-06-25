@@ -95,7 +95,8 @@ var router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.path != '/') {
+  // 要不要判断首次登录
+  // if (to.path != '/') {
     // var token = localStorage.getItem('token')
     // if (token && token != '') {
       // if (store.getters.getFirstTime) {
@@ -109,9 +110,9 @@ router.beforeEach((to, from, next) => {
         })
         next()
         // store.dispatch('changeInsTime')
-      } else {
-        next()
-      }
+      // } else {
+      //   next()
+      // }
   //   } else {
   //     router.push({path: '/'})
   //     next(false)

@@ -159,6 +159,10 @@ export default {
       queryAll(this.deptTreeUrl, {"empId": 714}).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
+          if (this.data.length > 0) {
+            this.activeId.push(this.data[0].id)
+            this.clickNode(this.data[0])
+          }
         }
       })
     },
@@ -166,14 +170,10 @@ export default {
       this.queryDataReq()
     },
     customQueryBefore () {
-      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptId' })
-      if (~index) {
-        this.queryParam[index].value = this.activeId[0]
+      if (this.queryData.hasOwnProperty('deptId')) {
+        this.queryData.deptId = this.activeId[0]
       } else {
-        this.queryParam.push({
-          key: 'deptId',
-          value: this.activeId[0]
-        })
+        this.$set(this.queryData, 'deptId', this.activeId[0])
       }
     }
   }

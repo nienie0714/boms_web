@@ -1,7 +1,7 @@
 <template>
   <div class="pagination">
     <div class="page-options">
-      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options" :width="135"></inputTag>
+      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options" :width="160"></inputTag>
     </div>
     <div class="page-list">
       <div :class="['prev', num <= 1 ? 'disabled' : '']" @click.self="(num > 1) && clickButton('prev')">上一页</div>
@@ -13,8 +13,8 @@
       <div :class="['next', num == list.length ? 'disabled' : '']" @click.self="(num < list.length) && clickButton('next')">下一页</div>
     </div>
     <div class="page-lists">
-      <inputTag v-model="currentNum" :prepend="'跳转至'" :type="'inputlist'" :options="list" :width="135"></inputTag>
-    </div>
+      <inputTag v-model="currentNum" :prepend="'跳转至'" :type="'input'" :width="135" @enter="$emit('click', $event)"></inputTag>
+    </div> 
   </div>
 </template>
 
@@ -108,11 +108,6 @@ export default {
     currentNum: {
       get () {
         return this.num
-      },
-      set (num) {
-        if (num) {
-          this.$emit('click', num)
-        }
       }
     }
   },
@@ -128,14 +123,16 @@ export default {
           this.$emit('click', 0)
         }
         this.computeList()
-      },
-      immediate: true
+      }
     },
     num: {
       handler (num) {
-        this.$emit('changeData')
-        this.computeList()
-      }
+        if (num > 0) {
+          this.$emit('changeData')
+          this.computeList()
+        }
+      },
+      immediate: true
     },
     size: {
       handler (size) {
@@ -174,12 +171,33 @@ $h: 34px;
       line-height: 31px;
     }
 
-    input, select {
-      width: 100%;
-      height: 100%;
+    input, select {    
+      height: 32px;
+    }
+
+    .ivu-select-large.ivu-select-single .ivu-select-selection {
+      height: 31px;
+    }
+    .ivu-select {
+      vertical-align: baseline!important;
+    }
+    .ivu-select-selection-focused, .ivu-select-selection:hover {
+      border: none;
+      box-shadow: none;
+    }
+    .ivu-select-visible .ivu-select-selection {
+      border: none!important;
+      box-shadow: none!important;
+    }
+    .ivu-select-selection {
+      border: none!important;
+    }
+    .ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+      height: 32px!important;
+      line-height: 32px!important;
+      font-size: 14px!important;
     }
   }
-
   .page-list {
     height: $h;
     line-height: $h;

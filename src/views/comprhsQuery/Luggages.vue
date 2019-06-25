@@ -149,6 +149,7 @@ export default {
   },
   mounted () {
     this.selectKey = this.tabsData[0].key
+    this.queryDataReq()
   },
   methods: {
     tabItemClick (key) {

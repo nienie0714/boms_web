@@ -37,12 +37,13 @@ export default {
     if (!this.exportUrl || this.exportUrl == '') {
       this.exportUrl = this.baseUrl + '/exportExcel'
     }
-    this.queryDataReq()
   },
   mounted () {
+    this.tableData.loading = false
     let table = document.getElementsByClassName('table')[0]
     if (table) {
       this.$nextTick(() => {
+        // this.queryDataReq()
         this.changeTableHeight(table)
       })
       window.onresize = () => {
@@ -126,32 +127,34 @@ export default {
             this.loading = false
           })
         } else {
-          pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
-            this.tableData.multSelection = []
-            if (response.data.code == 0) {
-              this.pageData.total = response.data.data.total
-              if (response.data.data.hasOwnProperty('rows')) {
-                this.tableData.data = response.data.data.rows
+          if (this.pageData.num > 0) {
+            pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
+              this.tableData.multSelection = []
+              if (response.data.code == 0) {
+                this.pageData.total = response.data.data.total
+                if (response.data.data.hasOwnProperty('rows')) {
+                  this.tableData.data = response.data.data.rows
+                } else {
+                  this.tableData.data = response.data.data
+                }
+                this.customAfterQuery()
+                /* this.$msg.success({
+                  info: '获取列表数据失败 !'
+                }) */
               } else {
-                this.tableData.data = response.data.data
+                this.$msg.error({
+                  info: '获取列表数据失败 !',
+                  tip: '请重新尝试 !'
+                })
               }
-              this.customAfterQuery()
-              /* this.$msg.success({
-                info: '获取列表数据失败 !'
-              }) */
-            } else {
-              this.$msg.error({
-                info: '获取列表数据失败 !',
-                tip: '请重新尝试 !'
-              })
-            }
-            this.tableData.loading = false
-            this.loading = false
-          }).catch(() => {
-            this.tableData.loading = false
-            this.loading = false
-          })
-        }
+              this.tableData.loading = false
+              this.loading = false
+            }).catch(() => {
+              this.tableData.loading = false
+              this.loading = false
+            })
+          }
+          }
       // }
     },
     openDetail ({type, row}) {

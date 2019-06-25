@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
 import store from '@/store/index'
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
 import '@/style/custom.scss'
 import '@/style/more.scss'
 import '@/style/iconfont/iconfont.css'
@@ -11,6 +13,7 @@ import Message from '@view/Message/'
 import * as filters from '@view/Filters/'
 // import LoaderAuto from '@view/LoaderAuto/'
 
+Vue.use(iView)
 Vue.config.productionTip = false
 Vue.prototype.axios = axiosReq
 Vue.prototype.removePending = removePending

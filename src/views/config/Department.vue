@@ -77,12 +77,10 @@ export default {
         column: [
           // left
           [
-            // {type: 'mult', width: 50},
-            {key: 'deptId',  label: '部门编号', width: 355},
+            {key: 'deptNo',  label: '部门编号', width: 355},
             {key: 'deptName', label: '部门名称', width: 355},
             {key: 'pDeptName',  label: '上级部门', width: 355},
-            {key: 'phone',  label: '联系电话', width: 355},
-            // {key: 'attr',  label: '操作类型', width: 150, enumKey: 'attr'},, format: [0, 10]  , title: true
+            {key: 'phone',  label: '联系电话', width: 355}
           ],
           // center
           [
@@ -158,6 +156,10 @@ export default {
       queryAll(this.deptTreeUrl, {"empId": 714}).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
+          if (this.data.length > 0) {
+            this.activeId.push(this.data[0].id)
+            this.clickNode(this.data[0])
+          }
         }
       })
     },
@@ -165,14 +167,10 @@ export default {
       this.queryDataReq()
     },
     customQueryBefore () {
-      let index = _.findIndex(this.queryParam, (o) => { return o.key == 'deptId' })
-      if (~index) {
-        this.queryParam[index].value = this.activeId[0]
+      if (this.queryData.hasOwnProperty('deptId')) {
+        this.queryData.deptId = this.activeId[0]
       } else {
-        this.queryParam.push({
-          key: 'deptId',
-          value: this.activeId[0]
-        })
+        this.$set(this.queryData, 'deptId', this.activeId[0])
       }
     }
   }

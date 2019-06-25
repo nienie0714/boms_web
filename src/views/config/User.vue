@@ -64,9 +64,9 @@ export default {
           width: 214
         },
         {
-          key: 'roleId',
+          key: 'stand',
           label: '角色',
-          type: 'inputlist',
+          type: 'select',
           width: 214,
           itemValue: 'roleId',
           itemLabel: 'name',

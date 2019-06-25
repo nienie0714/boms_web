@@ -137,7 +137,7 @@
             <div class="container">
               <div class="label">航班日期：{{formatDate(row['execDate'])}}</div>
               <div class="bold">{{row['flightNoAlias']}}</div>
-              <div class="label">航线：{{formatDate(row['routeCn'])}}</div>
+              <div class="label" :title="row['routeCn']">航线：{{row['routeCn']}}</div>
             </div>
             <div v-if="row&&row['nodes']" class="container">
               <div v-for="(item, index) in row['nodes']" :key="index" class="container node">
@@ -646,8 +646,16 @@ $bodyHead: 32px;
           >div:first-child {
             text-align: left;
           }
+          >div:not(:first-child):not(:last-child) {
+            position: absolute;
+            left: 43%;
+          }
           >div:last-child {
             text-align: right;
+            max-width: 43%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
         >div:last-child:not(:first-child) {

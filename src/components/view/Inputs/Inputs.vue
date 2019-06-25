@@ -1,7 +1,8 @@
 <template>
   <div class="inputs">
-    <input :type="type" :value="value" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder" :disabled="disabled"
-    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" :max="max" :min="min" :format="format"/>
+    <input :type="type" :value="value" :placeholder="placeholder" :disabled="disabled"
+    :max="max" :min="min" :maxlength="maxlength" :minlength="minlength"
+    @input="$emit('input', $event.target.value)" @change="$emit('change', $event.target.value)" @keyup.enter.stop="$emit('enter', $event.target.value)"/>
   </div>
 </template>
 

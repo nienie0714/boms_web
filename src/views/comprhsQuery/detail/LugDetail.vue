@@ -424,6 +424,13 @@ $transWidth: 0;
           font-size: $size;
           height: $size;
           line-height: $size;
+
+          &:last-child {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: inherit;
+          }
         }
         .pic-list {
           margin: 16px 0 0 0;

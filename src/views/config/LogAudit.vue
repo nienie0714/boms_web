@@ -28,7 +28,7 @@ import QueryRow from '@view/QueryRow/QueryRow'
 import Pagination from '@view/Pagination/Pagination'
 import Toolbar from '@view/Toolbar/Toolbar'
 import Tables from '@view/Table/Table'
-import Detail from './detail/UserDetail'
+import Detail from './detail/LogAuditDetail'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
@@ -59,7 +59,7 @@ export default {
         },
         {
           key: 'empName',
-          label: '人员',
+          label: '姓名',
           type: 'input',
           width: 214,
           toUpper: true
@@ -74,15 +74,15 @@ export default {
         {
           key: 'beginDate',
           label: '登录时间',
-          type: 'date',
+          type: 'datepickers',
           width: 254
         },
-        {
-          key: 'endDate',
-          label: '登录时间',
-          type: 'date',
-          width: 254
-        }
+        // {
+        //   key: 'endDate',
+        //   label: '登录时间',
+        //   type: 'date',
+        //   width: 254
+        // }
       ],
       tableData: {
         height: 600,

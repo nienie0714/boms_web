@@ -21,11 +21,28 @@ export default {
         key: 'deptId',
         loading: false,
         queryParam: {},
+        detailColumn: [
+          [
+            {key: 'deptNo', label:'部门编号', span: '6'},
+            {key: 'deptName', label:'部门名称', span: '6'},
+            {key: 'pDeptName', label:'上级部门', span: '6'},
+            {key: 'phone', label:'联系方式', span: '6'},
+          ],
+          [
+            {key: 'createtime', label:'创建时间', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
+            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+          ],
+          [
+            {key: 'remark', label:'备注', span: '24'}
+          ]
+        ],
         column: [
-          {key: 'deptId',  label: '部门编号', type: 'input', maxlength: 20},
+          {key: 'deptNo',  label: '部门编号', type: 'input', maxlength: 20},
           {key: 'phone',  label: '联系电话', type: 'input', maxlength: 15},
           {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 20},
-          {key: 'deptParentId', label: '上级部门', type: 'inputlist', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
+          {key: 'deptParentId', label: '上级部门', type: 'select', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
           {key: 'remark', label: '备注', type: 'textarea', rows: 2, maxlength: 100},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},

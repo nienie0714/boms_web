@@ -46,7 +46,7 @@ export default {
     background: linear-gradient(to right, #696BFF, #50b9f0);
     box-shadow: 0 0 40px rgba($color: $blue-shadow, $alpha: .5);
     justify-content: space-between;
-    z-index: 9999;
+    // z-index: 2000;
     >.logo {
       margin: 15px 0 0 20px;
     }

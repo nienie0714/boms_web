@@ -23,23 +23,22 @@ export default {
         queryParam: {},
         detailColumn: [
           [
-            {key: 'empName'},
-            {key: 'userName'},
-            {key: 'password'},
-            {key: 'roleNames'}
+            {key: 'empName', label:'姓名', span: '6'},
+            {key: 'userName', label:'用户名', span: '6'},
+            {key: 'deptName', label:'部门', span: '12'}
           ],
           [
-            {key: 'createtime'},
-            {key: 'createby'},
-            {key: 'updatetime'},
-            {key: 'updateby'}
+            {key: 'createtime', label:'创建时间', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
+            {key: 'updateby', label:'修改人', span: '6', formatter: true}
           ],
           [
-            {key: 'deptName'}
+            {key: 'roleNames', label:'角色', span: '24'}
           ]
         ],
         column: [
-          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
+          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
@@ -121,6 +120,24 @@ export default {
     },
     type: {
       handler (type) {
+        let rowData = null
+        if (type == 'update') {
+          queryAll('/organization/employee/queryAll', {}).then(res => {
+            console.log(this.data)
+            rowData = _.find(res.data.data, (o)=>{
+              return o.empId == this.data.empId    
+            })      
+            this.form.column.forEach((item, index) => {
+              if(item.key == 'empId') {
+                debugger
+                if (_.isArray(item.options)) {
+                  this.$set(item, 'options', item.options.unshift(rowData))
+                }
+              }
+            })
+          })
+        }
+
         this.form.column.forEach((item, index) => {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {

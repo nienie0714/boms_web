@@ -1,49 +1,25 @@
 <template>
-  <my-dialog v-bind="$attrs" v-on="$listeners" :title="title + typeName" :close="close" :header="header" :submit="submit"
+  <my-dialog v-bind="$attrs" v-on="$listeners" :visible="visible" :title="title + typeName" :close="close" :header="header" :submit="submit"
   :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @submitDialog="handleSubmit">
     <template>
-      <div class="form" v-if="typeName=='详情'">{{detailHis}}</div>
+      <div class="form" v-if="typeName=='详情'">
+        <Row v-for="(item, index) in detailHis" :key="index" justify="start" class="his-info-normal">
+          <i-col v-for="obj in item" :key="obj.key" :span="obj.span">
+            <div class="his-info-title">{{obj.label}}</div>
+            <div class="his-info-cont">{{obj.value}}</div>
+          </i-col>
+        </Row>
+      </div>
       <div class="form" v-else>
        <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '']">
           <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
-          <!-- <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">
-            <div class="info">{{ item.label }}</div>
-            <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
-          </div> -->
           <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
-          <div v-else-if="item.type == 'tree'" class="tree-wrapper"><tree :data="item.options" :selected="true" :disabled="item.disabled" :allSelectNodeId="data[item.saveKey ? item.saveKey : item.key]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree></div>
+          <div v-else-if="item.type == 'tree'" class="tree-wrapper"><tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree></div>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
           :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
           @change="handleChange(item, $event)"></input-tag>
           <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
         </div>
-        <!-- <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item">
-          <div class="label">
-            <div class="info">{{ item.label }}</div>
-            <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
-          </div>
-          <div :class="['value', item.key in errors ? 'error' : '']" :style="item.hasOwnProperty('width')?`width: ${item.width}px;`:''">
-            <inputs v-if="item.type == 'input'" :type="item.inputType" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength"
-            :placeholder="item.label" :disabled="item.disabled"
-            @change="handleChange(item, $event)"></inputs>
-            <tab-button v-else-if="item.type == 'tab'" v-model="data[item.key]" :options="item.options" :id="item.itemId" :label="item.itemLabel" :disabled="item.disabled"
-            @change="handleChange(item, $event)"></tab-button>
-            <input-list v-else-if="item.type == 'inputlist'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
-            :id="item.itemId" :label="item.itemLabel"
-            @change="handleChange(item, $event)"></input-list>
-             <input-list-more v-else-if="item.type == 'inputlistmore'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
-            :id="item.itemId" :label="item.itemLabel"
-            @change="handleChange(item, $event)"></input-list-more>
-            <selects v-else-if="item.type == 'select'" v-model="data[item.saveKey ? item.saveKey : item.key]" :options="item.options" :disabled="item.disabled"
-            @change="handleChange(item, $event)"></selects>
-            <textarea v-else-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength"
-            :placeholder="'请输入'+item.label" :disabled="item.disabled" :rows="item.rows" :cols="item.cols"
-            @change="handleChange(item, $event)"></textarea>
-            <tree v-else-if="item.type == 'tree'" :data="item.options" :selected="true" :disabled="item.disabled"
-            :allSelectNodeId="data[item.saveKey ? item.saveKey : item.key]"
-            :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree>
-          </div>
-        </div> -->
       </div>
     </template>
   </my-dialog>
@@ -69,7 +45,7 @@ export default {
     InputTag
   },
   mixins: [utilMixin],
-  props: ['form', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
+  props: ['form', 'visible', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
   data () {
     return {
       typeName: '',
@@ -90,7 +66,8 @@ export default {
         })()
       })
     }
-    // this.handleDetail()
+    this.detailHis = []
+    this.detailHis = _.cloneDeep(this.form.detailColumn)
   },
   methods: {
     handleDetail() {
@@ -135,9 +112,6 @@ export default {
           this.$set(item, 'options', this.$store.getters.getOptions(item.enumKey))
         }
       })
-
-      this.detailHis = []
-      this.detailHis = _.cloneDeep(this.form.detailColumn)
     },
     handleChange (item, val) {
       let value = val
@@ -249,32 +223,40 @@ export default {
       },
       immediate: true
     },
-    type: {
-      handler (type) {
-        switch (type) {
-          case 'detail': this.typeName = '详情'
-          this.submit = false
-          break
-          case 'insert': this.typeName = '新增'
-          this.submit = true
-          if (this.form.key) {
-            this.data = {}
-            this.$set(this.data, this.form.key, null)
+    visible: {
+      handler (visible) {
+        if (visible) {
+          let type = this.type
+          switch (type) {
+            case 'detail': this.typeName = '详情'
+            this.submit = false
+            break
+            case 'insert': this.typeName = '新增'
+            this.submit = true
+            if (this.form.key) {
+              this.data = {}
+              this.$set(this.data, this.form.key, null)
+            }
+            break
+            case 'update': this.typeName = '编辑'
+            this.submit = true
+            break
           }
-          break
-          case 'update': this.typeName = '编辑'
-          this.submit = true
-          break
+          this.updateData()
         }
-        this.updateData()
-      },
-      immediate: true
+      }
     },
     data: {
       handler (data) {
-        for (let i = 0; i < this.detailHis.length; i++) {
-          for (let j = 0; j < this.detailHis[i].length; j++) {
-            this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key])
+        if (this.detailHis) {
+          for (let i = 0; i < this.detailHis.length; i++) {
+            for (let j = 0; j < this.detailHis[i].length; j++) {
+              if (this.detailHis[i][j].formatter && data[this.detailHis[i][j].key]) {
+                this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key].substr(0, 16))
+              } else {
+                this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key])
+              }
+            }
           }
         }
       },
@@ -373,4 +355,32 @@ export default {
 //     display: inline;
 //   }
 // }
+.his-info-normal {
+  width: 100%;
+  height: fit-content;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(221,230,237,1);
+  &:last-child{
+    border-bottom: none;
+  }
+  &:first-child{
+    padding-top: 0px;
+  }
+}
+.his-info-title {
+  font-size: 14px;
+  color: #899DB2;
+  text-align: left;
+  margin-bottom: 8px;
+}
+.his-info-cont {
+  font-size: 16px;
+  height: 16px;
+  min-height: 16px;
+  line-height: 16px;
+  color: #3D424D;
+  text-align: left;
+  // margin-top: 10px;
+  // margin-bottom: 20px;
+}
 </style>

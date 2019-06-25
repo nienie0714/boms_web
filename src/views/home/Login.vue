@@ -42,6 +42,7 @@ export default {
   },
   mounted () {
     localStorage.setItem('token', '')
+    localStorage.setItem('username', '')
     window.name = this.$route.name
   },
   methods: {
@@ -51,24 +52,6 @@ export default {
         this.password = password
       }
     },
-    // login () {
-    //   if (this.userName && this.password) {
-    //     this.loading = true
-    //     this.$router.push({name: '首页'})
-    //     let obj = {
-    //       "username": this.userName,
-    //       "pasword": this.password
-    //     }
-    //     postData('auth', obj).then(res => {
-    //       // 
-    //     })
-    //   } else {
-    //     this.$msg.error({
-    //       info: '用户名或密码不能为空',
-    //       tip: '请填写用户名或密码'
-    //     })
-    //   }
-    // },
     login () {
       if (this.userName && this.userName != '') {
         if (this.remember) {
@@ -86,6 +69,7 @@ export default {
             // localStorage.setItem('teamName', res.data.data.teamName ? res.data.data.teamName : '')
             // localStorage.setItem('deptName', res.data.data.deptName ? res.data.data.deptName : '')
             localStorage.setItem('empId', res.data.data.empId ? res.data.data.empId : '')
+            localStorage.setItem('username', this.userName)
             this.$router.push('/home')
           } else if (res.data.code == -1) {
             this.$msg.error({

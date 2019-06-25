@@ -21,6 +21,21 @@ export default {
         key: 'roleId',
         loading: false,
         queryParam: {},
+        detailColumn: [
+          [
+            {key: 'name', label:'角色名称', span: '6'},
+            {key: 'description', label:'角色描述', span: '18'}
+          ],
+          [
+            {key: 'createtime', label:'创建时间', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
+            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+          ],
+          [
+            {key: 'resource', label:'权限配置', span: '24'}
+          ]
+        ],
         column: [
           {key: 'roleId',  label: 'id', width: 2, isHidden: true},
           {key: 'name',  label: '角色名称', type: 'input', maxlength: 20},
@@ -47,6 +62,9 @@ export default {
   },
   methods: {
     changeData () {
+      if (this.form.data && !this.form.data.resource) {
+        this.form.data.resource = []
+      }
       this.form.data = this.data
       this.visible = true
     }

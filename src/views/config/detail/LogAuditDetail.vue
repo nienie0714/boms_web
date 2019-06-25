@@ -20,6 +20,23 @@ export default {
       form: {
         key: 'logId',
         queryParam: {},
+        detailColumn: [
+          [
+            {key: 'logUser', label:'用户名', span: '6'},
+            {key: 'empName', label:'姓名', span: '6'},
+            {key: 'logSummary', label:'操作类型', span: '6'},
+            {key: 'logTime', label:'操作时间', span: '6', formatter: true},
+          ],
+          [
+            {key: 'createtime', label:'创建时间', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
+            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+          ],
+          [
+            {key: 'logDetail', label:'操作内容', span: '24'}
+          ]
+        ],
         column: [
           {key: 'logId',  label: '日志Id', type: 'input', isHidden: true},
           {key: 'logUser',  label: '用户名', type: 'input'},

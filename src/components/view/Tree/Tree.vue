@@ -8,9 +8,9 @@
         :class="['checkbox', ~selectNodeId.indexOf(node[nodeKey]) ? 'is-checked' : (~halfSelectNodeId.indexOf(node[nodeKey]) ? 'is-half-checked' : '')]"></span><!-- {{selectNodeId.indexOf(node[nodeKey])}} -->
         <span>{{node[nodeLabel]}}</span>
       </div>
-      <tree v-if="node.hasOwnProperty(nodeChild)" v-show="node.hasOwnProperty('open') && node.open" ref="treeChild" class="tree-child"
+      <tree v-if="node.hasOwnProperty(nodeChild) && node[nodeChild]" v-show="node.hasOwnProperty('open') && node.open" ref="treeChild" class="tree-child"
       :data="node[nodeChild]" :selected="selected" :disabled="disabled || (node.hasOwnProperty(disabledKey) ? node[disabledKey] : false)" :nodeKey="nodeKey" :nodeLabel="nodeLabel" :nodeChild="nodeChild"
-      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId"
+      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId" :autoSelectNodeId="autoSelectChildNodeId"
       @clickNode="clickNode" @selectCheckBox="selectChildCheckBox"></tree>
     </div>
   </div>
@@ -63,6 +63,10 @@ export default {
       type: Array,
       default: function () {return []}
     },
+    autoSelectNodeId: {
+      type: Array,
+      default: function () {return []}
+    },
     selectNode: {
       type: Array,
       default: function () {return []}
@@ -75,7 +79,8 @@ export default {
   data () {
     return {
       tree: [],
-      deepData: []
+      deepData: [],
+      autoSelectChildNodeId: []
     }
   },
   mounted () {
@@ -87,7 +92,7 @@ export default {
       if (~index) {
         this.selectNode.splice(index, 1)
         this.selectNodeId.splice(index, 1)
-        if (node.hasOwnProperty(this.nodeChild)) {
+        if (node.hasOwnProperty(this.nodeChild) && node[this.nodeChild]) {
           let tmp = []
           let arr = []
           flattenDeep(node[this.nodeChild], arr, node)
@@ -211,6 +216,21 @@ export default {
         flattenDeep(this.tree, this.deepData)
       },
       deep: true,
+      immediate: true
+    },
+    autoSelectNodeId: {
+      handler (ids) {
+        if (ids && ids.length > 0) {
+          ids.forEach(id => {
+            let obj = _.find(this.data, [this.nodeKey, id])
+            if (obj) {
+              this.selectCheckBox(obj)
+            } else {
+              this.autoSelectChildNodeId.push(id)
+            }
+          })
+        }
+      },
       immediate: true
     }
   }

@@ -1,9 +1,9 @@
 <template>
   <div class="query-row">
-    <div v-for="item in dataHis" :key="item.key" class="query-item">
+    <div v-for="item in dataHis" :key="item.key" v-show="item.hasOwnProperty('type')" class="query-item">
       <input-tag v-model="item.value" :width="item.width" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
       :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
-      @change="handleChange(item.value)"></input-tag>
+      @change="handleChange(item.value)" @enter="handleEnter(item, $event)"></input-tag>
     </div>
   </div>
 </template>
@@ -75,16 +75,14 @@ export default {
     handleChange (value) {
       this.$emit('change', value)
     },
-    handleEnter (item, event) {
+    handleEnter (item, val) {
       if (item.toUpper) {
-        this.toUpper(item, event)
+        this.toUpper(item, val)
       }
       this.$emit('handleEnter')
     },
-    toUpper (item, event) {
-      let value = item.value.trim().toUpperCase()
-      event.target.value = value
-      this.$set(item, 'value', item.value.trim().toUpperCase())
+    toUpper (item, val) {
+      this.$set(item, 'value', val.trim().toUpperCase())
     }
   },
   watch: {
