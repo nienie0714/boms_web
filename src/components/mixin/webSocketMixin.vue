@@ -1,4 +1,21 @@
 <script>
+var heartCheck = {
+    timeout: 1000,//60s  1s
+    timeoutObj: null,
+    reset: function(){
+        clearInterval(this.timeoutObj);
+        this.start();
+        console.log('reset')
+    },
+    start: function(){
+      this.timeoutObj = setInterval(function(){
+          if(websocket.readyState==1){
+              websocket.send("HeartBeat");
+          }
+      }, this.timeout)
+      console.log('reset')
+    }
+};
 export default {
   data () {
     return {
@@ -16,7 +33,8 @@ export default {
     initWebSocket () {
       this.$store.commit('setConfigValue', 'wsUrl')
       const wsURL = this.$store.getters.getConfigValue
-      this.ws = new WebSocket(wsURL)
+      // let wsURL = 'ws://10.254.1.4:8989/boms/online/websocket'
+      this.ws = new WebSocket('ws://10.255.1.4:8989/boms/online/websocket')
       this.ws.onopen = this.websocketOnOpen
       this.ws.onerror = this.websocketOnError
       this.ws.onmessage = this.websocketOnMessage
@@ -25,6 +43,7 @@ export default {
     // 连接websocket
     websocketOnOpen () {
       console.log('websocket连接成功！ws')
+      heartCheck.start()
     },
     // websocket错误
     websocketOnError (e) {
@@ -35,6 +54,8 @@ export default {
       var resData = JSON.parse(e.data)
       console.log('消息更新')
       this.customWsOnMessage(resData)
+      heartCheck.reset()
+      // todo 业务逻辑
     },
     // 关闭websocket
     websocketClose (e, status) {

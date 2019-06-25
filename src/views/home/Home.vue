@@ -22,11 +22,13 @@
 
 <script>
 import DropMenu from '@view/DropMenu/DropMenu'
+import webSocketMixin from '../../components/mixin/webSocketMixin'
 
 export default {
   components: {
     DropMenu,
   },
+  mixins: [webSocketMixin],
   mounted () {
     this.$router.push({name: '信息共享平台'})
   }

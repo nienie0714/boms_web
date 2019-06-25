@@ -20,7 +20,24 @@ export default {
       form: {
         key: 'userId',
         loading: false,
-        queryParam: {},                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+        queryParam: {},
+        detailColumn: [
+          [
+            {key: 'empName'},
+            {key: 'userName'},
+            {key: 'password'},
+            {key: 'roleNames'}
+          ],
+          [
+            {key: 'createtime'},
+            {key: 'createby'},
+            {key: 'updatetime'},
+            {key: 'updateby'}
+          ],
+          [
+            {key: 'deptName'}
+          ]
+        ],
         column: [
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
@@ -28,7 +45,7 @@ export default {
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},
           {key: 'roleIds', label: '角色', type: 'inputlistmore', itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
-          {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
+          {key: 'createtime', label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}

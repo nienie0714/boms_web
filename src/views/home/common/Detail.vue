@@ -2,7 +2,8 @@
   <my-dialog v-bind="$attrs" v-on="$listeners" :title="title + typeName" :close="close" :header="header" :submit="submit"
   :position="'right'" class="form-dialog under-head-dialog" @handleClose="handleClose" @submitDialog="handleSubmit">
     <template>
-      <div class="form" v-if="'column' in form">
+      <div class="form" v-if="typeName=='详情'">{{detailHis}}</div>
+      <div class="form" v-else>
        <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '']">
           <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
           <!-- <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">
@@ -77,6 +78,7 @@ export default {
       data: {},
       errors: {},
       dataHis: null,
+      detailHis: null,
       test: ''
     }
   },
@@ -88,8 +90,13 @@ export default {
         })()
       })
     }
+    // this.handleDetail()
   },
   methods: {
+    handleDetail() {
+      this.dataHis = _.cloneDeep(this.form.detailColumn)
+      console.log(this.data)
+    },
     updateData () {
       this.errors = {}
       this.dataHis = []
@@ -128,6 +135,9 @@ export default {
           this.$set(item, 'options', this.$store.getters.getOptions(item.enumKey))
         }
       })
+
+      this.detailHis = []
+      this.detailHis = _.cloneDeep(this.form.detailColumn)
     },
     handleChange (item, val) {
       let value = val
@@ -259,7 +269,17 @@ export default {
         this.updateData()
       },
       immediate: true
-    }
+    },
+    data: {
+      handler (data) {
+        for (let i = 0; i < this.detailHis.length; i++) {
+          for (let j = 0; j < this.detailHis[i].length; j++) {
+            this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key])
+          }
+        }
+      },
+      immediate: true
+    },
   }
 }
 </script>

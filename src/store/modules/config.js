@@ -1,7 +1,7 @@
 export default {
   state: {
     configs: [
-      {key: 'wsUrl', classify: 'websocket_url', name: 'boms-job', value: ''},
+      {key: 'wsUrl', classify: 'websocket_url', name: 'boms_websocket', value: ''},
       // {key: 'mqUrl', classify: 'web_mq_url', name: 'aoms-webmq', value: ''},
       {key: 'dfs', classify: 'file-url', name: 'file_root_url', value: ''},
       // {key: 'aptLoc', classify: 'apt_loc', name: 'aptIata-loc', value: ''}
@@ -20,6 +20,9 @@ export default {
       }
       return value
     }
+    // getConfigValue: state => {
+    //   return state.configValue
+    // },
   },
   mutations: {
     setConfigs (state, configs) {

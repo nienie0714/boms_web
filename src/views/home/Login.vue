@@ -9,7 +9,7 @@
         <div class="title">行李运行管理平台</div>
         <div class="title-tip">用户登录</div>
         <div class="info">
-          <input v-model.trim="username" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter.native="login"/>
+          <input v-model.trim="userName" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter.native="login"/>
           <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter.native="login"/>
         </div>
         <div class="remember">
@@ -28,10 +28,8 @@
 </template>
 
 <script>
-import webSocketMixin from '../../components/mixin/webSocketMixin'
 import { queryAll } from '@/util/base'
 export default {
-  mixins: [webSocketMixin],
   data () {
     return {
       loginUrl: 'auth',
@@ -48,7 +46,7 @@ export default {
   },
   methods: {
     getPasswordByUsername () {
-      let password = localStorage.getItem(this.username)
+      let password = localStorage.getItem(this.userName)
       if (password) {
         this.password = password
       }
@@ -72,12 +70,12 @@ export default {
     //   }
     // },
     login () {
-      if (this.username && this.username != '') {
+      if (this.userName && this.userName != '') {
         if (this.remember) {
-          localStorage.setItem(this.username, this.password)
+          localStorage.setItem(this.userName, this.password)
         }
         let data = {
-          username: this.username,
+          username: this.userName,
           password: this.password
         }
         // postData
