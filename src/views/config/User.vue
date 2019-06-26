@@ -64,7 +64,7 @@ export default {
           width: 214
         },
         {
-          key: 'stand',
+          key: 'roleId',
           label: '角色',
           type: 'select',
           width: 214,

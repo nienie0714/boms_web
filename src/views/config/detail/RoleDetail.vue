@@ -44,7 +44,8 @@ export default {
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true},
-          {key: 'resource', label: '权限配置', type: 'tree', itemValue: 'id', itemLabel: 'text', itemChild: 'children', url: '/sys/sysRole/resourceTree', urlType: 'get'}// todo: tree
+          {key: 'hasRoleList', label: '权限配置', type: 'tree', saveKey: 'resourceIds', itemValue: 'id', itemLabel: 'text', itemChild: 'children', url: '/sys/sysRole/resourceTree', urlType: 'get'}// todo: tree
+          // autoSelectNodeId: '', allSelectNodeId: '',
         ],
         rules: {
           name: [
@@ -63,7 +64,7 @@ export default {
   methods: {
     changeData () {
       if (this.form.data && !this.form.data.resource) {
-        this.form.data.resource = []
+        this.form.data.hasRoleList = []
       }
       this.form.data = this.data
       this.visible = true

@@ -73,9 +73,11 @@ export default {
         // },
         {
           key: 'beginDate',
+          key1: 'beginDate',
+          key2: 'endDate',
           label: '登录时间',
           type: 'datepickers',
-          width: 254
+          width: 278
         },
         // {
         //   key: 'endDate',

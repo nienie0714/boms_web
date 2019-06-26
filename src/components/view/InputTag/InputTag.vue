@@ -2,12 +2,19 @@
   <div class="input-tag" :style="`width: ${width}px`">
     <div v-if="prepend" class="prepend">{{prepend}}</div>
     <div class="value">
-      <inputs v-if="type == 'input' || type == 'datetime-local' || type == 'date'" :type="type" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" @change="change($event)" :maxlength="maxlength" :minlength="minlength" max="max" min="min"></inputs>
-      <date-picker v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-picker>
+      <inputs v-if="type == 'input' || type == 'datetime-local' || type == 'date'" :type="type" v-model="currentValue"
+      :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled"
+      :maxlength="maxlength" :minlength="minlength" max="max" min="min"
+      @change="change($event)" @enter="enter($event)"></inputs>
+      <date-pickers v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
       <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></tab-button>
       <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list>
-      <selects v-else-if="type == 'select'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects>
+      <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects>
+      <Select v-else-if="type == 'select'" v-model="currentValue" :size="'large'" :filterable="filterable" @on-change="change($event)">
+          <Option v-for="(item, index) in options" :value="id ? item[id] : item" :key="index">{{label ? item[label] : (id ? item[id] : item)}}</Option>
+      </Select>
       <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more>
+      <DatePicker v-else-if="type == 'datepickers'" v-model="currentValue" format="yyyy-MM-dd" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
     </div>
     <div v-if="append" class="append">{{append}}</div>
   </div>
@@ -15,7 +22,7 @@
 
 <script>
 import Inputs from '@view/Inputs/Inputs'
-import DatePicker from '@view/DatePicker/DatePicker'
+import DatePickers from '@view/DatePicker/DatePicker'
 import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
 import Selects from '@view/Selects/Selects'
@@ -24,7 +31,7 @@ import InputListMore from '@view/InputListMore/InputListMore'
 export default {
   components: {
     Inputs,
-    DatePicker,
+    DatePickers,
     TabButton,
     InputList,
     Selects,
@@ -83,6 +90,10 @@ export default {
       type: Boolean,
       default: false
     },
+    filterable: {
+      type: Boolean,
+      default: true
+    },
     maxlength: {
       type: Number,
       default: null
@@ -98,6 +109,12 @@ export default {
     min: {
       type: String,
       default: null
+    },
+    dateValue: {
+      type: Array,
+      default: ()=>{
+        return ['', '']
+      }
     }
   },
   model: {
@@ -110,7 +127,11 @@ export default {
   },
   methods: {
     change (val) {
+      this.currentValue = val
       this.$emit('change', val)
+    },
+    enter (val) {
+      this.$emit('enter', val)
     }
   },
   computed: {
@@ -189,6 +210,58 @@ export default {
           box-shadow: none;
         }
       }
+    }
+
+    .ivu-select-large.ivu-select-single .ivu-select-selection {
+      height: 38px;
+    }
+    .ivu-select {
+      vertical-align: baseline!important;
+    }
+    .ivu-select-selection-focused, .ivu-select-selection:hover {
+      border: none;
+      box-shadow: none;
+    }
+    .ivu-select-visible .ivu-select-selection {
+      border: none!important;
+      box-shadow: none!important;
+    }
+    .ivu-select-selection {
+      border: none!important;
+    }
+    .ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+      height: 32px!important;
+      line-height: 32px!important;
+      font-size: 14px!important;
+    }
+
+    // 日期
+    .ivu-input-large {
+      height: 38px!important;
+    }
+
+    .ivu-input:focus {
+      border: none!important;
+      outline: 0;
+      box-shadow: none!important;
+    }
+
+    .ivu-date-picker-focused input {
+      border: none!important;
+      outline: 0;
+      box-shadow: none!important;
+    }
+    .ivu-input:hover {
+      border: none!important;
+      outline: 0;
+      box-shadow: none;
+    }
+    .ivu-input {
+      border: none;
+    }
+    input:focus, input:hover, textarea:focus, textarea:hover, select:focus, select:hover {
+      border: none;
+      box-shadow: none;
     }
 
     >.tab-button {

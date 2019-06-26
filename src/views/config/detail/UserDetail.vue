@@ -121,22 +121,22 @@ export default {
     type: {
       handler (type) {
         let rowData = null
-        if (type == 'update') {
-          queryAll('/organization/employee/queryAll', {}).then(res => {
-            console.log(this.data)
-            rowData = _.find(res.data.data, (o)=>{
-              return o.empId == this.data.empId    
-            })      
-            this.form.column.forEach((item, index) => {
-              if(item.key == 'empId') {
-                debugger
-                if (_.isArray(item.options)) {
-                  this.$set(item, 'options', item.options.unshift(rowData))
-                }
-              }
-            })
-          })
-        }
+        // if (type == 'update') {
+        //   queryAll('/organization/employee/queryAll', {}).then(res => {
+        //     console.log(this.data)
+        //     rowData = _.find(res.data.data, (o)=>{
+        //       return o.empId == this.data.empId    
+        //     })      
+        //     this.form.column.forEach((item, index) => {
+        //       if(item.key == 'empId') {
+        //         debugger
+        //         if (_.isArray(item.options)) {
+        //           this.$set(item, 'options', item.options.unshift(rowData))
+        //         }
+        //       }
+        //     })
+        //   })
+        // }
 
         this.form.column.forEach((item, index) => {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {

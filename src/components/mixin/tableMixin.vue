@@ -77,7 +77,12 @@ export default {
           if (item.value === '') {
             this.$set(data, item.key, null)
           } else {
-            this.$set(data, item.key, item.value)
+            if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+              this.$set(data, item.key1, item.value[0])
+              this.$set(data, item.key2, item.value[1])
+            } else {
+              this.$set(data, item.key, item.value)
+            }
           }
         })
         this.queryData = data
