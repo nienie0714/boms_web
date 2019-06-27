@@ -29,9 +29,9 @@ export default {
           ],
           [
             {key: 'createtime', label:'创建时间', span: '6', formatter: true},
-            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6'},
             {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
-            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+            {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
             {key: 'logDetail', label:'操作内容', span: '24'}

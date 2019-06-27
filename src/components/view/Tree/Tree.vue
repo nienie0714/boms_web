@@ -76,6 +76,10 @@ export default {
       default: function () {return []}
     }
   },
+  model: {
+    prop: 'allSelectNodeId',
+    event: 'changeIds'
+  },
   data () {
     return {
       tree: [],
@@ -131,6 +135,7 @@ export default {
       }
       let all = [...this.selectNodeId, ...this.halfSelectNodeId]
       this.allSelectNodeId.splice(0, this.allSelectNodeId.length, ...new Set(all))
+      this.$emit('changeIds', this.allSelectNodeId)
       this.$emit('selectCheckBox', node)
     },
     selectChildCheckBox (node) {
@@ -214,15 +219,11 @@ export default {
       handler (data) {
         this.tree = JSON.parse(JSON.stringify(data))
         flattenDeep(this.tree, this.deepData)
-      },
-      deep: true,
-      immediate: true
-    },
-    autoSelectNodeId: {
-      handler (ids) {
+        let ids = this.autoSelectNodeId
         if (ids && ids.length > 0) {
+          this.autoSelectChildNodeId = []
           ids.forEach(id => {
-            let obj = _.find(this.data, [this.nodeKey, id])
+            let obj = _.find(data, [this.nodeKey, id])
             if (obj) {
               this.selectCheckBox(obj)
             } else {
@@ -231,6 +232,7 @@ export default {
           })
         }
       },
+      deep: true,
       immediate: true
     }
   }

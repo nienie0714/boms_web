@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     getDeptTree () {
-      queryAll(this.deptTreeUrl, {"empId": 714}).then(res => {
+      queryAll(this.deptTreeUrl).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
           if (this.data.length > 0) {

@@ -6,15 +6,25 @@
         <Row v-for="(item, index) in detailHis" :key="index" justify="start" class="his-info-normal">
           <i-col v-for="obj in item" :key="obj.key" :span="obj.span">
             <div class="his-info-title">{{obj.label}}</div>
-            <div class="his-info-cont">{{obj.value}}</div>
+            <div class="his-info-cont">
+              <template v-if="obj.type == 'tree'">
+                <Tree :data="obj.value"></Tree>
+              </template>
+              <template v-else>
+                {{obj.value}}
+              </template>
+            </div>
           </i-col>
         </Row>
       </div>
       <div class="form" v-else>
-       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" class="form-item" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '']">
+       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '', item.isHidden ? '': 'form-item']">
           <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
           <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
-          <div v-else-if="item.type == 'tree'" class="tree-wrapper"><tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></tree></div>
+          <div v-else-if="item.type == 'tree'" class="tree-wrapper">
+            {{data[item.saveKey]}}
+            <my-tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></my-tree>
+          </div>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
           :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
           @change="handleChange(item, $event)"></input-tag>
@@ -31,7 +41,7 @@ import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
 import InputListMore from '@view/InputListMore/InputListMore'
 import Selects from '@view/Selects/Selects'
-import Tree from '@view/Tree/Tree'
+import MyTree from '@view/Tree/Tree'
 import InputTag from '@view/InputTag/InputTag'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll, queryAllGet } from '@/util/base'
@@ -41,7 +51,7 @@ import { debug } from 'util';
 
 export default {
   components: {
-    Tree,
+    MyTree,
     InputTag
   },
   mixins: [utilMixin],
@@ -85,6 +95,13 @@ export default {
         } else if (!this.data.hasOwnProperty(item.key)) {
           this.$set(this.data, item.key, null)
         }
+        // if (item.hasOwnProperty('saveKey')) {
+        //   if (item.type == 'tree') {
+        //     this.$set(this.data, item.saveKey, [])
+        //   } else {
+        //     this.$set(this.data, item.saveKey, null)
+        //   }
+        // }
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
         }
@@ -323,7 +340,8 @@ export default {
   textarea {
     border: 1px solid rgba($color: $gray-border, $alpha: 1);
     border-radius: 6px;
-    // width: 100%;
+    font-size: 14px;
+    width: 100%;
     min-height: 80px;
     resize: vertical;
     margin-bottom: 20px;
@@ -382,5 +400,9 @@ export default {
   text-align: left;
   // margin-top: 10px;
   // margin-bottom: 20px;
+}
+
+.ivu-tree ul {
+  font-size: 16px;
 }
 </style>

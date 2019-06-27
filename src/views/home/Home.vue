@@ -4,12 +4,12 @@
       <div class="logo">
         <img :src="require('@img/logo.png')"/>
       </div>
-      <drop-menu></drop-menu>
+      <drop-menu :menuList="menuList"></drop-menu>
       <div class="user">
         <div class="img">
           <img :src="require('@img/user/img_usr.png')"/>
         </div>
-        <div class="name"></div>
+        <div class="name">{{empName?empName:''}}</div>
       </div>
     </div>
     <div class="main">
@@ -28,9 +28,35 @@ export default {
   components: {
     DropMenu,
   },
+  data () {
+    return {
+      empName: '',
+      topResource: [],
+      menuList: [
+        {
+          label: '信息共享平台',
+          router: '/comprhsQuery',
+          append: false,
+          icon: 'icon_comprhs_query'
+        },
+        {
+          label: '配置管理',
+          router: '/config',
+          append: false,
+          icon: 'icon_config'
+        }
+      ],
+      activeIndex: 0
+    }
+  },
   mixins: [webSocketMixin],
   mounted () {
     this.$router.push({name: '信息共享平台'})
+    this.empName = localStorage.getItem('empName')
+    // postData('basicdata/sysUser/queryTopResource', {}).then(response => {
+    //   this.topResource = response.data.data
+    // })
+    // {"code":0,"msg":"success","data":[{"resourceId":"c5d07c0c4c5e4d29b1106895c54f4f1","name":"指挥监控","url":"dynamicmap","icon":"card-commond","resourceType":1,"status":"Y","sortkey":1,"pid":null,"parentIds":null,"parentName":null},{"resourceId":"3610d459a68f41c3bb05279ef6ad150","name":"基础数据","url":"/basicdata","icon":"card-basic","resourceType":1,"status":"Y","sortkey":4,"pid":null,"parentIds":null,"parentName":null}]}
   }
 }
 </script>

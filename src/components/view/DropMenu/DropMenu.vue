@@ -18,9 +18,15 @@
 import _ from 'lodash'
 
 export default {
+  props: {
+    menuList: {
+      type: Array,
+      default: ()=>[]
+    }
+  },
   data () {
     return {
-      menuList: [
+      menuLists: [// localMenuList
         // {
         //   label: '综合查询',
         //   child: [
@@ -56,6 +62,7 @@ export default {
           icon: 'icon_config'
         }
       ],
+      // menuList: [],
       activeIndex: 0
     }
   },

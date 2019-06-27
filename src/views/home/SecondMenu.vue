@@ -95,23 +95,9 @@ export default {
           disabled: false
         },
         {
-          label: '测试三级菜单',
-          disabled: false,
-          open: true,
-          children: [
-            {
-              label: '测试4级菜单',
-              disabled: false,
-              open: true,
-              children: [
-                {
-                  label: '日志审计管理',
-                  path: 'LogAudit',
-                  disabled: false
-                }
-              ]
-            }
-          ]
+          label: '在线用户查看',
+          path: 'Online',
+          disabled: false
         }
       ]
     } else {

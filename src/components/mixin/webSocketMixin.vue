@@ -21,8 +21,8 @@ export default {
     // 初始化websocket
     initWebSocket () {
       const wsURL = this.$store.getters.getConfigValue('wsUrl')
-      this.ws = new WebSocket(`${wsURL}/${localStorage.getItem('username')}`)
       if (wsURL != '') {
+        this.ws = new WebSocket(`${wsURL}/${localStorage.getItem('username')}`)
         this.ws.onopen = this.websocketOnOpen
         this.ws.onerror = this.websocketOnError
         this.ws.onmessage = this.websocketOnMessage

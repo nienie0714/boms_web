@@ -137,10 +137,6 @@ export default {
   computed: {
     currentValue: {
       get: function () {
-        // if (_.isArray(this.value)) {
-        //   let val = _.map(this.value, this.id);
-        //   this.value = val
-        // }
         return this.value
       },
       set: function (val) {
@@ -149,8 +145,8 @@ export default {
     }
   }
 }
+// "001001001", "99999999901", "99999999904", "99999999905", "99999999906", "99999999907"
 </script>
-
 <style lang="scss">
 .input-tag {
   display: inline-flex;

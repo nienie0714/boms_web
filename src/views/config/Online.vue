@@ -63,14 +63,6 @@ export default {
           type: 'input',
           width: 214,
           toUpper: true
-        },
-        {
-          key: 'beginDate',
-          key1: 'beginDate',
-          key2: 'endDate',
-          label: '登录时间',
-          type: 'datepickers',
-          width: 278
         }
       ],
       tableData: {
@@ -81,18 +73,16 @@ export default {
         column: [
           // left
           [
-            {key: 'logUser',  label: '用户名', width: 200},
-            {key: 'empName', label: '姓名', width: 200},
-            {key: 'logSummary',  label: '操作类型', width: 300},
-            {key: 'logDetail',  label: '操作内容', width: 500},
-            {key: 'logTime',  label: '操作时间', width: 250},
+            {key: 'logUser',  label: '用户名', width: 415},
+            {key: 'empName', label: '姓名', width: 415},
+            {key: 'mac',  label: 'MAC地址', width: 415},
+            {key: 'loginType',  label: '登录设备类型', width: 415}
           ],
           // center
           [
           ],
           // right
           [
-            {label: '操作', type: 'opr', width: 220}
           ]
         ],
         data: []

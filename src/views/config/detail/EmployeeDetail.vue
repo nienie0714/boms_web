@@ -24,19 +24,19 @@ export default {
         detailColumn: [
           [
             {key: 'empName', label:'姓名', span: '6'},
-            {key: 'gender', label:'性别', span: '6'},
+            {key: 'genderName', label:'性别', span: '6'},
             {key: 'post', label:'职务名称', span: '6'},
             {key: 'phone', label:'联系方式', span: '6'},
           ],
           [
             {key: 'createtime', label:'创建时间', span: '6', formatter: true},
-            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6'},
             {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
-            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+            {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
             {key: 'empNo', label:'人员编号', span: '6'},
-            {key: 'deptId', label:'单位/部门', span: '18'}
+            {key: 'deptName', label:'单位/部门', span: '18'}
           ]
         ],
         column: [
@@ -53,6 +53,7 @@ export default {
         ],
         rules: {
           empNo: [
+            {type: 'regex', reg: /^[a-zA-Z0-9]{1,20}$/, info: '必须为数字、字母'},
             {type: 'unique', url: '/organization/employee', trigger: 'blur'}
           ],
           empName: [

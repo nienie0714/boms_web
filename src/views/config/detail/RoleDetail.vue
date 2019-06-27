@@ -28,12 +28,12 @@ export default {
           ],
           [
             {key: 'createtime', label:'创建时间', span: '6', formatter: true},
-            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6'},
             {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
-            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+            {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
-            {key: 'resource', label:'权限配置', span: '24'}
+            {key: 'hasRoleTree', label:'权限配置', span: '24', type: 'tree'}
           ]
         ],
         column: [
@@ -45,15 +45,11 @@ export default {
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true},
           {key: 'hasRoleList', label: '权限配置', type: 'tree', saveKey: 'resourceIds', itemValue: 'id', itemLabel: 'text', itemChild: 'children', url: '/sys/sysRole/resourceTree', urlType: 'get'}// todo: tree
-          // autoSelectNodeId: '', allSelectNodeId: '',
         ],
         rules: {
           name: [
             {type: 'require', trigger: 'blur'}
-          ],
-          resource: [
-            {type: 'require', trigger: 'blur'}
-          ],
+          ]
         },
         data: null
       }
@@ -63,11 +59,7 @@ export default {
   },
   methods: {
     changeData () {
-      if (this.form.data && !this.form.data.resource) {
-        this.form.data.hasRoleList = []
-      }
       this.form.data = this.data
-      this.visible = true
     }
   },
   watch: {

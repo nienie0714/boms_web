@@ -29,21 +29,21 @@ export default {
           ],
           [
             {key: 'createtime', label:'创建时间', span: '6', formatter: true},
-            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6'},
             {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
-            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+            {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
             {key: 'roleNames', label:'角色', span: '24'}
           ]
         ],
         column: [
+          {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
+          {key: 'roleIds', label: '角色', type: 'inputlistmore', itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
-          {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},
-          {key: 'roleIds', label: '角色', type: 'inputlistmore', itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
           {key: 'createtime', label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
@@ -55,7 +55,8 @@ export default {
           ],
           userName: [
             {type: 'require', trigger: 'blur'},
-            {type: 'regex', reg: /^[a-zA-Z0-9-]*$/, info: '必须为数字、字母、-'}
+            {type: 'regex', reg: /^[a-zA-Z0-9-]{1,20}$/, info: '必须为数字、字母、-'},
+            {type: 'unique', url: '/sys/sysUser', trigger: 'blur'}
           ],
           deptName: [
             {type: 'require', trigger: 'blur'}
@@ -122,20 +123,20 @@ export default {
       handler (type) {
         let rowData = null
         // if (type == 'update') {
-        //   queryAll('/organization/employee/queryAll', {}).then(res => {
-        //     console.log(this.data)
-        //     rowData = _.find(res.data.data, (o)=>{
-        //       return o.empId == this.data.empId    
-        //     })      
-        //     this.form.column.forEach((item, index) => {
-        //       if(item.key == 'empId') {
-        //         debugger
-        //         if (_.isArray(item.options)) {
-        //           this.$set(item, 'options', item.options.unshift(rowData))
-        //         }
-        //       }
-        //     })
-        //   })
+          // queryAll('/organization/employee/queryAll', {}).then(res => {
+          //   console.log(this.data)
+          //   rowData = _.find(res.data.data, (o)=>{
+          //     return o.empId == this.data.empId    
+          //   })      
+          //   this.form.column.forEach((item, index) => {
+          //     if(item.key == 'empId') {
+          //       debugger
+          //       if (_.isArray(item.options)) {
+          //         this.$set(item, 'options', item.options.unshift(rowData))
+          //       }
+          //     }
+          //   })
+          // })
         // }
 
         this.form.column.forEach((item, index) => {
@@ -153,6 +154,39 @@ export default {
               this.$delete(item, 'isHidden')
             }
           }
+          if (item.key == 'userName') {
+            if (type == 'update' || type == 'detail') {
+              this.$set(item, 'disabled', true)
+            } else if (type == 'insert') {
+              this.$delete(item, 'disabled')
+            }
+          }
+          // if (item.key == 'empId') {
+          //   if (type == 'update' || type == 'detail') {
+          //     this.$set(item, 'type', 'input')
+          //     this.$set(item, 'value', this.data.empName)
+          //     this.$set(item, 'disabled', true)
+          //   } else if (type == 'insert') {
+          //     this.$set(item, 'type', 'select')
+          //     if (item.hasOwnProperty('disabled')) {
+          //       this.$delete(item, 'disabled')
+          //     }
+          //   }
+          // }
+          // if (item.key == 'empName') {
+          //   if (type == 'update' || type == 'detail') {
+          //     this.$delete(item, 'isHidden')
+          //   } else if (type == 'insert') {
+          //     this.$set(item, 'isHidden', true)
+          //   }
+          // }
+          // if (item.key == 'empId') {
+          //   if (type == 'update' || type == 'detail') {
+          //     this.$set(item, 'isHidden', true)
+          //   } else if (type == 'insert') {
+          //     this.$delete(item, 'isHidden')
+          //   }
+          // }
         })
       },
       immediate: true

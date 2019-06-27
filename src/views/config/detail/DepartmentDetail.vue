@@ -30,9 +30,9 @@ export default {
           ],
           [
             {key: 'createtime', label:'创建时间', span: '6', formatter: true},
-            {key: 'createby', label:'创建人', span: '6', formatter: true},
+            {key: 'createby', label:'创建人', span: '6'},
             {key: 'updatetime', label:'修改时间', span: '6', formatter: true},
-            {key: 'updateby', label:'修改人', span: '6', formatter: true}
+            {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
             {key: 'remark', label:'备注', span: '24'}
@@ -50,8 +50,9 @@ export default {
           {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true}
         ],
         rules: {
-          deptId: [
-            {type: 'require', trigger: 'blur'}
+          deptNo: [
+            {type: 'require', trigger: 'blur'},
+            {type: 'regex', reg: /^[A-Za-z0-9/]{1,20}$/, info: '必须由数字、字母组成'}
           ],
           phone: [
             {type: 'require', trigger: 'blur'},
