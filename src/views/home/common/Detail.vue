@@ -22,7 +22,6 @@
           <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
           <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
           <div v-else-if="item.type == 'tree'" class="tree-wrapper">
-            {{data[item.saveKey]}}
             <my-tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></my-tree>
           </div>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
@@ -92,16 +91,17 @@ export default {
       this.dataHis.forEach(item => {
         if (this.type == 'insert') {
           this.$set(this.data, item.key, item.hasOwnProperty('default') ? item.default : null)
+          if (item.hasOwnProperty('saveKey')) {
+            if (item.type == 'tree') {
+              this.$set(this.data, item.saveKey, [])
+            } else {
+              this.$set(this.data, item.saveKey, null)
+            }
+          }
         } else if (!this.data.hasOwnProperty(item.key)) {
           this.$set(this.data, item.key, null)
         }
-        // if (item.hasOwnProperty('saveKey')) {
-        //   if (item.type == 'tree') {
-        //     this.$set(this.data, item.saveKey, [])
-        //   } else {
-        //     this.$set(this.data, item.saveKey, null)
-        //   }
-        // }
+
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
         }
@@ -194,21 +194,35 @@ export default {
               break
             }
           } else if (item.type == 'unique') {
+            let k = item.hasOwnProperty('key') ? item['key'] : key
             if (value || value === 0) {
               let url = item.url + '/checkExist'
               let data = {}
               let k = item.hasOwnProperty('key') ? item['key'] : key
               this.$set(data, k, value)
-              queryAll(url, data).then(res => {
-                if (res.data.code == 0 && res.data.data.hasOwnProperty('exist')) {
-                  this.$set(this.errors, key, '数据已存在')
-                }
-              }).catch(err => {
-                this.$msg.error({
-                  info: '请求异常 !',
-                  tip: err
+              if (this.form.data == null) {
+                queryAll(url, data).then(res => {
+                  if (res.data.code == 0 && res.data.data.hasOwnProperty('exist')) {
+                    this.$set(this.errors, key, '数据已存在')
+                  }
+                }).catch(err => {
+                  this.$msg.error({
+                    info: '请求异常 !',
+                    tip: err
+                  })
                 })
-              })
+              } else if (value != this.form.data[k]) {
+                queryAll(url, data).then(res => {
+                  if (res.data.code == 0 && res.data.data.hasOwnProperty('exist')) {
+                    this.$set(this.errors, key, '数据已存在')
+                  }
+                }).catch(err => {
+                  this.$msg.error({
+                    info: '请求异常 !',
+                    tip: err
+                  })
+                })
+              }
             }
           } else if (item.type == 'regex') { // 匹配
             let reg = item.reg
@@ -270,6 +284,13 @@ export default {
             for (let j = 0; j < this.detailHis[i].length; j++) {
               if (this.detailHis[i][j].formatter && data[this.detailHis[i][j].key]) {
                 this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key].substr(0, 16))
+                // if (value.length > 8) {
+                //   name = `${value.substr(0, 4)}\n${value.substr(4, 3)}...`
+                // } else if (value.length > 4) {
+                //   name = `${value.substr(0, 4)}\n${value.substr(4, 4)}`
+                // } else {
+                //   name = value
+                // }
               } else {
                 this.$set(this.detailHis[i][j], 'value', data[this.detailHis[i][j].key])
               }

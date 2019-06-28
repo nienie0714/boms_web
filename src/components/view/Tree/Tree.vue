@@ -10,7 +10,7 @@
       </div>
       <tree v-if="node.hasOwnProperty(nodeChild) && node[nodeChild]" v-show="node.hasOwnProperty('open') && node.open" ref="treeChild" class="tree-child"
       :data="node[nodeChild]" :selected="selected" :disabled="disabled || (node.hasOwnProperty(disabledKey) ? node[disabledKey] : false)" :nodeKey="nodeKey" :nodeLabel="nodeLabel" :nodeChild="nodeChild"
-      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId" :autoSelectNodeId="autoSelectChildNodeId"
+      :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId" :autoSelectNodeId="autoSelectChildNodeId" :allSelectNodeId="allSelectNodeId"
       @clickNode="clickNode" @selectCheckBox="selectChildCheckBox"></tree>
     </div>
   </div>

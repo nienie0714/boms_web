@@ -1,5 +1,5 @@
 <script>
-import { postData, pageQuery, nopageQuery, remove, download } from '@/util/base'
+import { postData, queryAll, pageQuery, nopageQuery, remove, download } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -12,6 +12,18 @@ export default {
       exportUrl: '',
       // 请求的查询参数
       queryData: {},
+      // 获取菜单按钮权限路径
+      getResourcePerm: 'sys/sysResource/queryOptionUrlName',
+      // 菜单对应按钮权限
+      permissions: {
+        insert: false,
+        update: false,
+        remove: false,
+        detail: false,
+        export: false,
+        import: false,
+        reset: false
+      },
       pageData: {
         num: 1,
         size: 10,
@@ -41,9 +53,11 @@ export default {
   mounted () {
     this.tableData.loading = false
     let table = document.getElementsByClassName('table')[0]
+    let that = this
     if (table) {
       this.$nextTick(() => {
         // this.queryDataReq()
+        that.queryResourcePerm()
         this.changeTableHeight(table)
       })
       window.onresize = () => {
@@ -161,6 +175,23 @@ export default {
           }
           }
       // }
+    },
+    // 获取按钮权限
+    queryResourcePerm (path) {
+      let data = {
+        url: localStorage.getItem('curPath')
+      }
+      if (path) {
+        data.url = path
+      }
+      let _this = this
+      queryAll(this.getResourcePerm, data).then(res => {
+        if (res.data.code == 0) {
+          res.data.data.forEach(item => {
+            _this.permissions[item] = true
+          })
+        }
+      })
     },
     openDetail ({type, row}) {
       this.detail.type = type

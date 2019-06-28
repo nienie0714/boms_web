@@ -1,6 +1,6 @@
 <template>
-  <div class="toolbar">
-    <div class="tool-button export" @click="openExport">
+  <div class="toolbar" >
+    <div v-if="permissions.export" class="tool-button export" @click="openExport">
       <div class="icon"></div>
       <div class="label">导出</div>
     </div>
@@ -8,7 +8,7 @@
       <div class="icon"></div>
       <div class="label">删除</div>
     </div> -->
-    <div class="tool-button insert" @click="openDetail">
+    <div v-if="permissions.insert" class="tool-button insert" @click="openDetail">
       <div class="icon"></div>
       <div class="label">新增</div>
     </div>
@@ -17,6 +17,12 @@
 
 <script>
 export default {
+  props: {
+    permissions: {
+      type: Object,
+      default: ()=>{}
+    }
+  },
   methods: {
     openExport () {
       this.$emit('openExport')

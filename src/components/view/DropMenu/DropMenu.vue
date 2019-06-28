@@ -22,65 +22,45 @@ export default {
     menuList: {
       type: Array,
       default: ()=>[]
+    },
+    activeIndex: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
-      menuLists: [// localMenuList
-        // {
-        //   label: '综合查询',
-        //   child: [
-        //     {
-        //       label: '航班信息查询',
-        //       router: '/home/flight',
-        //       append: false
-        //     },
-        //     {
-        //       label: '行李信息查询',
-        //       router: '/home/luggage',
-        //       append: false
-        //     }
-        //   ],
-        //   icon: 'icon_menu_sch'
-        // },
+      menuLists: [
         {
           label: '信息共享平台',
           router: '/comprhsQuery',
           append: false,
           icon: 'icon_comprhs_query'
         },
-        // {
-        //   label: '行李信息查询',
-        //   router: '/luggage',
-        //   append: false,
-        //   icon: 'icon_luggage_info'
-        // },
         {
           label: '配置管理',
           router: '/config',
           append: false,
           icon: 'icon_config'
         }
-      ],
-      // menuList: [],
-      activeIndex: 0
+      ]
     }
   },
-  // mounted () {
-  //   this.activeIndex = _.findIndex(this.menuList, ['router', this.$route.path])
-  // },
+  created () {
+  },
   methods: {
     changeActive (index, item) {
-      this.activeIndex = index
-      if (item && item.hasOwnProperty('router')) {
-        this.$router.push(item.router)
-      }
+      this.$emit('changeActive', {index, item})
+      // this.activeIndex = index
+      // if (item && item.hasOwnProperty('router')) {
+      //   this.$router.push(item.router)
+      // }
     }
   },
   watch: {
-    $route (to, from) {
-      this.activeIndex = _.findIndex(this.menuList, ['router', to.path])
-    }
+    // $route (to, from) {
+    //   this.activeIndex = _.findIndex(this.menuList, ['router', to.path])
+    // }
   }
 }
 </script>

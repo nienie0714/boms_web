@@ -74,7 +74,6 @@ export default {
   methods: {
     changeData () {
       this.form.data = this.data
-      this.visible = true
     }
   },
   watch: {

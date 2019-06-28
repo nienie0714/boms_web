@@ -115,7 +115,6 @@ export default {
     total: {
       handler (total) {
         if (total > 0) {
-          this.$emit('click', 1)
           let count = Math.ceil(total/this.size)
           let arr = Array.from({length: count}, (item, index) => index + 1)
           this.list.splice(0, this.list.length, ...arr)

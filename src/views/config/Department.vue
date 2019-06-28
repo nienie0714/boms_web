@@ -17,10 +17,10 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
+          <toolbar @openExport="openExport" @openDetail="openDetail" :permissions="permissions"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
@@ -37,7 +37,7 @@ import Detail from './detail/DepartmentDetail'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
-import { queryAll } from '@/util/base'
+import { queryAll, insert, update } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -152,6 +152,9 @@ export default {
     this.getDeptTree()
   },
   methods: {
+    customAfterQuery () {
+      // this.getDeptTree()
+    },
     getDeptTree () {
       queryAll(this.deptTreeUrl).then(res => {
         if (res.data.data.length) {
@@ -172,6 +175,52 @@ export default {
       } else {
         this.$set(this.queryData, 'deptId', this.activeId[0])
       }
+    },
+    insert (data) {
+      insert(this.insertUrl, data).then(res => {
+        if (res.data.code == 0) {
+          this.$msg.success({
+            info: '保存成功 !'
+          })
+          this.handleClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.getDeptTree()
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '保存失败 !'
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
+        console.log(err)
+      })
+    },
+    update (data) {
+      update(this.updateUrl, data).then(res => {
+        if (res.data.code == 0) {
+          this.$msg.success({
+            info: '保存成功 !'
+          })
+          this.handleClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.getDeptTree()
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '保存失败 !'
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
+        console.log(err)
+      })
     }
   }
 }

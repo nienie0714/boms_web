@@ -19,7 +19,7 @@ export default {
   props: ['data', 'index', 'defaults'],
   data () {
     return {
-      selectIndex: null,
+      selectIndex: 0,
       width: 0,
       style: {
         width: 'max-content'
@@ -28,7 +28,7 @@ export default {
   },
   mounted () {
     document.addEventListener('click', this.hiddenMenu)
-    this.handleClick(this.defaults)
+    // this.handleClick(this.defaults)
   },
   destroyed () {
     document.removeEventListener('click', this.hiddenMenu)
@@ -39,10 +39,10 @@ export default {
     },
     handleClick (item, index) {
       if (item && _.isUndefined(index)) {
-        index = _.findIndex(this.data, ['path', item.path])
+        index = _.findIndex(this.data, ['path', item.router])
       }
       this.selectIndex = index
-      if (!item.hasOwnProperty('children')) {
+      if (item.hasOwnProperty('children') && !item.children || !item.hasOwnProperty('children')) {
         this.$emit('skipPath', item)
       }
     },

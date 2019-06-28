@@ -85,7 +85,7 @@ export default {
       handler (data) {
         if (this.type == 'datetime-local') { // 2019-12-31T23:59 // yyyy-mm-ddThh:mm 12小时制
         } else if (this.type == 'date') { // 2019-12-31
-          // console.log(this.value)
+          console.log(this.value)
         }
       },
       immediate: true

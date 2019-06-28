@@ -1,5 +1,5 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :visible="visible" :title="title" :type="type" :form="form"></detail>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ export default {
     Detail
   },
   mixins: [utilMixin],
-  props: ['data', 'type'],
+  props: ['data', 'type', 'visible'],
   data () {
     return {
       title: '角色管理',
@@ -48,7 +48,8 @@ export default {
         ],
         rules: {
           name: [
-            {type: 'require', trigger: 'blur'}
+            {type: 'require', trigger: 'blur'},
+            {type: 'unique', url: '/sys/sysRole', trigger: 'blur'}
           ]
         },
         data: null
@@ -68,6 +69,12 @@ export default {
         this.changeData()
       },
       immediate: true
+    },
+    visible: {
+      handler (visible) {
+        if (visible) {
+        }
+      }
     },
     type: {
       handler (type) {

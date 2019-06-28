@@ -4,7 +4,7 @@
       <div class="logo">
         <img :src="require('@img/logo.png')"/>
       </div>
-      <drop-menu :menuList="menuList"></drop-menu>
+      <drop-menu :menuList="topResource" :activeIndex="activeIndex" @changeActive="changeActive"></drop-menu>
       <div class="user">
         <div class="img">
           <img :src="require('@img/user/img_usr.png')"/>
@@ -23,6 +23,7 @@
 <script>
 import DropMenu from '@view/DropMenu/DropMenu'
 import webSocketMixin from '../../components/mixin/webSocketMixin'
+import { postData } from '@/util/base'
 
 export default {
   components: {
@@ -31,19 +32,12 @@ export default {
   data () {
     return {
       empName: '',
-      topResource: [],
-      menuList: [
+      topResource: [
         {
-          label: '信息共享平台',
-          router: '/comprhsQuery',
+          label: '无权限',
+          router: '',
           append: false,
           icon: 'icon_comprhs_query'
-        },
-        {
-          label: '配置管理',
-          router: '/config',
-          append: false,
-          icon: 'icon_config'
         }
       ],
       activeIndex: 0
@@ -51,12 +45,30 @@ export default {
   },
   mixins: [webSocketMixin],
   mounted () {
-    this.$router.push({name: '信息共享平台'})
     this.empName = localStorage.getItem('empName')
-    // postData('basicdata/sysUser/queryTopResource', {}).then(response => {
-    //   this.topResource = response.data.data
-    // })
-    // {"code":0,"msg":"success","data":[{"resourceId":"c5d07c0c4c5e4d29b1106895c54f4f1","name":"指挥监控","url":"dynamicmap","icon":"card-commond","resourceType":1,"status":"Y","sortkey":1,"pid":null,"parentIds":null,"parentName":null},{"resourceId":"3610d459a68f41c3bb05279ef6ad150","name":"基础数据","url":"/basicdata","icon":"card-basic","resourceType":1,"status":"Y","sortkey":4,"pid":null,"parentIds":null,"parentName":null}]}
+    // 获取顶级菜单
+    postData('sys/sysResource/queryHasSysResource', {url: null, resourceType: 0}).then(response => {
+      this.topResource = response.data.data
+      // this.$router.push({name: '信息共享平台'})
+      
+      let i = _.findIndex(this.topResource, ['router', localStorage.getItem('topMenuActive')])
+      if (i == -1) {
+        this.activeIndex = 0
+        this.changeActive(0, this.topResource[0]) 
+      } else {
+        this.activeIndex = i
+        let data = {index: i, item: this.topResource[i]}
+        this.changeActive(data)
+      }
+    })
+  },
+  methods: {
+    changeActive ({index, item}) {
+      this.activeIndex = index
+      if (item && item.hasOwnProperty('router')) {
+        this.$router.push(item.router)
+      }
+    }
   }
 }
 </script>

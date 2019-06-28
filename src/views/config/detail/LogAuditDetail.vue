@@ -78,7 +78,6 @@ export default {
         this.changeWindowSize()
       })
       this.form.data = this.data
-      this.visible = true
     }
   },
   watch: {

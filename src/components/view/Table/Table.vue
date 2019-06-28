@@ -52,10 +52,10 @@
               + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               +`color: ${item.color};`">
                 <template v-if="item.type=='opr'">
-                  <div class="table-opr update" @click="openDetail('update', row)"></div>
-                  <div class="table-opr remove" @click="openRemove(row)"></div>
-                  <div class="table-opr reset" @click="openDetail('reset', row)"></div>
-                  <div class="table-opr detail" @click="openDetail('detail', row)"></div>
+                  <div v-if="permissions.update" class="table-opr update" @click="openDetail('update', row)"></div>
+                  <div v-if="permissions.remove" class="table-opr remove" @click="openRemove(row)"></div>
+                  <div v-if="permissions.reset" class="table-opr reset" @click="openDetail('reset', row)"></div>
+                  <div v-if="permissions.detail" class="table-opr detail" @click="openDetail('detail', row)"></div>
                 </template>
                 <template v-else-if="item.type!='slot'">
                   <template v-if="item.type=='mult'">
@@ -85,6 +85,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    permissions: {
+      type: Object,
+      default: ()=>{}
     }
   },
   data () {

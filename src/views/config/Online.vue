@@ -14,10 +14,10 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <toolbar @openExport="openExport" @openDetail="openDetail"></toolbar>
+          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>
@@ -47,12 +47,12 @@ export default {
   data () {
     return {
       // 请求路径
-      baseUrl: '/base/sysLog',
+      queryUrl: 'online/userOnline/pageQuery',
       dataS: '',
       dataSS: '',
       queryParam: [
         {
-          key: 'logUser',
+          key: 'userName',
           label: '用户名',
           type: 'input',
           width: 214
@@ -61,22 +61,21 @@ export default {
           key: 'empName',
           label: '姓名',
           type: 'input',
-          width: 214,
-          toUpper: true
+          width: 214
         }
       ],
       tableData: {
         height: 600,
         multSelection: [],
         loading: false,
-        key: 'logId',
+        key: 'userId',
         column: [
           // left
           [
-            {key: 'logUser',  label: '用户名', width: 415},
+            {key: 'userName',  label: '用户名', width: 415},
             {key: 'empName', label: '姓名', width: 415},
             {key: 'mac',  label: 'MAC地址', width: 415},
-            {key: 'loginType',  label: '登录设备类型', width: 415}
+            {key: 'machine',  label: '登录设备类型', width: 415}
           ],
           // center
           [
@@ -92,9 +91,6 @@ export default {
   mounted () {
   },
   methods: {
-    // customQueryBefore () {
-    //   this.$set(this.queryData, 'inOutFlag', this.selectKey)
-    // },
   }
 }
 </script>

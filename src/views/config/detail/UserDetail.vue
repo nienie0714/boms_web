@@ -1,5 +1,5 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" :visible="visible" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ export default {
     Detail
   },
   mixins: [utilMixin],
-  props: ['data', 'type'],
+  props: ['data', 'type', 'visible'],
   data () {
     return {
       title: '用户管理',
@@ -40,7 +40,7 @@ export default {
         column: [
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
           {key: 'roleIds', label: '角色', type: 'inputlistmore', itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
-          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', urlType: 'get', method: this.queryDept},
+          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
           {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},
@@ -109,7 +109,6 @@ export default {
     },
     changeData () {
       this.form.data = this.data
-      this.visible = true
     }
   },
   watch: {
@@ -118,27 +117,24 @@ export default {
         this.changeData()
       },
       immediate: true
+    },    
+    visible: {
+      handler (visible) {
+        if (visible && this.type == 'update') {
+          this.form.column.forEach((item, index) => {
+            if (item.key == 'empId') {
+              if (this.type == 'update') {
+                this.$set(item, 'param', {empId: this.data.empId})
+              } else if (this.type == 'insert') {
+                this.$set(item, 'param', {})
+              }
+            }
+          })
+        }
+      }
     },
     type: {
       handler (type) {
-        let rowData = null
-        // if (type == 'update') {
-          // queryAll('/organization/employee/queryAll', {}).then(res => {
-          //   console.log(this.data)
-          //   rowData = _.find(res.data.data, (o)=>{
-          //     return o.empId == this.data.empId    
-          //   })      
-          //   this.form.column.forEach((item, index) => {
-          //     if(item.key == 'empId') {
-          //       debugger
-          //       if (_.isArray(item.options)) {
-          //         this.$set(item, 'options', item.options.unshift(rowData))
-          //       }
-          //     }
-          //   })
-          // })
-        // }
-
         this.form.column.forEach((item, index) => {
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
@@ -161,32 +157,13 @@ export default {
               this.$delete(item, 'disabled')
             }
           }
-          // if (item.key == 'empId') {
-          //   if (type == 'update' || type == 'detail') {
-          //     this.$set(item, 'type', 'input')
-          //     this.$set(item, 'value', this.data.empName)
-          //     this.$set(item, 'disabled', true)
-          //   } else if (type == 'insert') {
-          //     this.$set(item, 'type', 'select')
-          //     if (item.hasOwnProperty('disabled')) {
-          //       this.$delete(item, 'disabled')
-          //     }
-          //   }
-          // }
-          // if (item.key == 'empName') {
-          //   if (type == 'update' || type == 'detail') {
-          //     this.$delete(item, 'isHidden')
-          //   } else if (type == 'insert') {
-          //     this.$set(item, 'isHidden', true)
-          //   }
-          // }
-          // if (item.key == 'empId') {
-          //   if (type == 'update' || type == 'detail') {
-          //     this.$set(item, 'isHidden', true)
-          //   } else if (type == 'insert') {
-          //     this.$delete(item, 'isHidden')
-          //   }
-          // }
+          if (item.key == 'empId') {
+            if (type == 'update') {
+              this.$set(item, 'param', {empId: this.data.empId})
+            } else if (type == 'insert') {
+              this.$set(item, 'param', {})
+            }
+          }
         })
       },
       immediate: true
