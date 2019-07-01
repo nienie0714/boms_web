@@ -37,7 +37,8 @@ import Detail from './detail/DepartmentDetail'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
-import { queryAll, insert, update } from '@/util/base'
+import { queryAll, insert, update, remove } from '@/util/base'
+import { flattenDeep } from '@/util/util'
 import _ from 'lodash'
 
 export default {
@@ -145,24 +146,19 @@ export default {
         }
       ],
       data: [],
-      activeId: []
+      activeId: [],
+      topId: '',
+      deleteFlag: false
     }
   },
   mounted () {
     this.getDeptTree()
   },
   methods: {
-    customAfterQuery () {
-      // this.getDeptTree()
-    },
-    getDeptTree () {
+    getDeptTree (id) {
       queryAll(this.deptTreeUrl).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
-          if (this.data.length > 0) {
-            this.activeId.push(this.data[0].id)
-            this.clickNode(this.data[0])
-          }
         }
       })
     },
@@ -173,7 +169,7 @@ export default {
       if (this.queryData.hasOwnProperty('deptId')) {
         this.queryData.deptId = this.activeId[0]
       } else {
-        this.$set(this.queryData, 'deptId', this.activeId[0])
+          this.$set(this.queryData, 'deptId', this.activeId[0])
       }
     },
     insert (data) {
@@ -220,6 +216,35 @@ export default {
           info: '请求异常 !'
         })
         console.log(err)
+      })
+    },
+    handleRemove (row) {
+      let data = {
+        ids: this.getRemove(row)
+      }
+      remove(this.removeUrl, data).then(res => {
+        if (res.data.code == 0) {
+          this.$msg.success({
+            info: '删除成功 !'
+          })
+          this.handleRemoveClose()
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.getDeptTree()
+            if(data.ids == this.activeId[0]){
+              this.activeId[0] = 100
+            }
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '删除失败 !',
+            tip: res.data.msg
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
       })
     }
   }

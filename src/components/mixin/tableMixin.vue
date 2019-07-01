@@ -38,6 +38,10 @@ export default {
         visible: false,
         data: null
       },
+      exportData: {
+        visible: false,
+        data: null
+      },
       axiosArr: [],
       loading: false
     }
@@ -240,16 +244,20 @@ export default {
     handleRemoveClose () {
       this.remove.visible = false
     },
+    openExport () {
+      this.exportData.visible = true
+    },
     // 下载
-    openExport (total) {
+    handleExport (total) {
       if (!_.isEmpty(total)) {
         if (total) {
           download(this.exportUrl, this.queryData, total).then(response => {
+            // this.downFile(response, this.fileName)
+            this.downFile(response, '导出')
             this.$msg.success({
               info: '导出成功 !'
             })
-            // this.downFile(response, this.fileName)
-            this.downFile(response, '导出')
+            this.handleExportClose()
           })
         } else {
           this.$msg.error({
@@ -260,11 +268,12 @@ export default {
         let sum = this.pageData ? this.pageData.total : 1
         if (sum) {
           download(this.exportUrl, this.queryData, sum).then(response => {
+            this.downFile(response, '导出')
             this.$msg.success({
               info: '导出成功 !'
             })
+            this.handleExportClose()
             // this.downFile(response, this.fileName)
-            this.downFile(response, '导出')
           })
         } else {
           this.$msg.error({
@@ -272,6 +281,9 @@ export default {
           })
         }
       }
+    },
+    handleExportClose () {
+      this.exportData.visible = false
     },
     // Blob文件转换下载
     downFile (result, fileName, fileType) {

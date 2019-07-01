@@ -5,8 +5,9 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        // target: 'http://10.254.0.116:8095/',
-        target: 'http://10.255.1.2:8989/',
+        target: 'http://10.254.130.18:8095/',
+        // http://10.254.130.18:8095
+        // target: 'http://10.255.1.8:8989/',
         // target: 'http://10.255.1.9:8080/',
         ws: true,
         changeOrigin: true,
@@ -17,7 +18,7 @@ module.exports = {
       '/foo': {
         target: '<other_url>'
       }
-    },
+    }
   },
   css: {
     loaderOptions: {

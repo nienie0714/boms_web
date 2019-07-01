@@ -44,7 +44,8 @@ export default {
           }
         } else {
           this.$msg.error({
-            info: '保存失败 !'
+            info: '保存失败 !',
+            tip: res.data.msg
           })
         }
       }).catch(err => {

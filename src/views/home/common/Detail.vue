@@ -47,6 +47,7 @@ import { queryAll, queryAllGet } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
 import _ from 'lodash'
 import { debug } from 'util';
+import { setTimeout } from 'timers';
 
 export default {
   components: {
@@ -160,7 +161,7 @@ export default {
       this.$emit('handleClose')
     },
     handleSubmit () {
-      this.errors = {}
+      // this.errors = {}
       let hiddenKeys = []
       // 表单字段隐藏时不校验
       this.dataHis.forEach((item, index) => {
@@ -170,14 +171,18 @@ export default {
       })
       _.forEach(this.form.rules, (arr, key) => {
         if(!hiddenKeys.includes(key)) {
-          this.handleError(key, this.data[key])
+          if (!this.errors.hasOwnProperty(key)) {
+            this.handleError(key, this.data[key])
+          }
         }
       })
+      // setTimeout(()=>{ // 等待唯一性校验接口返回
       if (!_.isEmpty(this.errors)) {
         return
       } else {
         this.$emit('handleSubmit', {data: this.data, type: this.type})
       }
+      // }, 1000)
     },
     handleError (key, value) {
       this.$delete(this.errors, key)
@@ -413,14 +418,15 @@ export default {
   margin-bottom: 8px;
 }
 .his-info-cont {
-  font-size: 16px;
-  height: 16px;
-  min-height: 16px;
-  line-height: 16px;
-  color: #3D424D;
-  text-align: left;
-  // margin-top: 10px;
-  // margin-bottom: 20px;
+    max-width: 600px;
+    overflow-y: auto;
+    font-size: 16px;
+    min-height: 16px;
+    line-height: 16px;
+    color: #3d424d;
+    text-align: left;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .ivu-tree ul {

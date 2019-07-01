@@ -52,7 +52,8 @@ export default {
         rules: {
           deptNo: [
             {type: 'require', trigger: 'blur'},
-            {type: 'regex', reg: /^[A-Za-z0-9/]{1,20}$/, info: '必须由数字、字母组成'}
+            {type: 'regex', reg: /^[A-Za-z0-9/]{1,20}$/, info: '必须由数字、字母组成'},
+            {type: 'unique', url: '/organization/department', trigger: 'blur'}
           ],
           phone: [
             {type: 'require', trigger: 'blur'},
