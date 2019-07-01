@@ -5,6 +5,7 @@ export default {
       {key: 'none', classify: '未知', options: []},
       {key: 'attr', classify: '属性', options: []},
       {key: 'isYOrN', classify: '是否', options: [{code: 'Y', name: '是'}, {code: 'N', name: '否'}]},
+      {key: 'yOrNOrAll', classify: '是否', options: [{code: null, name: '全部'}, {code: 'Y', name: '是'}, {code: 'N', name: '否'}]},
       {key: 'inOutFlag', classify: '进出标识', options: []},
       {key: 'lugMarkType', classify: '行李标记类型', options: []},
       {key: 'resourceType',

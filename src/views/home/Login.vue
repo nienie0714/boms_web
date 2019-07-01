@@ -44,6 +44,7 @@ export default {
     localStorage.setItem('token', '')
     localStorage.setItem('username', '')
     window.name = this.$route.name
+    this.getAuthCode()
   },
   methods: {
     getPasswordByUsername () {
@@ -66,8 +67,6 @@ export default {
           if (res.data.code == 0) {
             localStorage.setItem('token', res.data.data.token ? res.data.data.token : '')
             localStorage.setItem('empName', res.data.data.empName ? res.data.data.empName : '')
-            // localStorage.setItem('teamName', res.data.data.teamName ? res.data.data.teamName : '')
-            // localStorage.setItem('deptName', res.data.data.deptName ? res.data.data.deptName : '')
             localStorage.setItem('empId', res.data.data.empId ? res.data.data.empId : '')
             localStorage.setItem('username', this.userName)
             this.$router.push('/home')
@@ -90,7 +89,9 @@ export default {
         })
       }
     },
-    
+    getAuthCode() {
+      
+    }
   }
 }
 </script>

@@ -1,23 +1,53 @@
 .flight, .luggages, .log-audit {
   .toolbar {
-    margin-left: 20px;
     height: 38px;
-    align-self: flex-end;
+    margin: 0 auto;
+    align-self: flex-start;
+    min-width: 62px;
     >button {
       height: 100%;
       line-height: 100%;
     }
   }
-  .tabs-parent {
+  .tab-group {
     position: absolute;
     top: 100px;
-    left: 0;
+    left: 218px;
     right: 0;
-    margin: auto;
-    .tab-item>div {
-      height: 22px;
-      line-height: 22px;
+    margin: auto;    
+    display: flex;
+    justify-content: center;
+    .tabs-parent {
+      margin-right: 20px;
     }
+  }
+  .tabs-parent {
+    .tab-item>div {
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+  .tab-item {
+    color: $gray-rd;
+    cursor: pointer;
+    &.current-item {
+      box-sizing: border-box;
+      margin: 2px;
+      background-color: $blue;
+      color: #fff !important;
+      border-radius: 60px/50px;
+    }
+    &:hover {
+      color: $blue;
+    }
+    &:not(:last-child)>div {
+      border-right: none!important;
+    }
+    // >div {
+    //   margin: 8px 0;
+    //   padding: 0 24px;
+    //   display: flex;
+    // }
   }
 }
 
@@ -162,11 +192,12 @@
         >.left-tree {
           padding-top: 20px;
           position: absolute;
-          height: calc(100% - 60px);
+          height: calc(100% - 40px);
           top: 60px;
           left: -280px;
           right: calc(100% + 20px);
           background-color: rgba(61, 78, 95, 1);
+          overflow-x: auto;
           .tree-label {
             color: #fff;
           }

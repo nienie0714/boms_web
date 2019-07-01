@@ -255,7 +255,7 @@ export default {
 .luggages {
   >div>.table {
     .table-header {
-      $rowHeight: 48px;
+      $rowHeight: 32px;
       .row_height_1 {
         max-height: $rowHeight !important;
         height: $rowHeight !important;

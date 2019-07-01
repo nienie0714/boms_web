@@ -1,7 +1,7 @@
 <template>
   <div class="query-row">
-    <div v-for="item in dataHis" :key="item.key" v-show="item.hasOwnProperty('type')" class="query-item">
-      <input-tag v-model="item.value" :width="item.width" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
+    <div v-for="item in dataHis" :key="item.key" class="query-item" :class="item.class">
+      <input-tag  v-if="!item.hasOwnProperty('isHidden') || !item.isHidden" v-model="item.value" :width="item.width" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
       :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
       @change="handleChange(item.value)" @enter="handleEnter(item, $event)"></input-tag>
     </div>

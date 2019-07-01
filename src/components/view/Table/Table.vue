@@ -242,11 +242,13 @@ export default {
 <style lang="scss">
 .th-col-title {
   $height: 18px;
-  font-size: 16px !important;
+  font-size: 14px !important;
   color: $gray-st !important;
   height: $height !important;
   max-height: $height !important;
   line-height: $height !important;
+  font-weight: bold !important;
+  padding: 7px 0;
   border: {
     left: 1px solid #E7EDF2;
     right: 1px solid #E7EDF2;
@@ -255,8 +257,6 @@ export default {
 th.col-child-title {
   $height: 12px;
   max-height: $height !important;
-  height: $height !important;
-  line-height: $height !important;
 }
 .col-child-title {
   border: {
@@ -436,11 +436,11 @@ $rowHeight: 40px;
 .table-header {
   @include heightMix ($rowHeight);
   border-top: 1px solid $gray-border;
-  // .row_height_1 {
-  //   max-height: $rowHeight;
-  //   height: $rowHeight;
-  //   line-height: $rowHeight;
-  // }
+  .row_height_1 {
+    max-height: 32px;
+    height: 32px;
+    line-height: 32px;
+  }
   // .row_height_2 {
   //   max-height: 2 * $rowHeight - 21;
   //   height: 2 * $rowHeight - 21;

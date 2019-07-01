@@ -5,12 +5,21 @@
         <img :src="require('@img/logo.png')"/>
       </div>
       <drop-menu :menuList="topResource" :activeIndex="activeIndex" @changeActive="changeActive"></drop-menu>
-      <div class="user">
+      <!-- <div class="user">
         <div class="img">
           <img :src="require('@img/user/img_usr.png')"/>
         </div>
         <div class="name">{{empName?empName:''}}</div>
-      </div>
+      </div> -->
+       <Dropdown class="user">
+        <div class="img">
+          <img :src="require('@img/user/img_usr.png')"/>
+        </div>
+        <div class="name">{{empName?empName:''}}</div>
+        <DropdownMenu slot="list">
+            <DropdownItem @click.native="loginOut">退出登录</DropdownItem>
+        </DropdownMenu>
+    </Dropdown>
     </div>
     <div class="main">
       <keep-alive>
@@ -22,7 +31,7 @@
 
 <script>
 import DropMenu from '@view/DropMenu/DropMenu'
-import webSocketMixin from '../../components/mixin/webSocketMixin'
+// import webSocketMixin from '../../components/mixin/webSocketMixin'
 import { postData } from '@/util/base'
 
 export default {
@@ -43,7 +52,7 @@ export default {
       activeIndex: 0
     }
   },
-  mixins: [webSocketMixin],
+  // mixins: [webSocketMixin],
   mounted () {
     this.empName = localStorage.getItem('empName')
     // 获取顶级菜单
@@ -68,6 +77,9 @@ export default {
       if (item && item.hasOwnProperty('router')) {
         this.$router.push(item.router)
       }
+    },
+    loginOut() {
+      this.$router.push('/')
     }
   }
 }
@@ -89,25 +101,29 @@ export default {
       margin: 15px 0 0 20px;
     }
     >.user {
-      width: 130px;
+      width: 178px;
       display: flex;
       align-items: center;
       padding: 0 20px 0 30px;
       background-image: url(~@img/header/bg_usr_center.png);
-      .img {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        overflow: hidden;
-      }
-      .name {
-        width: calc(100% - 50px);
-        margin-left: 14px;
-        color: #fff;
-        font-size: 14px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
+      >.ivu-dropdown-rel {
+        width: 100%;
+        display: flex;
+        .img {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+        .name {
+          width: calc(100% - 50px);
+          margin-left: 14px;
+          color: #fff;
+          font-size: 14px;
+          white-space:nowrap;
+          overflow:hidden;
+          text-overflow:ellipsis;
+        }
       }
     }
   }
