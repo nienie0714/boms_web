@@ -93,14 +93,22 @@ export default {
       } else {
         this.queryParam.forEach(item => {
           if (item.value === '') {
-            this.$set(data, item.key, null)
-          } else {
             if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+              this.$set(data, item.key1, null)
+              this.$set(data, item.key2, null)
+            } else {
+              this.$set(data, item.key, null)
+            }
+          } else if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+            if (item.value) {
               this.$set(data, item.key1, item.value[0])
               this.$set(data, item.key2, item.value[1])
             } else {
-              this.$set(data, item.key, item.value)
+              this.$set(data, item.key1, null)
+              this.$set(data, item.key2, null)
             }
+          } else {
+            this.$set(data, item.key, item.value)
           }
         })
         this.queryData = data
@@ -108,6 +116,10 @@ export default {
     },
     customQueryBefore () {},
     customAfterQuery () {},
+    queryDataReqReset(status){
+      this.pageData.num = 1
+      this.queryDataReq(status)
+    },
     // 发送查询请求
     queryDataReq (status) {
       // if (!this.loading) {

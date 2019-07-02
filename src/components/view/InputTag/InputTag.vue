@@ -10,11 +10,12 @@
       <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></tab-button>
       <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list>
       <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects>
-      <Select v-else-if="type == 'select'" v-model="currentValue" :size="'large'" :filterable="filterable" @on-change="change($event)">
+      <Select v-else-if="type == 'select'" v-model="currentValue" :size="'large'" :filterable="filterable" :clearable="clearable" @on-change="change($event)">
           <Option v-for="(item, index) in options" :value="id ? item[id] : item" :key="index">{{label ? item[label] : (id ? item[id] : item)}}</Option>
       </Select>
       <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more>
       <DatePicker v-else-if="type == 'datepickers'" v-model="currentValue" format="yyyy-MM-dd" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
+      <DatePicker v-else-if="type == 'datepickersHM'" v-model="currentValue" format="yyyy-MM-dd HH:mm" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
     </div>
     <div v-if="append" class="append">{{append}}</div>
   </div>
@@ -91,6 +92,10 @@ export default {
       default: false
     },
     filterable: {
+      type: Boolean,
+      default: true
+    },
+    clearable: {
       type: Boolean,
       default: true
     },
@@ -241,7 +246,9 @@ export default {
       outline: 0;
       box-shadow: none!important;
     }
-
+    .ivu-date-picker {
+      width: 100%;
+    }
     .ivu-date-picker-focused input {
       border: none!important;
       outline: 0;

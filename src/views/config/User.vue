@@ -3,7 +3,7 @@
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -66,7 +66,7 @@ export default {
         {
           key: 'roleId',
           label: '角色',
-          type: 'inputlist',
+          type: 'select',
           width: 214,
           itemValue: 'roleId',
           itemLabel: 'name',

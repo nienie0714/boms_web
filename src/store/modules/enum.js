@@ -6,6 +6,7 @@ export default {
       {key: 'attr', classify: '属性', options: []},
       {key: 'isYOrN', classify: '是否', options: [{code: 'Y', name: '是'}, {code: 'N', name: '否'}]},
       {key: 'yOrNOrAll', classify: '是否', options: [{code: null, name: '全部'}, {code: 'Y', name: '是'}, {code: 'N', name: '否'}]},
+      {key: 'terminal', classify: '是否', options: [{code: 'T1', name: 'T1'}, {code: 'T2', name: 'T2'}, {code: 'T3', name: 'T3'}]},
       {key: 'inOutFlag', classify: '进出标识', options: []},
       {key: 'lugMarkType', classify: '行李标记类型', options: []},
       {key: 'resourceType',

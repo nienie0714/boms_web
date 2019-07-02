@@ -24,7 +24,7 @@
   .tabs-parent {
     .tab-item>div {
       height: 20px;
-      line-height: 20px;
+      line-height: 24px;
     }
   }
   .tab-item {
@@ -36,6 +36,9 @@
       background-color: $blue;
       color: #fff !important;
       border-radius: 60px/50px;
+      >div {
+        line-height: 20px!important;
+      }
     }
     &:hover {
       color: $blue;

@@ -1,29 +1,35 @@
 <template>
   <div class="flight">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" :defaultKey="'0'" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" :defaultKey="'today'" @tabItemClick="tabItemClickDay"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
-    <FltHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltHis>
-    <FltNow v-else :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltNow>
+    <FltNow :selectedDay="selectKeyDay" :selected="selectKey"></FltNow>
+    <flt :isComp="showComp.is" :row="showComp.row"></flt>
   </div>
 </template>
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
 import Tabs from '@view/Tabs/Tabs'
+import Tables from '@view/Table/Table'
+import tableMixin from '@mixin/tableMixin'
 import { queryAll } from '@/util/base'
+import Flt from './detail/FltDetail'
 import FltNow from './history/FltNow'
-import FltHis from './history/FltHis'
+import CsProgress from '@view/CsProgress/CsProgress'
 import _ from 'lodash'
 
 export default {
   components: {
+    // QueryRow,
     Tabs,
-    FltNow,
-    FltHis
+    // Tables,
+    Flt,
+    // CsProgress
+    FltNow
   },
-  // mixins: [tableMixin],
+  mixins: [tableMixin],
   data () {
     return {
       axiosChildArr: [],
@@ -32,21 +38,27 @@ export default {
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
       selectKey: 'D',
       selectKeyDay: 'today',
+      showComp: {
+        is: null,
+        lugUrl: '/integrated/dynamicFlight/flightLugStat',
+        fltUrl: '/integrated/dynamicFlight/detail',
+        row: null
+      },
       tabsDataDay: [
         {
-          key: '-1',
+          key: 'yestoday',
           label: '昨日'
         },
         {
-          key: '0',
+          key: 'today',
           label: '今日'
         },
         {
-          key: '1',
+          key: 'tomorrow',
           label: '明日'
         },
         {
-          key: '-2',
+          key: 'history',
           label: '历史记录'
         }
       ],
@@ -54,6 +66,7 @@ export default {
         {
           key: 'D',
           label: '出港航班',
+          // icon: 'icon_departure_20'
         },
         {
           key: 'A',
@@ -62,16 +75,18 @@ export default {
       ]
     }
   },
-  created () {
+  mounted () {
     this.selectKey = this.tabsData[0].key
     this.selectKeyDay = this.tabsDataDay[1].key
   },
   methods: {
     tabItemClickDay (key) {
       this.selectKeyDay = key
+      this.queryDataReq(1)
     },
     tabItemClick (key) {
       this.selectKey = key
+      this.queryDataReq(1)
     }
   }
 }
