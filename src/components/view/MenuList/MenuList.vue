@@ -3,7 +3,7 @@
     <ul>
       <li v-for="(child, index) in data" :key="index"  :class="[(index%2==0)?'single-index':'', selectIndex==index?'select-index':'']"
       @click.stop="handleClick(child, index)"><!-- :class="child.disabled ? 'disabled' : ''" @mouseenter.stop="handleHover(idx)" @mouseleave.stop="handleRemoveHover" -->
-        <span>{{ child.label }}<i v-if="child.hasOwnProperty('children')" class="el-icon-caret-right"></i></span>
+        <span>{{ child.label }}<i v-if="child.hasOwnProperty('children') && child.children" class="el-icon-caret-right"></i></span>
         <child v-if="child.hasOwnProperty('children') && (selectIndex == index)" class="list-menu-child" :data="child.children" :index="index"
         @skipPath="skipPath" @handleClose="handleClose"></child>
       </li>

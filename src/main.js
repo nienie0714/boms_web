@@ -4,6 +4,8 @@ import router from '@/router'
 import store from '@/store/index'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import '@/style/custom.scss'
 import '@/style/more.scss'
 import '@/style/iconfont/iconfont.css'
@@ -14,6 +16,7 @@ import * as filters from '@view/Filters/'
 // import LoaderAuto from '@view/LoaderAuto/'
 
 Vue.use(iView)
+Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.axios = axiosReq
 Vue.prototype.removePending = removePending

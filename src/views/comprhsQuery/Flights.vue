@@ -1,7 +1,7 @@
 <template>
   <div class="flight">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" :defaultKey="'0'" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
     <FltHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltHis>
@@ -31,22 +31,22 @@ export default {
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
       selectKey: 'D',
-      selectKeyDay: 'today',
+      selectKeyDay: 0,
       tabsDataDay: [
         {
-          key: '-1',
+          key: -1,
           label: '昨日'
         },
         {
-          key: '0',
+          key: 0,
           label: '今日'
         },
         {
-          key: '1',
+          key: 1,
           label: '明日'
         },
         {
-          key: '-2',
+          key: -2,
           label: '历史记录'
         }
       ],

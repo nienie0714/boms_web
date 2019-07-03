@@ -37,15 +37,27 @@ export default {
         arr.forEach(index => {
           this.dataHis.splice(index, 1, this.data[index])
           if (this.dataHis[index].hasOwnProperty('url')) {
-            queryAll(this.dataHis[index].url, this.data[index].param).then(res => {
-              if (res.data.code == 0) {
-                this.$set(this.data[index], 'options', res.data.data)
-              } else {
-                this.$msg.error({
-                  info: '获取' + this.dataHis[index].label + '失败 !'
-                })
-              }
-            })
+            // if (this.dataHis[index].urlType == 'get') {
+            //   queryAllGet(this.dataHis[index].url, this.data[index].param).then(res => {
+            //     if (res.data.code == 0) {
+            //       this.$set(this.data[index], 'options', res.data.data)
+            //     } else {
+            //       this.$msg.error({
+            //         info: '获取' + this.dataHis[index].label + '失败 !'
+            //       })
+            //     }
+            //   })
+            // } else {
+              queryAll(this.dataHis[index].url, this.data[index].param).then(res => {
+                if (res.data.code == 0) {
+                  this.$set(this.data[index], 'options', res.data.data)
+                } else {
+                  this.$msg.error({
+                    info: '获取' + this.dataHis[index].label + '失败 !'
+                  })
+                }
+              })
+            // }
           } else if (this.dataHis[index].hasOwnProperty('enumKey')) {
             this.$set(this.dataHis[index], 'options', this.$store.getters.getOptions(this.dataHis[index].enumKey))
           }

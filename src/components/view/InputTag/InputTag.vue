@@ -16,6 +16,9 @@
       <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more>
       <DatePicker v-else-if="type == 'datepickers'" v-model="currentValue" format="yyyy-MM-dd" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
       <DatePicker v-else-if="type == 'datepickersHM'" v-model="currentValue" format="yyyy-MM-dd HH:mm" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
+      <Date-range-picker v-if="type == 'error'" v-model="currentValue[key]" :currentValue="currentValue" :dateRange="item"></Date-range-picker>
+      <el-date-picker v-if="type == 'elDateRange'" v-model="currentValue" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat">
+      </el-date-picker>
     </div>
     <div v-if="append" class="append">{{append}}</div>
   </div>
@@ -28,6 +31,7 @@ import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
 import Selects from '@view/Selects/Selects'
 import InputListMore from '@view/InputListMore/InputListMore'
+import DateRangePicker from '@view/DateRangePicker/DateRangePicker'
 
 export default {
   components: {
@@ -36,7 +40,8 @@ export default {
     TabButton,
     InputList,
     Selects,
-    InputListMore
+    InputListMore,
+    DateRangePicker
   },
   props: {
     width: {
@@ -120,7 +125,15 @@ export default {
       default: ()=>{
         return ['', '']
       }
-    }
+    },
+    format: {
+      type: String,
+      default: 'yyyy-MM-dd HH:mm'
+    },
+    valueFormat: {
+      type: String,
+      default: 'yyyy-MM-dd HH:mm'
+    },
   },
   model: {
     prop: 'value',
@@ -272,8 +285,16 @@ export default {
       border-radius: 0;
       margin: 0 auto;
     }
+
+    .el-date-editor--datetimerange.el-input, .el-date-editor--datetimerange.el-input__inner {
+      width: 304px;
+    }
+    .el-input__inner {
+      height: 38px;
+      line-height: 38px;
+      border: none;
+    }
   }
-  
   &:focus-within, &:hover {
     border: 1px solid rgba(63, 153, 255, 0.8);
     box-shadow: 0 0 0 2px rgba($color: $blue-shadow, $alpha: .3);

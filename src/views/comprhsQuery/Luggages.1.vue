@@ -1,9 +1,6 @@
 <template>
   <div class="luggages">
-    <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" :defaultKey="'0'" @tabItemClick="tabItemClickDay"></tabs>
-      <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
-    </div>
+    <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
@@ -61,25 +58,6 @@ export default {
         lugUrl: '/integrated/luggage/detail',
         row: null
       },
-      selectKeyDay: 'today',
-      tabsDataDay: [
-        {
-          key: '-1',
-          label: '昨日'
-        },
-        {
-          key: '0',
-          label: '今日'
-        },
-        {
-          key: '1',
-          label: '明日'
-        },
-        {
-          key: '-2',
-          label: '历史记录'
-        }
-      ],
       tabsData: [
         {
           key: 'D',
@@ -171,13 +149,9 @@ export default {
   },
   mounted () {
     this.selectKey = this.tabsData[0].key
-    this.selectKeyDay = this.tabsDataDay[1].key
     this.queryDataReq()
   },
   methods: {
-    tabItemClickDay (key) {
-      this.selectKeyDay = key
-    },
     tabItemClick (key) {
       if (((this.selectKey != key) && (this.selectKey == 'A')) || ((this.selectKey != key) && (key == 'A'))) {
         this.queryParam.pop()
@@ -281,7 +255,7 @@ export default {
 .luggages {
   >div>.table {
     .table-header {
-      $rowHeight: 32px;
+      $rowHeight: 48px;
       .row_height_1 {
         max-height: $rowHeight !important;
         height: $rowHeight !important;

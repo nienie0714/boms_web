@@ -1,10 +1,12 @@
 <template>
   <div class="luggages">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" :defaultKey="'0'" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" :defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
-    <div class="query-top">
+    <LugHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugHis>
+    <LugNow v-else :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugNow>
+    <!-- <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
         <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
@@ -30,49 +32,42 @@
         </template>
       </tables>
     </div>
-    <component :is="showComp.is" :row="showComp.row"></component>
+    <component :is="showComp.is" :row="showComp.row"></component> -->
+    <!-- <LugNow :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugNow> -->
   </div>
 </template>
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
 import Tabs from '@view/Tabs/Tabs'
-import Tables from '@view/Table/Table'
-import tableMixin from '@mixin/tableMixin'
 import { queryAll } from '@/util/base'
-import Lug from './detail/LugDetail'
+import LugNow from './history/LugNow'
+import LugHis from './history/LugHis'
 
 export default {
   components: {
-    QueryRow,
     Tabs,
-    Tables,
-    Lug
+    LugNow,
+    LugHis
   },
-  mixins: [tableMixin],
   data () {
     return {
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/luggage/queryAll',
       selectKey: 'D',
-      showComp: {
-        is: null,
-        lugUrl: '/integrated/luggage/detail',
-        row: null
-      },
-      selectKeyDay: 'today',
+      selectKeyDay: 0,
       tabsDataDay: [
         {
-          key: '-1',
+          key: -1,
           label: '昨日'
         },
         {
-          key: '0',
+          key: 0,
           label: '今日'
         },
         {
-          key: '-2',
+          key: -2,
           label: '历史记录'
         }
       ],
@@ -89,252 +84,19 @@ export default {
         //   key: 'E',
         //   label: '中转行李'
         // }
-      ],
-      queryParamD: [
-        {
-          key: 'flightNo',
-          label: '航班号',
-          type: 'input',
-          width: 214,
-          toUpper: true
-        },
-        {
-          key: 'progressStatus',
-          label: '航班状态',// todo 航班状态
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
-        },
-        {
-          key: 'lugType',
-          label: '行李类型',// todo 行李类型
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
-        },
-        {
-          key: 'marking',
-          label: '是否标记',// todo 是否标记
-          type: 'tab',
-          width: 214,
-          enumKey: 'yOrNOrAll',
-          itemValue: 'code',
-          itemLabel: 'name',
-          value: null
-        },
-        // todo 保障状态
-        {
-          key: 'lugNo',
-          label: '行李编号',
-          type: 'input',
-          width: 214
-        },
-        {
-          key: 'chute',
-          label: '行李滑槽号',// todo 行李滑槽号改为文本框
-          type: 'input',
-          width: 214,
-        },
-        {
-          key: 'checkinCounter',
-          label: '值机柜台号',// todo 值机柜台号
-          type: 'input',
-          width: 214,
-          toUpper: true,
-          class: 'mt14'
-        },
-        {
-          key: 'checkinTime',
-          key1: 'beginCheckin',
-          key2: 'endCheckin',
-          label: '值机时间',// todo 值机时间
-          type: 'datepickersHM',
-          width: 360,
-          class: 'mt14'
-        }
-      ],
-      queryParamA: [
-        {
-          key: 'flightNo',
-          label: '航班号',
-          type: 'input',
-          width: 214,
-          toUpper: true
-        },
-        {
-          key: 'progressStatus',
-          label: '航班状态',// todo 航班状态
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
-        },
-        {
-          key: 'lugType',
-          label: '行李类型',// todo 行李类型
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
-        },
-        {
-          key: 'marking',
-          label: '是否标记',// todo 是否标记
-          type: 'tab',
-          width: 214,
-          enumKey: 'yOrNOrAll',
-          itemValue: 'code',
-          itemLabel: 'name',
-          value: null
-        },
-        // todo 保障状态
-        {
-          key: 'lugNo',
-          label: '行李编号',
-          type: 'input',
-          width: 214
-        },
-        {
-          key: 'belt',
-          label: '转盘号',
-          type: 'input',
-          width: 214
-        },
-        {
-          key: 'unloadTime',
-          key1: 'beginUnload',
-          key2: 'endUnload',
-          label: '卸机时间',// todo 卸机时间
-          type: 'datepickersHM',
-          width: 360,
-          class: 'mt14'
-        }
-      ],
-      queryParam: [],
-      tableData: {
-        height: 600,
-        multSelection: [],
-        loading: false,
-        key: 'lugId',
-        column: [
-          // left
-          [
-            {type: 'mult', width: 50},
-            {key: 'lugNo',  label: '行李编号', width: 100, class: 'bold', title: true},
-            // todo 保障状态
-            // todo 旅客姓名
-            {key: 'passenger',  label: '旅客姓名', width: 110, type: 'slot', title: true},
-            {key: 'flightNo',  label: '航班号', width: 80, title: true},
-          ],
-          // center
-          [
-            {key: 'seatNo',  label: '座位号', width: 90, title: true},
-            {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
-            // todo 航线
-            // todo 值机时间
-            // todo 航班状态
-            // todo 异常状态
-            // todo 机位
-            {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
-            // todo 是否标记
-            {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-            // todo 值机柜台号 是 交运柜台么
-            {key: 'counter',  label: '值机柜台', width: 90},
-            {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
-            // todo 安检状态
-            // todo 人工分拣时间
-            // todo 装机时间
-          ],
-          // right
-          [
-            {label: '操作', type: 'slot', width: 120}
-          ]
-        ],
-        data: []
-      }
+      ]
     }
   },
   mounted () {
     this.selectKey = this.tabsData[0].key
     this.selectKeyDay = this.tabsDataDay[1].key
-    this.queryParam.push(...this.queryParamD)
-    this.queryDataReq()
   },
   methods: {
     tabItemClickDay (key) {
       this.selectKeyDay = key
     },
     tabItemClick (key) {
-      if (((this.selectKey != key) && (this.selectKey == 'A')) || ((this.selectKey != key) && (key == 'A'))) {
-        if (key == 'A') {
-          this.queryParam.pop()
-          this.queryParam = []
-          // this.$set(this, 'queryParam', [])
-          this.queryParam.push(...this.queryParamA)
-          // this.$set(this.queryParam, 0, this.queryParamA)
-          this.$set(this.tableData.column, 1, [
-            {key: 'seatNo',  label: '座位号', width: 90, title: true},
-            {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
-            // todo 航线
-            // todo 航班状态
-            // todo 异常状态
-            // todo 机位
-            {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
-            // todo 是否标记
-            {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-            {key: 'belt',  label: '行李转盘', width: 70, title: true},
-            // todo 卸机时间
-            // todo 上转盘时间
-          ])
-        } else {
-          this.queryParam = []
-          this.queryParam.push(...this.queryParamD)
-          // this.$set(this.queryParam, 0, this.queryParamD)
-          this.$set(this.tableData.column, 1, [
-            {key: 'seatNo',  label: '座位号', width: 90, title: true},
-            {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
-            // todo 航线
-            // todo 值机时间
-            // todo 航班状态
-            // todo 异常状态
-            // todo 机位
-            {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
-            // todo 是否标记
-            {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-            // todo 值机柜台号 是 交运柜台么
-            {key: 'counter',  label: '值机柜台', width: 90},
-            {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
-            // todo 安检状态
-            // todo 人工分拣时间
-            // todo 装机时间
-          ])
-        }
-      }
       this.selectKey = key
-      this.queryDataReq()
-    },
-    customQueryBefore () {
-      this.$set(this.queryData, 'inOutFlag', this.selectKey)
-      this.$set(this.queryData, 'execRange', this.selectKeyDay)
-    },
-    changeComp (comp, row) {
-      this.showComp.is = comp
-      if (comp == 'lug') {
-        let idObj = {
-          lugId: row['lugId']
-        }
-        queryAll(this.showComp.lugUrl, idObj).then(res => {
-          if (res.data.code == 0) {
-            this.showComp.row = res.data.data
-          }
-        })
-      }
     }
   }
 }

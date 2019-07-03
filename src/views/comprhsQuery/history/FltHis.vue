@@ -19,7 +19,7 @@
           </div> -->
         </div>
       </div>
-      <div class="table-cont container cross">
+      <div class="table-cont container cross height523">
         <tables :tableData="tableData" :loading="tableData.loading">
           <template v-slot:slot-body="{index, row, item}">
             <template v-if="item.label=='操作'">
@@ -70,7 +70,7 @@ export default {
   data () {
     return {
       // 请求路径
-      queryUrl: 'online/userOnline/pageQuery',
+      queryUrl: '/integrated/dynamicFlight/pageQuery',
       queryParam: [
         {
           key: 'flightNo',
@@ -79,19 +79,18 @@ export default {
           width: 278,
           toUpper: true
         },
-        {
-          key: 'terminal',
-          label: '航站楼',// todo 航站楼
-          type: 'select',
-          width: 214,
-          enumKey: 'terminal',
-          itemValue: 'code',
-          itemLabel: 'name',
-          // url: '/base/aircraftStand/queryAll'
-        },
+        // {
+        //   key: 'guarantee',
+        //   label: '保障状态',// todo
+        //   type: 'select',
+        //   width: 214,
+        //   itemValue: 'standNo',
+        //   itemLabel: 'standNo',
+        //   url: '/base/aircraftStand/queryAll'
+        // },
         {
           key: 'marking',
-          label: '是否标记',// todo 是否标记
+          label: '是否标记',
           type: 'tab',
           width: 214,
           enumKey: 'yOrNOrAll',
@@ -100,30 +99,43 @@ export default {
           value: null
         },
         {
-          key: 'progressStatus',
-          label: '航班状态',// todo 航班状态
-          type: 'inputlist',
-          width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
-        },
-        {
           key: 'abnormalStatus',
           label: '航班异常状态',// todo 航班异常状态
-          type: 'inputlist',
+          type: 'select',
           width: 234,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          itemValue: 'statusCode',
+          itemLabel: 'nameC',
+          url: '/base/flightStatus/queryAbnormalStatus'
+        },
+        {
+          key: 'progressStatus',
+          label: '航班状态',
+          type: 'select',
+          width: 214,
+          itemValue: 'statusCode',
+          itemLabel: 'nameC',
+          url: '/base/flightStatus/queryFlightStatus'
+        },
+        {
+          key: 'terminal',
+          label: '航站楼',
+          type: 'select',
+          width: 214,
+          itemValue: 'terminalNo',
+          itemLabel: 'name',
+          url: '/base/terminal/queryAll'
         },
         {
           key: 'execDate',
           key1: 'beginDate',
           key2: 'endDate',
           label: '航班日期',// 航班日期
-          type: 'datepickers',
-          width: 278
+          type: 'elDateRange',
+          dateType: 'date',
+          format: 'yyyy-MM-dd HH:mm',
+          valueFormat: 'yyyy-MM-dd HH:mm',
+          width: 390,
+          class: 'mt14',
         }
       ],
       tableData: {
@@ -134,6 +146,7 @@ export default {
         column: [
           // left
           [
+            // {type: 'mult', width: 50, rowspan: 2},
             {
               label: '航班信息',
               colspan: 11,
@@ -146,10 +159,10 @@ export default {
                 {key: 'etd', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
                 {key: 'atd', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
                 {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
-                {key: 'abnormalStatusCn',  label: '异常状态', width: 70, title: true, class: 'col-child-title'},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
                 {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
-                {key: 'chute',  label: '滑槽', width: 60, title: true, class: 'col-child-title'}
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
               ]
             }
           ],
@@ -162,43 +175,34 @@ export default {
               child: [
                 // todo 保障状态
                 {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
-                // todo 值机数
+                {key: 'checkinCount',  label: '值机数', width: 60, class: 'col-child-title'},
+                // todo 中转数
+                // todo 异常报警行李数
                 // todo 安检数
                 // todo 自动分拣数
                 // todo 人工分拣数
-                // todo 装机数
-                // todo 中转数
-                // todo 异常报警行李数
-                // todo 分拣耗时 N-LOAD-TRUCK.lastLugTime - N-LOAD-TRUCK.firstLugTime
-                {key: 'N-LOAD-TRUCK.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
-                {key: 'N-LOAD-TRUCK.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'},
-                // todo 分拣进度
-                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
                 // todo 起运时间
-                // todo 装机耗时 N-LOAD-AIRCRAFT.lastLugTime - N-LOAD-AIRCRAFT.firstLugTime
-                {key: 'N-LOAD-AIRCRAFT.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
-                {key: 'N-LOAD-AIRCRAFT.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'},
-                // todo 装载进度
+                // todo 装机数
+                {key: 'loadTruckCost', label: '分拣耗时', width: 50, class: 'col-child-title'},
+                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 50, class: 'col-child-title'},
                 {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
               ]
             },
             {
               label: '行李类型',
-              colspan: 2,
+              colspan: 3,
               titleClass: 'th-col-title',
               child: [
-                // 普通
-                // 追加数量
-                // 拉减数
-                {key: 'lugCancelTotal',  label: '拉减数', width: 60, class: 'col-child-title'},
-                // 挑找
-                // VIP
+                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
+                {key: 'lugCancelTotal',  label: '拉减', width: 60, class: 'col-child-title'},
+                // todo 挑找
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                // 标记
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
               ]
-            },
-            // {key: 'checkinCounter',  label: '值机柜台', rowspan: 2, width: 80, title: true},
-            // {key: 'gate',  label: '登机口', rowspan: 2, width: 60},
+            }
           ],
           // right
           [
@@ -226,6 +230,26 @@ export default {
     },
     customAfterQuery () {
       if (this.selectKey == 'D') {
+        this.$set(this.tableData.column, 0, [
+            {
+              label: '航班信息',
+              colspan: 11,
+              titleClass: 'th-col-title',
+              child: [
+                {key: 'flightNoAlias',  label: '航班', width: 80, class: 'col-child-title'},
+                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10], class: 'col-child-title'},
+                {key: 'routeCn',  label: '航线', width: 120, title: true},
+                {key: 'std', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'etd', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'atd', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
+                {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
+              ]
+            }
+          ])
         this.$set(this.tableData.column, 1, [
             {
               label: '运行情况',
@@ -234,45 +258,56 @@ export default {
               child: [
                 // todo 保障状态
                 {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
-                // 值机数
                 {key: 'checkinCount',  label: '值机数', width: 60, class: 'col-child-title'},
+                // todo 中转数
+                // todo 异常报警行李数
                 // todo 安检数
                 // todo 自动分拣数
                 // todo 人工分拣数
-                // 装机数
-                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                // todo 中转数
-                // todo 异常报警行李数
-                // 分拣耗时
-                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
-                // 分拣进度
-                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
                 // todo 起运时间
-                // 装机耗时 N-LOAD-AIRCRAFT.lastLugTime - N-LOAD-AIRCRAFT.firstLugTime
-                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
-                // 装载进度
+                // todo 装机数
+                {key: 'loadTruckCost', label: '分拣耗时', width: 50, class: 'col-child-title'},
+                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 50, class: 'col-child-title'},
                 {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
               ]
             },
             {
               label: '行李类型',
-              colspan: 2,
+              colspan: 5,
               titleClass: 'th-col-title',
               child: [
-                // 普通
-                // 追加数量
-                // 拉减数
-                {key: 'lugCancelTotal',  label: '拉减数', width: 60, class: 'col-child-title'},
+                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
+                {key: 'lugCancelTotal',  label: '拉减', width: 60, class: 'col-child-title'},
                 // todo 挑找
-                // VIP
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                // 标记
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
               ]
-            },
-            // {key: 'checkinCounter',  label: '值机柜台', rowspan: 2, width: 80, title: true},
-            // {key: 'gate',  label: '登机口', rowspan: 2, width: 60},
+            }
           ])
       } else if (this.selectKey == 'A') {
+        this.$set(this.tableData.column, 0, [
+            {
+              label: '航班信息',
+              colspan: 11,
+              titleClass: 'th-col-title',
+              child: [
+                {key: 'flightNoAlias',  label: '航班', width: 80, class: 'col-child-title'},
+                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10], class: 'col-child-title'},
+                {key: 'routeCn',  label: '航线', width: 120, title: true},
+                {key: 'sta', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'eta', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'ata', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
+                {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
+                {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
+              ]
+            }
+          ])
         this.$set(this.tableData.column, 1, [
             {
               label: '运行情况',
@@ -283,34 +318,26 @@ export default {
                 {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
                 // todo 前站装机数
                 // todo 中转行李数
-                // todo 卸机数
-                // todo 卸机耗时 N-UNLOAD-AIRCRAFT.lastLugTime - N-UNLOAD-AIRCRAFT.firstLugTime
-                {key: 'N-UNLOAD-AIRCRAFT.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
-                {key: 'N-UNLOAD-AIRCRAFT.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'},
-                // todo 卸机进度
+                {key: 'unLoadAirNum',  label: '卸机数', width: 60, class: 'col-child-title'},
+                {key: 'unLoadAirCostTime',  label: '卸机耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-UNLOAD-AIRCRAFT', label: '已卸机/总数', width: 120, type: 'slot', class: 'col-child-title'},
-                // todo 卸车数
-                // todo 卸车耗时 N-UPLOAD.lastLugTime - N-UPLOAD.firstLugTime
-                {key: 'N-UPLOAD.firstLugTime', label: '首件', width: 50, format: [11, 5], class: 'col-child-title'},
-                {key: 'N-UPLOAD.lastLugTime', label: '末件', width: 50, format: [11, 5], class: 'col-child-title'},
-                // todo 卸车进度
+                {key: 'unLoadCarNum',  label: '卸机耗时', width: 60, class: 'col-child-title'},
+                {key: 'unLoadCarCostTime',  label: '卸机耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-UPLOAD', label: '已卸车/总数', width: 120, type: 'slot', class: 'col-child-title'},
                 // todo 提取核验数
               ]
             },
             {
               label: '行李类型',
-              colspan: 1,
+              colspan: 4,
               titleClass: 'th-col-title',
               child: [
-                // 普通
-                // 追加数量
-                // VIP
+                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                // 标记
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
               ]
             }
-            // {key: 'belt',  label: '转盘', rowspan: 2, width: 80, title: true},
           ])
       }
     },
@@ -401,6 +428,9 @@ export default {
 
 <style lang="scss">
 .flight-his {
+  .height523 {
+    height: 523px;
+  }
   .query-top {
     display: flex;
     justify-content: space-between;

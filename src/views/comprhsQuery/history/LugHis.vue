@@ -1,5 +1,5 @@
 <template>
-  <div class="luggages">
+  <div class="lug-his">
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
@@ -7,24 +7,38 @@
       </div>
     </div>
     <div class="table-cont container cross">
-      <tables :tableData="tableData" :loading="tableData.loading">
-        <template v-slot:slot-body="{index, row, item}">
-          <template v-if="item.label=='操作'">
-            <button type="info" @click="changeComp('lug', row)">行李详情</button>
+      <div class="table-title">
+        <div class="left">
+          <span class="label">查询结果</span>
+          <span class="info">共{{pageData.total}}条</span>
+        </div>
+        <div class="right">
+          <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
+          <!-- <div class="toolbar">
+            <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+          </div> -->
+        </div>
+      </div>
+      <div class="table-cont container cross height523">
+        <tables :tableData="tableData" :loading="tableData.loading">
+          <template v-slot:slot-body="{index, row, item}">
+            <template v-if="item.label=='操作'">
+              <button type="info" @click="changeComp('lug', row)">行李详情</button>
+            </template>
+            <template v-else-if="item.key=='idcardNo'">
+              <div class="type">{{row['idcardType']}}</div>
+              <div class="value">{{row[item.key]}}</div>
+            </template>
+            <template v-else-if="item.key=='phone'">
+              <div class="type">{{row['contact']}}</div>
+              <div class="value">{{row[item.key]}}</div>
+            </template>
+            <template v-else>
+              <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isCancel')?'pull_down':((item.key=='isAddition')?'added':(item.key=='isLookfor'?'find':'vip'))]"></div>
+            </template>
           </template>
-          <template v-else-if="item.key=='idcardNo'">
-            <div class="type">{{row['idcardType']}}</div>
-            <div class="value">{{row[item.key]}}</div>
-          </template>
-          <template v-else-if="item.key=='phone'">
-            <div class="type">{{row['contact']}}</div>
-            <div class="value">{{row[item.key]}}</div>
-          </template>
-          <template v-else>
-            <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isCancel')?'pull_down':((item.key=='isAddition')?'added':(item.key=='isLookfor'?'find':'vip'))]"></div>
-          </template>
-        </template>
-      </tables>
+        </tables>
+      </div>
     </div>
     <component :is="showComp.is" :row="showComp.row"></component>
   </div>
@@ -32,59 +46,28 @@
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
-import Tabs from '@view/Tabs/Tabs'
+import Pagination from '@view/Pagination/Pagination'
 import Tables from '@view/Table/Table'
 import tableMixin from '@mixin/tableMixin'
+import formMixin from '@mixin/formMixin'
 import { queryAll } from '@/util/base'
 import Lug from '../detail/LugDetail'
+import _ from 'lodash'
 
 export default {
   components: {
     QueryRow,
-    Tabs,
+    Pagination,
     Tables,
     Lug
   },
-  mixins: [tableMixin],
+  mixins: [tableMixin, formMixin],
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
-      queryType: 'nopage',
       // 请求路径
-      queryUrl: '/integrated/luggage/queryAll',
-      showComp: {
-        is: null,
-        lugUrl: '/integrated/luggage/detail',
-        row: null
-      },
-      tabsDataDay: [
-        {
-          key: '-1',
-          label: '昨日'
-        },
-        {
-          key: '0',
-          label: '今日'
-        },
-        {
-          key: '-2',
-          label: '历史记录'
-        }
-      ],
-      tabsData: [
-        {
-          key: 'D',
-          label: '出港行李'
-        },
-        {
-          key: 'A',
-          label: '进港行李'
-        },
-        // {
-        //   key: 'E',
-        //   label: '中转行李'
-        // }
-      ],
+      queryUrl: 'online/userOnline/pageQuery',
+      queryParam: [],
       queryParamD: [
         {
           key: 'flightNo',
@@ -226,7 +209,6 @@ export default {
           isHidden: true
         }
       ],
-      queryParam: [],
       tableData: {
         height: 600,
         multSelection: [],
@@ -244,17 +226,18 @@ export default {
           ],
           // center
           [
-            {key: 'seatNo',  label: '旅客座位号', width: 90, title: true},
+            {key: 'seatNo',  label: '座位号', width: 90, title: true},
             {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
             // todo 航线
             // todo 值机时间
             // todo 航班状态
-            // todo 航班异常状态
+            // todo 异常状态
             // todo 机位
             {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
             // todo 是否标记
             {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-            {key: 'counter',  label: '值机柜台号', width: 90},
+            // todo 值机柜台号 是 交运柜台么
+            {key: 'counter',  label: '值机柜台', width: 90},
             {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
             // todo 安检状态
             // todo 人工分拣时间
@@ -266,11 +249,16 @@ export default {
           ]
         ],
         data: []
-      }
+      },
+      showComp: {
+        is: null,
+        lugUrl: '/integrated/luggage/detail',
+        row: null
+      },
     }
   },
   mounted () {
-    this.$set(this, 'queryParam', this.queryParamD)
+    this.queryParam.push(...this.queryParamD)
     this.queryDataReq()
   },
   methods: {
@@ -279,20 +267,20 @@ export default {
     },
     tabItemClick (key) {
       if (key == 'A') {
+        this.queryParam = []
         this.$set(this, 'queryParam', [])
         this.$set(this, 'queryParam', this.queryParamA)
-        this.queryParam = this.queryParamA
         this.$set(this.tableData.column, 1, [
           {key: 'seatNo',  label: '座位号', width: 90, title: true},
           {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
           // todo 航线
           // todo 航班状态
-          // todo 航班异常状态
+          // todo 异常状态
           // todo 机位
           {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
           // todo 是否标记
           {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-          {key: 'belt',  label: '行李转盘号', width: 70, title: true},
+          {key: 'belt',  label: '行李转盘', width: 70, title: true},
           // todo 卸机时间
           // todo 上转盘时间
         ])
@@ -300,12 +288,12 @@ export default {
         this.$set(this, 'queryParam', [])
         this.$set(this, 'queryParam', this.queryParamD)
         this.$set(this.tableData.column, 1, [
-          {key: 'seatNo',  label: '旅客座位号', width: 90, title: true},
+          {key: 'seatNo',  label: '座位号', width: 90, title: true},
           {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
           // todo 航线
           // todo 值机时间
           // todo 航班状态
-          // todo 航班异常状态
+          // todo 异常状态
           // todo 机位
           {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
           // todo 是否标记
@@ -357,7 +345,10 @@ export default {
 </script>
 
 <style lang="scss">
-.luggages {
+.lug-his {
+  .height523 {
+    height: 523px;
+  }
   .query-top {
     .query-item {
       &.mt14 {
