@@ -59,6 +59,9 @@
     top: 80px !important;
   }
 }
+.whole-table-cont {
+  margin-top: 0 !important;
+}
 .table-cont {
   margin-top: 16px;
   border-radius: 10px;
@@ -239,4 +242,70 @@
       }
     }
   }
+}
+/* 信息共享平台  样式*/
+.red-color {
+  color: #F75467!important;
+}
+.red-color-bold {
+  color: #F75467;
+}
+.other-class {
+  background-color: #EAF4FF;
+  color: #3392FF;
+  margin: 0 4px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 3px;
+}
+.fly-class {
+  background-color: #F3F5F7;
+  color: #899DB2;
+  margin: 0 4px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 3px;
+}
+.marking-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* 列表标注 色点/文字 */
+.dot-font {
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dot-font div {
+  margin-right: 8px;
+  height: 10px;
+  width: 10px;
+  float: left;
+  border-radius: 50%;
+}
+// 普通
+.dot-color-1 {
+  background: #A3B6CC;
+}
+// 拉减
+.dot-color-2 {
+  background: #F79F2D;
+}
+// 追加
+.dot-color-3 {
+  background: #3392FF;
+}
+// VIP
+.dot-color-4 {
+  background: #01B674;
+}
+
+/* 覆盖iview样式 */
+.ivu-dropdown-rel {
+  width: 85%!important;
+  display: flex!important;
+  justify-content: center!important;
+  align-items: center!important;
 }

@@ -9,8 +9,8 @@
         <div class="title">行李运行管理平台</div>
         <div class="title-tip">用户登录</div>
         <div class="info">
-          <input v-model.trim="userName" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter.native="login"/>
-          <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter.native="login"/>
+          <input v-model.trim="userName" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter="login"/>
+          <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter="login"/>
         </div>
         <div class="remember">
           <div>

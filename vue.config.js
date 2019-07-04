@@ -7,7 +7,7 @@ module.exports = {
       '/api': {
         // target: 'http://10.254.130.18:8095/',
         // http://10.254.130.18:8095
-        target: 'http://10.255.1.5:8989/',
+        target: 'http://10.255.1.7:8989/',
         // target: 'http://10.255.1.9:8080/',
         ws: true,
         changeOrigin: true,

@@ -123,6 +123,7 @@ export default {
     },
     queryDataReqInterval(status){
       clearInterval(this.timer)
+      this.queryDataReq(status)
       this.timer = setInterval(this.queryDataReq, 60000)
     },
     queryDataReqClearInterval(){

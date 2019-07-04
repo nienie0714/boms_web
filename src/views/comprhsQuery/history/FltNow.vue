@@ -10,14 +10,31 @@
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
-            <button type="info" @click="changeComp('flt', row)">航班详情</button>
-            <button type="info" @click="changeComp('lug', row)">行李详情</button>
+            <!-- <button type="info" @click="changeComp('flt', row)">航班详情</button>
+            <button type="info" @click="changeComp('lug', row)">行李详情</button> -->
+            <div class="table-opr detail" @click="changeComp('flt', row)"></div>
+          </template>
+          <template v-else-if="item.key == 'flightNoAlias'">
+            <div @click="changeComp('flt', row)">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key == 'progressStatusCn'">
+            <div v-if="row[item.key] == '起飞'" class="fly-class">{{row[item.key]}}</div>
+            <div v-else-if="row[item.key] == null || row[item.key] == ''">-</div>
+            <div v-else class="other-class">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key == 'abnormalStatusCn'">
+            <div v-if="row[item.key] == null || row[item.key] == ''">-</div>
+            <div v-else class="red-color">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="['lugCommonTotal', 'lugAdditionTotal', 'lugCancelTotal', 'lugMarkingTotal'].includes(item.key)">
+            <div v-if="row[item.key] == null || row[item.key] == 0">-</div>
+            <div v-else>{{row[item.key]}}</div>
           </template>
           <template v-else>
             <div class="container cross col-pro">
               <div class="container">
                 <div>{{formatNum(row, item)}}</div>
-                <div class="label">{{Math.floor(formatPro(row, item) * 100) + '%'}}</div>
+                <!-- <div class="label">{{Math.floor(formatPro(row, item) * 100) + '%'}}</div> -->
               </div>
               <div>
                 <cs-progress :value="formatPro(row, item)" :color="proColor(row, item)"></cs-progress>
@@ -162,16 +179,16 @@ export default {
               colspan: 11,
               titleClass: 'th-col-title',
               child: [
-                {key: 'flightNoAlias',  label: '航班', width: 80, class: 'col-child-title'},
-                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10], class: 'col-child-title'},
+                {key: 'flightNoAlias',  label: '航班', width: 80, colClass: 'bold-underline', title: true, type: 'slot'},
+                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10]}, 
                 {key: 'routeCn',  label: '航线', width: 120, title: true},
-                {key: 'std', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'etd', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'atd', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
-                {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
+                {key: 'std', label: '计划', width: 80, format: [11, 5]},
+                {key: 'etd', label: '预计', width: 80, format: [11, 5]},
+                {key: 'atd', label: '实际', width: 80, format: [11, 5]},
+                {key: 'terminal',  label: '航站楼', width: 60},
+                {key: 'stand',  label: '机位', width: 60},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
               ]
             }
@@ -184,8 +201,8 @@ export default {
               titleClass: 'th-col-title',
               child: [
                 // todo 保障状态
-                {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
-                {key: 'checkinCount',  label: '值机数', width: 60, class: 'col-child-title'},
+                {key: 'lugTotal',  label: '总数', width: 60, format: this.formatTotalAdd},
+                {key: 'checkinCount',  label: '值机数', width: 60},
                 // todo 中转数
                 // todo 异常报警行李数
                 // todo 安检数
@@ -204,18 +221,18 @@ export default {
               colspan: 3,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
-                {key: 'lugCancelTotal',  label: '拉减', width: 60, class: 'col-child-title'},
+                {key: 'lugCommonTotal',  label: '普通', width: 60},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60},
+                {key: 'lugCancelTotal',  label: '拉减', width: 60},
                 // todo 挑找
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
+                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60},
               ]
             }
           ],
           // right
           [
-            {label: '操作', rowspan: 2, type: 'slot', width: 220},
+            {label: '操作', rowspan: 2, type: 'slot', width: 70},
             // {label: '操作2', rowspan: 2, type: 'button', width: 220}
           ]
         ],
@@ -224,7 +241,6 @@ export default {
     }
   },
   mounted () {
-    this.queryDataReq()
     this.queryDataReqInterval()
     this.$once('hook:beforeDestroy', () => {            
       clearInterval(this.timer);
@@ -244,17 +260,17 @@ export default {
               colspan: 11,
               titleClass: 'th-col-title',
               child: [
-                {key: 'flightNoAlias',  label: '航班', width: 80, class: 'col-child-title'},
-                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10], class: 'col-child-title'},
+                {key: 'flightNoAlias',  label: '航班', width: 80, colClass: 'bold-underline', title: true, type: 'slot'},
+                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10]},
                 {key: 'routeCn',  label: '航线', width: 120, title: true},
-                {key: 'std', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'etd', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'atd', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
-                {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
+                {key: 'std', label: '计划', width: 80, format: [11, 5]},
+                {key: 'etd', label: '预计', width: 80, format: [11, 5]},
+                {key: 'atd', label: '实际', width: 80, format: [11, 5]},
+                {key: 'terminal',  label: '航站楼', width: 60},
+                {key: 'stand',  label: '机位', width: 60},
+                {key: 'progressStatusCn',  label: '航班状态', width: 100, title: true, type: 'slot'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])
@@ -265,19 +281,19 @@ export default {
               titleClass: 'th-col-title',
               child: [
                 // todo 保障状态
-                {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
-                {key: 'checkinCount',  label: '值机数', width: 60, class: 'col-child-title'},
+                {key: 'lugTotal',  label: '总数', width: 60, format: this.formatTotalAdd},
+                {key: 'checkinCount',  label: '值机数', width: 60},
                 // todo 中转数
                 // todo 异常报警行李数
                 // todo 安检数
                 // todo 自动分拣数
                 // todo 人工分拣数
                 // todo 起运时间
-                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
-                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'loadTruckCost', label: '分拣耗时', width: 60},
+                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot'},
+                {key: 'loadAircraftCount',  label: '装机数', width: 60},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 60},
+                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-right'},
               ]
             },
             {
@@ -285,12 +301,12 @@ export default {
               colspan: 5,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
-                {key: 'lugCancelTotal',  label: '拉减', width: 60, class: 'col-child-title'},
+                {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
+                {key: 'lugCancelTotal',  label: '拉减', width: 60, type: 'slot'},
                 // todo 挑找
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
+                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
           ])
@@ -301,17 +317,17 @@ export default {
               colspan: 11,
               titleClass: 'th-col-title',
               child: [
-                {key: 'flightNoAlias',  label: '航班', width: 80, class: 'col-child-title'},
-                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10], class: 'col-child-title'},
+                {key: 'flightNoAlias',  label: '航班', width: 80, colClass: 'bold-underline', title: true, type: 'slot'},
+                {key: 'execDate', label: '航班日期', width: 90, format: [0, 10]},
                 {key: 'routeCn',  label: '航线', width: 120, title: true},
-                {key: 'sta', label: '计划', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'eta', label: '预计', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'ata', label: '实际', width: 80, format: [11, 5], class: 'col-child-title'},
-                {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
-                {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
+                {key: 'sta', label: '计划', width: 80, format: [11, 5]},
+                {key: 'eta', label: '预计', width: 80, format: [11, 5]},
+                {key: 'ata', label: '实际', width: 80, format: [11, 5]},
+                {key: 'terminal',  label: '航站楼', width: 60},
+                {key: 'stand',  label: '机位', width: 60},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true},
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true}
               ]
             }
           ])
@@ -322,15 +338,15 @@ export default {
               titleClass: 'th-col-title',
               child: [
                 // todo 保障状态
-                {key: 'lugTotal',  label: '总数', width: 60, class: 'col-child-title', format: this.formatTotalAdd},
+                {key: 'lugTotal',  label: '总数', width: 60, format: this.formatTotalAdd},
                 // todo 前站装机数
                 // todo 中转行李数
-                {key: 'unLoadAirNum',  label: '卸机数', width: 60, class: 'col-child-title'},
-                {key: 'unLoadAirCostTime',  label: '卸机耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-UNLOAD-AIRCRAFT', label: '已卸机/总数', width: 120, type: 'slot', class: 'col-child-title'},
-                {key: 'unLoadCarNum',  label: '卸车数', width: 60, class: 'col-child-title'},
-                {key: 'unLoadCarCostTime',  label: '卸车耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-UPLOAD', label: '已卸车/总数', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'unLoadAirNum',  label: '卸机数', width: 60},
+                {key: 'unLoadAirCostTime',  label: '卸机耗时', width: 60},
+                {key: 'N-UNLOAD-AIRCRAFT', label: '已卸机/总数', width: 120, type: 'slot'},
+                {key: 'unLoadCarNum',  label: '卸车数', width: 60},
+                {key: 'unLoadCarCostTime',  label: '卸车耗时', width: 60},
+                {key: 'N-UPLOAD', label: '已卸车/总数', width: 120, type: 'slot'},
                 // todo 提取核验数
               ]
             },
@@ -339,10 +355,10 @@ export default {
               colspan: 4,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60, class: 'col-child-title'},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60, class: 'col-child-title'},
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN', class: 'col-child-title'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60, class: 'col-child-title'},
+                {key: 'lugCommonTotal',  label: '普通', width: 60},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60},
+                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60},
               ]
             }
           ])
@@ -387,8 +403,8 @@ export default {
       if (obj) {
         let denominator = (obj['totalNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
-        denominator = denominator == 0 ? '0' : denominator
-        molecule = molecule == 0 ? '0' : molecule
+        // denominator = denominator == 0 ? '0' : denominator
+        // molecule = molecule == 0 ? '0' : molecule
         value = (molecule || '-') + '/' + (denominator || '-')
       }
       return value
@@ -503,6 +519,24 @@ export default {
             height: 50%;
           }
         }
+      }
+    }
+    td {
+      height: 52px !important;
+      .type {
+        font-size: 12px;
+        height: 12px;
+        line-height: 12px;
+        text-align: left;
+        color: $gray-nd;
+      }
+      .value {
+        margin-top: 8px;
+        font-size: 14px;
+        height: 14px;
+        line-height: 14px;
+        text-align: left;
+        color: $gray-st;
       }
     }
   }

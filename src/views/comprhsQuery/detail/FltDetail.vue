@@ -6,115 +6,57 @@
       </template>
       <template v-if="row && selectKey=='flt'">
         <div class="block flt-block block-first container">
-          <template v-if="row.inOutFlag == 'A'">
-            <div class="info">
-              <div class="first-row container">
-                <div class="label">前站：</div>
-                <div class="text">{{(row['prevStation'] || '-') + '-' + (row['prevStationCn'] || '-')}}</div>
+          <div class="info">
+            <div class="first-row container">
+              <div class="label">始发站：</div>
+              <div class="text">{{(row['startStation'] || '-') + '-' + (row['startStationCn'] || '-')}}</div>
+            </div>
+            <div class="second-row">{{formatHHMM(row['atd']||row['etd']||row['std'])}}</div>
+            <div v-if="!row['atd']&&(row['etd']||row['std'])" class="time-block">
+              <div v-if="row['etd']" class="time-e">预计</div>
+              <div v-else-if="row['std']" class="time-s">计划</div>
+            </div>
+            <div class="third-row">
+              <div>
+                <div class="label">计划</div>
+                <div class="text">{{formatHHMM(row['std'])}}</div>
               </div>
-              <div class="second-row">{{formatHHMM(row['prevDepTimeA']||row['prevDepTimeE']||row['prevDepTimeS'])}}</div>
-              <div v-if="!row['prevDepTimeA']&&(row['prevDepTimeE']||row['prevDepTimeS'])" class="time-block">
-                <div v-if="row['prevDepTimeE']" class="time-e">预计</div>
-                <div v-else-if="row['prevDepTimeS']" class="time-s">计划</div>
+              <div>
+                <div class="label">预计</div>
+                <div class="text">{{formatHHMM(row['etd'])}}</div>
               </div>
-              <div class="third-row">
-                <div>
-                  <div class="label">计划</div>
-                  <div class="text">{{formatHHMM(row['prevDepTimeS'])}}</div>
-                </div>
-                <div>
-                  <div class="label">预计</div>
-                  <div class="text">{{formatHHMM(row['prevDepTimeE'])}}</div>
-                </div>
-                <div>
-                  <div class="label">实际</div>
-                  <div class="text">{{formatHHMM(row['prevDepTimeA'])}}</div>
-                </div>
+              <div>
+                <div class="label">实际</div>
+                <div class="text">{{formatHHMM(row['atd'])}}</div>
               </div>
             </div>
-          </template>
-          <template v-else>
-            <div class="info">
-              <div class="first-row container">
-                <div class="label">本站：</div>
-                <div class="text">{{(row['startStation'] || '-') + '-' + (row['startStationCn'] || '-')}}</div>
-              </div>
-              <div class="second-row">{{formatHHMM(row['atd']||row['etd']||row['std'])}}</div>
-              <div v-if="!row['atd']&&(row['etd']||row['std'])" class="time-block">
-                <div v-if="row['etd']" class="time-e">预计</div>
-                <div v-else-if="row['std']" class="time-s">计划</div>
-              </div>
-              <div class="third-row">
-                <div>
-                  <div class="label">计划</div>
-                  <div class="text">{{formatHHMM(row['std'])}}</div>
-                </div>
-                <div>
-                  <div class="label">预计</div>
-                  <div class="text">{{formatHHMM(row['etd'])}}</div>
-                </div>
-                <div>
-                  <div class="label">实际</div>
-                  <div class="text">{{formatHHMM(row['atd'])}}</div>
-                </div>
-              </div>
-            </div>
-          </template>
+          </div>
           <div class="img"></div>
-          <template v-if="row.inOutFlag == 'A'">
-            <div class="info">
-              <div class="first-row container">
-                <div class="label">本站：</div>
-                <div class="text">{{(row['terminalStation'] || '-') + '-' + (row['terminalStationCn'] || '-')}}</div>
+          <div class="info">
+            <div class="first-row container">
+              <div class="label">目的站：</div>
+              <div class="text">{{(row['terminalStation'] || '-') + '-' + (row['terminalStationCn'] || '-')}}</div>
+            </div>
+            <div class="second-row">{{formatHHMM(row['ata']||row['eta']||row['sta'])}}</div>
+            <div v-if="!row['ata']&&(row['eta']||row['sta'])" class="time-block">
+              <div v-if="row['eta']" class="time-e">预计</div>
+              <div v-else-if="row['sta']" class="time-s">计划</div>
+            </div>
+            <div class="third-row">
+              <div>
+                <div class="label">计划</div>
+                <div class="text">{{formatHHMM(row['sta'])}}</div>
               </div>
-              <div class="second-row">{{formatHHMM(row['ata']||row['eta']||row['sta'])}}</div>
-              <div v-if="!row['ata']&&(row['eta']||row['sta'])" class="time-block">
-                <div v-if="row['eta']" class="time-e">预计</div>
-                <div v-else-if="row['sta']" class="time-s">计划</div>
+              <div>
+                <div class="label">预计</div>
+                <div class="text">{{formatHHMM(row['eta'])}}</div>
               </div>
-              <div class="third-row">
-                <div>
-                  <div class="label">计划</div>
-                  <div class="text">{{formatHHMM(row['sta'])}}</div>
-                </div>
-                <div>
-                  <div class="label">预计</div>
-                  <div class="text">{{formatHHMM(row['eta'])}}</div>
-                </div>
-                <div>
-                  <div class="label">实际</div>
-                  <div class="text">{{formatHHMM(row['ata'])}}</div>
-                </div>
+              <div>
+                <div class="label">实际</div>
+                <div class="text">{{formatHHMM(row['ata'])}}</div>
               </div>
             </div>
-          </template>
-          <template v-else>
-            <div class="info">
-              <div class="first-row container">
-                <div class="label">下站：</div>
-                <div class="text">{{(row['nextStation'] || '-') + '-' + (row['nextStationCn'] || '-')}}</div>
-              </div>
-              <div class="second-row">{{formatHHMM(row['nextDepTimeA']||row['nextDepTimeE']||row['nextDepTimeS'])}}</div>
-              <div v-if="!row['nextDepTimeA']&&(row['nextDepTimeE']||row['nextDepTimeS'])" class="time-block">
-                <div v-if="row['nextDepTimeE']" class="time-e">预计</div>
-                <div v-else-if="row['nextDepTimeS']" class="time-s">计划</div>
-              </div>
-              <div class="third-row">
-                <div>
-                  <div class="label">计划</div>
-                  <div class="text">{{formatHHMM(row['nextDepTimeS'])}}</div>
-                </div>
-                <div>
-                  <div class="label">预计</div>
-                  <div class="text">{{formatHHMM(row['nextDepTimeE'])}}</div>
-                </div>
-                <div>
-                  <div class="label">实际</div>
-                  <div class="text">{{formatHHMM(row['nextDepTimeA'])}}</div>
-                </div>
-              </div>
-            </div>
-          </template>
+          </div>
         </div>
         <div v-for="(conf, idx) in rowConf" :key="idx" class="block flt-block">
           <div class="header">{{conf.label}}</div>
@@ -137,7 +79,7 @@
             <div class="container">
               <div class="label">航班日期：{{formatDate(row['execDate'])}}</div>
               <div class="bold">{{row['flightNoAlias']}}</div>
-              <div class="label" :title="row['routeCn']">航线：{{row['routeCn']}}</div>
+              <div class="label" :title="row['route']">航线代码：{{row['route']}}</div>
             </div>
             <div v-if="row&&row['nodes']" class="container">
               <div v-for="(item, index) in row['nodes']" :key="index" class="container node">
@@ -150,7 +92,8 @@
           <div class="body-second">
             <tables :tableData="tableData" @handleDblClick="showLugDetail" :loading="tableData.loading">
               <template v-slot:slot-body="{index, row, item}">
-                <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isCancel')?'pull_down':((item.key=='isAddition')?'added':'vip')]"></div>
+                <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isMark')?'marking':'']"></div>
+                <div v-else-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isMark')?'marking':'']"></div>
               </template>
             </tables>
           </div>
@@ -185,12 +128,12 @@ export default {
       selectKey: '',
       tabsData: [
         {
-          key: 'flt',
-          label: '航班详情'
+          key: 'lug',
+          label: '航班保障信息'
         },
         {
-          key: 'lug',
-          label: '保障详情'
+          key: 'flt',
+          label: '航班基本信息'
         }
       ],
       rowConf: [
@@ -199,24 +142,25 @@ export default {
           list: [
             [
               {key: 'flightNoAlias', label: '航班号', class: 'bold'},
-              {key: 'airlineCn', label: '航空公司'},
-              {key: 'taskCn', label: '任务'},
+              {key: 'terminal', label: '航站楼编号'},
+              {key: 'execDate', label: '执行日期', format: [0, 10]},
+              {key: 'attr', label: '航班属性', enumKey: 'attr'},
+              {key: 'taskCn', label: '任务'}
+            ],
+            [
+              {key: 'aircraftNo', label: '飞机号'},
               {key: 'aircraftType', label: '机型'},
-              {key: 'execDate', label: '航班日期', format: [0, 10]}
+              {key: 'agencyCn', label: '代理'},
+              {key: 'stand', label: '机位'},
+              {key: 'chute', label: '滑槽号'}
             ],
             [
-              {key: 'inOutFlag', label: '进出标识', enumKey: 'inOutFlag'},
-              {key: 'attr', label: '属性', enumKey: 'attr'},
-              {key: 'aircraftNo', label: '机号'},
-              {key: 'terminal', label: '航站楼'},
-              {key: 'vipFlag', label: 'VIP', enumKey: 'isYOrN'}
-            ],
-            [
-              {key: 'alternateStationCn', label: '备降站', colWidth: 5},
-              {key: 'routeCn', label: '航线'}
+              {key: 'gate', label: '登机口', colWidth: 5},
+              {key: 'abnormalStatusCn', label: '航班异常状态', colWidth: 5, color: '#f79f2d'}, // , class: 'bold'
+              {key: 'route', label: '航线代码'} // routeCn
             ]
           ]
-        },
+        }/* ,
         {
           label: '航班资源信息',
           list: [
@@ -254,7 +198,7 @@ export default {
               {key: 'lugVipTotal', label: 'VIP行李数'}
             ]
           ]
-        }
+        } */
       ],
       nodeConf: [
         {key: 'lugNo', label: '操作人'},
@@ -279,16 +223,16 @@ export default {
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李号', width: 110, class: 'bold', title: true},
-            {key: 'inOutFlag', label: '行李类型', width: 70, enumKey: 'inOutFlag'},
-            {key: 'destCn',  label: '目的站', width: 90, title: true},
-            {key: 'originCn',  label: '始发站', width: 90, title: true},
-            {key: 'progressStatusCn',  label: '进展状态', width: 70, color: '#3392ff'},
-            {key: 'truck',  label: '容器', width: 80, title: true},
-            {key: 'isCancel',  label: '拉减', width: 35, enumKey: 'isYOrN', type: 'slot'},
-            {key: 'isAddition',  label: '追加', width: 35, enumKey: 'isYOrN', type: 'slot'},
-            {key: 'isVip',  label: 'VIP', width: 35, enumKey: 'isYOrN', type: 'slot'},
-            {key: 'markingNum',  label: '标记次数', width: 65}
+            {key: 'lugNo',  label: '行李号', width: 210, class: 'bold', title: true},
+            {key: 'progressStatusCn',  label: '保障状态', width: 170, color: '#3392ff'},
+            {key: 'isCancel',  label: '是否标记', width: 130},
+            {key: 'inOutFlag', label: '行李类型', width: 170}
+            // {key: 'destCn',  label: '目的站', width: 90, title: true},
+            // {key: 'originCn',  label: '始发站', width: 90, title: true},
+            // {key: 'truck',  label: '容器', width: 80, title: true},
+            // {key: 'isCancel',  label: '拉减', width: 35, enumKey: 'isYOrN', type: 'slot'},
+            // {key: 'isAddition',  label: '追加', width: 35, enumKey: 'isYOrN', type: 'slot'},
+            // {key: 'isVip',  label: 'VIP', width: 35, enumKey: 'isYOrN', type: 'slot'},
           ]
         ],
         data: []
@@ -370,26 +314,9 @@ export default {
         })
       } else {
         if (this.row.inOutFlag == 'D') {
-          this.rowConf[1].list = [
-            [
-              {key: 'stand', label: '机位', class: 'bold'},
-              {key: 'checkinRegion', label: '值机区域'},
-              {key: 'chute', label: '行李滑槽', class: 'bold'},
-              {key: 'gate', label: '登机口'},
-              {key: 'checkinCounter', label: '值机柜台'}
-            ]
-          ]
-          this.rowConf[3].list[0][2] = {key: 'lugLoadTruckTotal', label: '已分拣数'}
-          this.rowConf[3].list[0][3] = {key: 'lugLoadAircraftTotal', label: '已装机数'}
+          this.$set(this.rowConf[1].list[2], 5, {key: 'chute', label: '滑槽号'})
         } else {
-          this.rowConf[1].list = [
-            [
-              {key: 'stand', label: '机位', class: 'bold'},
-              {key: 'belt', label: '行李转盘', class: 'bold'}
-            ]
-          ]
-          this.rowConf[3].list[0][2] = {key: 'lugUnloadAircraftTotal', label: '已卸机数'}
-          this.rowConf[3].list[0][3] = {key: 'lugUploadTotal', label: '已卸车数'}
+          this.$set(this.rowConf[1].list[2], 5, {key: 'belt', label: '行李转盘'})
         }
       }
       this.visible = true

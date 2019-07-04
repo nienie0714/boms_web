@@ -4,7 +4,7 @@
       <div v-for="(column, colIndex) in columnHeaderData" :key="colIndex" :class="(colIndex==columnData.length-1)?'right-table':(colIndex==0?'left-table':'center-table')"
       :ref="(colIndex==columnData.length-1)?'rightTableH':(colIndex==0?'leftTableH':'centerTableH')"
       :style="(colIndex==columnData.length-1)?`width: ${rightWidth}px;`:(colIndex==0?`width: ${leftWidth}px;`:`width: calc(100% - ${leftWidth + rightWidth}px);`)">
-      <!-- colIndex==1?`width: calc(100% - ${leftWidth + rightWidth}px);`:`width: ${colIndex==0?leftWidth:rightWidth}px;`"> -->
+      <!-- colIndex==1?`width: calc(100% - ${leftWidth + rightWidth}px);`:`width: ${colIndex==0?leftWidth:rightWidth}px;`">  // -->
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- colIndex==0?'left-table':(colIndex==1?'center-table':'right-table') -->
           <thead>
             <tr v-for="(col, cIndex) in column" :key="cIndex">
@@ -50,7 +50,8 @@
             <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
             @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
               <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
-              :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false" :class="item.class"
+              :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false"
+              :class="[item.colClass, item.class]"
               :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               +`color: ${item.color};`">
@@ -269,11 +270,12 @@ th.col-child-title {
     margin-right: -1px;
   }
 }
-.red-color {
-  color: #F75467;
-}
-.red-color-bold {
-  color: #F75467;
+.col-child-right {
+  border: {
+    right: 1px solid #E7EDF2;
+    margin-left: -1px;
+    margin-right: -1px;
+  }
 }
 .mark {
   width: 30px;
@@ -290,6 +292,9 @@ th.col-child-title {
   }
   &.vip {
     background-image: url(~@lug/mark_vip.png);
+  }
+  &.marking {
+    background-image: url(~@lug/mark_marking.png);
   }
 }
 </style>
@@ -471,7 +476,7 @@ $rowHeight: 40px;
 .left-table {
   position: relative;
   // z-index: 99;
-  box-shadow: 4px 0 30px rgba($color: $white-shadow, $alpha: .1);
+  // box-shadow: 4px 0 30px rgba($color: $white-shadow, $alpha: .1);
 }
 .right-table {
   position: relative;

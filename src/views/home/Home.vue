@@ -11,7 +11,7 @@
         </div>
         <div class="name">{{empName?empName:''}}</div>
       </div> -->
-       <Dropdown class="user">
+       <Dropdown trigger="click" class="user">
         <div class="img">
           <img :src="require('@img/user/img_usr.png')"/>
         </div>
@@ -106,24 +106,21 @@ export default {
       align-items: center;
       padding: 0 20px 0 30px;
       background-image: url(~@img/header/bg_usr_center.png);
-      >.ivu-dropdown-rel {
-        width: 100%;
-        display: flex;
-        .img {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          overflow: hidden;
-        }
-        .name {
-          width: calc(100% - 50px);
-          margin-left: 14px;
-          color: #fff;
-          font-size: 14px;
-          white-space:nowrap;
-          overflow:hidden;
-          text-overflow:ellipsis;
-        }
+      
+      .img {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      .name {
+        width: calc(100% - 50px);
+        margin-left: 14px;
+        color: #fff;
+        font-size: 16px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
     }
   }

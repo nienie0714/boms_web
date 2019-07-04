@@ -10,15 +10,47 @@
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
-            <button type="info" @click="changeComp('lug', row)">行李详情</button>
+            <!-- <button type="info" @click="changeComp('lug', row)">行李详情</button> -->
+            <div class="table-opr detail" @click="changeComp('lug', row)"></div>
           </template>
-          <template v-else-if="item.key=='idcardNo'">
-            <div class="type">{{row['idcardType']}}</div>
-            <div class="value">{{row[item.key]}}</div>
+          <template v-else-if="item.key == 'lugNo'">
+            <div @click="changeComp('lug', row)">{{row[item.key]}}</div>
           </template>
-          <template v-else-if="item.key=='phone'">
-            <div class="type">{{row['contact']}}</div>
-            <div class="value">{{row[item.key]}}</div>
+          <template v-else-if="item.key=='psgNameCh'">
+            <div class="type">{{row['nameEn']}}</div>
+            <div class="value">{{row['nameCh']}}</div>
+          </template>
+          <template v-else-if="item.key=='flightStatusCn'">
+            <div v-if="row[item.key] == '起飞'" class="fly-class">{{row[item.key]}}</div>
+            <div v-else-if="row[item.key] == null || row[item.key] == ''">-</div>
+            <div v-else class="other-class">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key == 'abnormalStatusCn'">
+            <div v-if="row[item.key] == null || row[item.key] == ''">-</div>
+            <div v-else class="red-color">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key=='marking'">
+            <div v-if="row[item.key] == '是'" class="marking-flex"><img src="@lug/mark_marking.png"/></div>
+            <div v-else>-</div>
+          </template>
+          <template v-else-if="item.key=='luggeType'">
+            <div class="dot-font" v-if="row[item.key] == '普通'">
+              <div class="dot-color-1"></div>
+              <span>{{row[item.key]}}</span>
+            </div>
+            <div class="dot-font" v-else-if="row[item.key] == '拉减'">
+              <div class="dot-color-2"></div>
+              <span>{{row[item.key]}}</span>
+            </div>
+            <div class="dot-font" v-else-if="row[item.key] == '追加'">
+              <div class="dot-color-3"></div>
+              <span>{{row[item.key]}}</span>
+            </div>
+            <div class="dot-font" v-else-if="row[item.key] == 'VIP'">
+              <div class="dot-color-4"></div>
+              <span>{{row[item.key]}}</span>
+            </div>
+            <div v-else>-</div>
           </template>
           <template v-else>
             <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isCancel')?'pull_down':((item.key=='isAddition')?'added':(item.key=='isLookfor'?'find':'vip'))]"></div>
@@ -94,7 +126,7 @@ export default {
           toUpper: true
         },
         {
-          key: 'progressStatus',
+          key: 'flightStatus',
           label: '航班状态',
           type: 'select',
           width: 214,
@@ -104,7 +136,7 @@ export default {
           url: '/base/flightStatus/queryFlightStatus'
         },
         {
-          key: 'lugType',
+          key: 'luggeType',
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
@@ -125,7 +157,7 @@ export default {
         },
         // todo 保障状态
         {
-          key: 'lugNo',
+          key: 'luggeNo',
           label: '行李编号',
           type: 'input',
           width: 214
@@ -137,7 +169,7 @@ export default {
           width: 214,
         },
         {
-          key: 'checkinCounter',
+          key: 'counter',
           label: '值机柜台号',// todo 值机柜台号
           type: 'input',
           width: 214,
@@ -167,7 +199,7 @@ export default {
           toUpper: true
         },
         {
-          key: 'progressStatus',
+          key: 'flightStatus',
           label: '航班状态',// todo 航班状态
           type: 'select',
           width: 214,
@@ -176,13 +208,13 @@ export default {
           url: '/base/flightStatus/queryFlightStatus'
         },
         {
-          key: 'lugNo',
+          key: 'luggeNo',
           label: '行李编号',
           type: 'input',
           width: 214
         },
         {
-          key: 'lugType',
+          key: 'luggeType',
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
@@ -209,9 +241,9 @@ export default {
           width: 214
         },
         {
-          key: 'unloadTime',
-          key1: 'beginUnload',
-          key2: 'endUnload',
+          key: 'checkinTime',
+          key1: 'beginCheckin',
+          key2: 'endCheckin',
           label: '卸机时间',// todo 卸机时间
           type: 'elDateRange',
           dateType: 'date',
@@ -237,33 +269,41 @@ export default {
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李编号', width: 100, class: 'bold', title: true},
+            {key: 'lugNo',  label: '行李编号', width: 120, colClass: 'bold-underline', title: true, type: 'slot'},
             // todo 保障状态
             // todo 旅客姓名
-            {key: 'passenger',  label: '旅客姓名', width: 110, type: 'slot', title: true},
-            {key: 'flightNo',  label: '航班号', width: 80, title: true},
+            {key: 'psgNameCh',  label: '旅客姓名', width: 130, type: 'slot'},
+            {key: 'flightNo',  label: '航班号', width: 120, title: true},
           ],
           // center
           [
-            {key: 'seatNo',  label: '旅客座位号', width: 90, title: true},
-            {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
+            {key: 'seatNo',  label: '旅客座位号', width: 100, title: true},
+            {key: 'execDate',  label: '航班日期', width: 100, format: [0, 10]},
             // todo 航线
+            {key: 'routerCn',  label: '航线', width: 120, title: true},
             // todo 值机时间
+            {key: 'checkDate',  label: '值机时间', width: 120, title: true, format: [0, 16]},
             // todo 航班状态
+            {key: 'flightStatusCn',  label: '航班状态', width: 100, title: true, type:'slot'},
             // todo 航班异常状态
+            {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type:'slot'},
             // todo 机位
-            {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
+            {key: 'stand',  label: '机位', width: 110, title: true},
+            {key: 'luggeType', label: '行李类型', width: 90, enumKey: 'inOutFlag', type:'slot'},
             // todo 是否标记
-            {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
+            {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN', type: 'slot'},
             {key: 'counter',  label: '值机柜台号', width: 90},
             {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
             // todo 安检状态
+            {key: 'secure',  label: '安检状态', width: 100, title: true},
             // todo 人工分拣时间
+            {key: 'truckDate',  label: '人工分拣时间', width: 120, title: true, format: [0, 16]},
             // todo 装机时间
+            {key: 'airDate',  label: '装机时间', width: 120, title: true, format: [0, 16]}
           ],
           // right
           [
-            {label: '操作', type: 'slot', width: 120}
+            {label: '操作', type: 'slot', width: 70},
           ]
         ],
         data: []
@@ -278,12 +318,11 @@ export default {
       this.$set(this, 'queryParam', [])
       this.$set(this, 'queryParam', this.queryParamD)
     }
-    this.queryDataReq()
-    // this.queryDataReqInterval()
-    // this.$once('hook:beforeDestroy', () => {            
-    //   clearInterval(this.timer);
-    //   this.timer = null;
-    // })
+    this.queryDataReqInterval()
+    this.$once('hook:beforeDestroy', () => {            
+      clearInterval(this.timer);
+      this.timer = null;
+    })
   },
   methods: {
     tabItemClickDay (key) {
@@ -295,42 +334,55 @@ export default {
         this.$set(this, 'queryParam', this.queryParamA)
         this.queryParam = this.queryParamA
         this.$set(this.tableData.column, 1, [
-          {key: 'seatNo',  label: '座位号', width: 90, title: true},
-          {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
+          {key: 'seatNo',  label: '旅客座位号', width: 100, title: true},
+          {key: 'execDate',  label: '航班日期', width: 100, format: [0, 10]},
           // todo 航线
+          {key: 'routerCn',  label: '航线', width: 120, title: true},
           // todo 航班状态
+          {key: 'flightStatusCn',  label: '航班状态', width: 110, title: true, type:'slot'},
           // todo 航班异常状态
+          {key: 'abnormalStatusCn',  label: '航班异常状态', width: 110, title: true, type:'slot'},
           // todo 机位
-          {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
+          {key: 'stand',  label: '机位', width: 110, title: true},
+          {key: 'luggeType', label: '行李类型', width: 100, enumKey: 'inOutFlag', type:'slot'},
           // todo 是否标记
-          {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-          {key: 'belt',  label: '行李转盘号', width: 70, title: true},
+          {key: 'marking',  label: '是否标记', width: 100, enumKey: 'isYOrN'},
+          {key: 'belt',  label: '行李转盘号', width: 110, title: true},
           // todo 卸机时间
+          {key: 'checkDate',  label: '卸机时间', width: 120, title: true, format: [0, 16]},
           // todo 上转盘时间
+          {key: 'upLoadDate',  label: '上转盘时间', width: 120, title: true, format: [0, 16]}
         ])
       } else {
         this.$set(this, 'queryParam', [])
         this.$set(this, 'queryParam', this.queryParamD)
         this.$set(this.tableData.column, 1, [
-          {key: 'seatNo',  label: '旅客座位号', width: 90, title: true},
-          {key: 'execDate',  label: '航班日期', width: 90, format: [0, 10]},
+          {key: 'seatNo',  label: '旅客座位号', width: 100, title: true},
+          {key: 'execDate',  label: '航班日期', width: 100, format: [0, 10]},
           // todo 航线
+          {key: 'routerCn',  label: '航线', width: 120, title: true},
           // todo 值机时间
+          {key: 'checkDate',  label: '值机时间', width: 120, title: true, format: [0, 16]},
           // todo 航班状态
+          {key: 'flightStatusCn',  label: '航班状态', width: 100, title: true, type:'slot'},
           // todo 航班异常状态
+          {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type:'slot'},
           // todo 机位
-          {key: 'inOutFlag', label: '行李类型', width: 90, enumKey: 'inOutFlag'},
+          {key: 'stand',  label: '机位', width: 110, title: true},
+          {key: 'luggeType', label: '行李类型', width: 90, enumKey: 'inOutFlag', type:'slot'},
           // todo 是否标记
           {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
           {key: 'counter',  label: '值机柜台号', width: 90},
           {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
           // todo 安检状态
+          {key: 'secure',  label: '安检状态', width: 100, title: true},
           // todo 人工分拣时间
+          {key: 'truckDate',  label: '人工分拣时间', width: 120, title: true, format: [0, 16]},
           // todo 装机时间
+          {key: 'airDate',  label: '装机时间', width: 120, title: true, format: [0, 16]}
         ])
       }
-      this.queryDataReq()
-      // this.queryDataReqInterval()
+      this.queryDataReqInterval()
     },
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
@@ -361,8 +413,7 @@ export default {
     selectKeyDay: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          this.queryDataReq()
-          // this.queryDataReqInterval()
+          this.queryDataReqInterval()
         }
       }
     }
