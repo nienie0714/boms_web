@@ -23,7 +23,6 @@ export default {
     FltNow,
     FltHis
   },
-  // mixins: [tableMixin],
   data () {
     return {
       axiosChildArr: [],

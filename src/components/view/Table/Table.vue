@@ -15,6 +15,9 @@
                 <template v-if="tableData.type=='mult' && itemIndex == 0">
                   <div :class="(tableData.multSelection.length == tableData.data.length && tableData.data.length > 0)?'radio is-checked':'radio'" @click="selectAuto"></div>
                 </template>
+                <!-- <template v-else-if="tableData.type=='button'">
+                  <el-button type="primary" plain>主要按钮</el-button>
+                </template> -->
                 <template>{{item.label}}</template>
               </th>
             </tr>

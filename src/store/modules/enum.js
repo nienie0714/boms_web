@@ -9,6 +9,7 @@ export default {
       {key: 'terminal', classify: '是否', options: [{code: 'T1', name: 'T1'}, {code: 'T2', name: 'T2'}, {code: 'T3', name: 'T3'}]},
       {key: 'inOutFlag', classify: '进出标识', options: []},
       {key: 'lugMarkType', classify: '行李标记类型', options: []},
+      {key: 'lugType', classify: '行李类型', options: [{code: null, name: '全部'}, {code: 'other', name: '普通'}, {code: 'is_cancel', name: '拉减'}, {code: 'is_addition', name: '追加'}, {code: 'is_vip', name: 'VIP'}]},
       {key: 'resourceType',
       classify: '功能资源',
       options: [

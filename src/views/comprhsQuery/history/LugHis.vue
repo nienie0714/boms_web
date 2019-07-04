@@ -91,9 +91,10 @@ export default {
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          enumKey: 'lugType',
+          itemValue: 'code',
+          itemLabel: 'name',
+          // url: '/base/aircraftStand/queryAll'
         },
         {
           key: 'marking',
@@ -168,9 +169,10 @@ export default {
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          enumKey: 'lugType',
+          itemValue: 'code',
+          itemLabel: 'name',
+          // url: '/base/aircraftStand/queryAll'
         },
         {
           key: 'marking',
@@ -203,7 +205,7 @@ export default {
         },
         {
           key: 'slot',
-          label: 'slot',// todo 值机时间
+          label: 'slot',/// 占位
           type: 'input',
           width: 222,
           isHidden: true
@@ -258,7 +260,13 @@ export default {
     }
   },
   mounted () {
-    this.queryParam.push(...this.queryParamD)
+    if (this.selectKey == 'A') {
+      this.$set(this, 'queryParam', [])
+      this.$set(this, 'queryParam', this.queryParamA)
+    } else {
+      this.$set(this, 'queryParam', [])
+      this.$set(this, 'queryParam', this.queryParamD)
+    }
     this.queryDataReq()
   },
   methods: {
@@ -267,7 +275,6 @@ export default {
     },
     tabItemClick (key) {
       if (key == 'A') {
-        this.queryParam = []
         this.$set(this, 'queryParam', [])
         this.$set(this, 'queryParam', this.queryParamA)
         this.$set(this.tableData.column, 1, [

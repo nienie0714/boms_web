@@ -108,9 +108,10 @@ export default {
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          enumKey: 'lugType',
+          itemValue: 'code',
+          itemLabel: 'name',
+          // url: '/base/aircraftStand/queryAll'
         },
         {
           key: 'marking',
@@ -185,9 +186,10 @@ export default {
           label: '行李类型',// todo 行李类型
           type: 'select',
           width: 214,
-          itemValue: 'standNo',
-          itemLabel: 'standNo',
-          url: '/base/aircraftStand/queryAll'
+          enumKey: 'lugType',
+          itemValue: 'code',
+          itemLabel: 'name',
+          // url: '/base/aircraftStand/queryAll'
         },
         {
           key: 'marking',
@@ -220,7 +222,7 @@ export default {
         },
         {
           key: 'slot',
-          label: 'slot',// todo 值机时间
+          label: 'slot',// 占位
           type: 'input',
           width: 222,
           isHidden: true
@@ -235,7 +237,6 @@ export default {
         column: [
           // left
           [
-            {type: 'mult', width: 50},
             {key: 'lugNo',  label: '行李编号', width: 100, class: 'bold', title: true},
             // todo 保障状态
             // todo 旅客姓名
@@ -270,8 +271,19 @@ export default {
     }
   },
   mounted () {
-    this.$set(this, 'queryParam', this.queryParamD)
+    if (this.selectKey == 'A') {
+      this.$set(this, 'queryParam', [])
+      this.$set(this, 'queryParam', this.queryParamA)
+    } else {
+      this.$set(this, 'queryParam', [])
+      this.$set(this, 'queryParam', this.queryParamD)
+    }
     this.queryDataReq()
+    // this.queryDataReqInterval()
+    // this.$once('hook:beforeDestroy', () => {            
+    //   clearInterval(this.timer);
+    //   this.timer = null;
+    // })
   },
   methods: {
     tabItemClickDay (key) {
@@ -318,6 +330,7 @@ export default {
         ])
       }
       this.queryDataReq()
+      // this.queryDataReqInterval()
     },
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
@@ -349,6 +362,7 @@ export default {
       handler (value) {
         if (!_.isUndefined(value)) {
           this.queryDataReq()
+          // this.queryDataReqInterval()
         }
       }
     }

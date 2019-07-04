@@ -6,34 +6,6 @@
     </div>
     <LugHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugHis>
     <LugNow v-else :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugNow>
-    <!-- <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
-      <div class="toolbar">
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
-      </div>
-    </div>
-    <div class="table-cont container cross">
-      <tables :tableData="tableData" :loading="tableData.loading">
-        <template v-slot:slot-body="{index, row, item}">
-          <template v-if="item.label=='操作'">
-            <button type="info" @click="changeComp('lug', row)">行李详情</button>
-          </template>
-          <template v-else-if="item.key=='idcardNo'">
-            <div class="type">{{row['idcardType']}}</div>
-            <div class="value">{{row[item.key]}}</div>
-          </template>
-          <template v-else-if="item.key=='phone'">
-            <div class="type">{{row['contact']}}</div>
-            <div class="value">{{row[item.key]}}</div>
-          </template>
-          <template v-else>
-            <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isCancel')?'pull_down':((item.key=='isAddition')?'added':(item.key=='isLookfor'?'find':'vip'))]"></div>
-          </template>
-        </template>
-      </tables>
-    </div>
-    <component :is="showComp.is" :row="showComp.row"></component> -->
-    <!-- <LugNow :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugNow> -->
   </div>
 </template>
 

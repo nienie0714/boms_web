@@ -43,7 +43,8 @@ export default {
         data: null
       },
       axiosArr: [],
-      loading: false
+      loading: false,
+      timer: null
     }
   },
   created () {
@@ -119,6 +120,14 @@ export default {
     queryDataReqReset(status){
       this.pageData.num = 1
       this.queryDataReq(status)
+    },
+    queryDataReqInterval(status){
+      clearInterval(this.timer)
+      this.timer = setInterval(this.queryDataReq, 60000)
+    },
+    queryDataReqClearInterval(){
+      clearInterval(this.timer)
+      this.timer = null;
     },
     // 发送查询请求
     queryDataReq (status) {

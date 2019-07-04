@@ -95,7 +95,7 @@ export default {
           key: 'flightNo',
           label: '航班号',
           type: 'input',
-          width: 278,
+          width: 214,
           toUpper: true
         },
         // {
@@ -171,7 +171,7 @@ export default {
                 {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
                 {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
               ]
             }
@@ -192,11 +192,10 @@ export default {
                 // todo 自动分拣数
                 // todo 人工分拣数
                 // todo 起运时间
-                // todo 装机数
-                {key: 'loadTruckCost', label: '分拣耗时', width: 50, class: 'col-child-title'},
+                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
                 {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                {key: 'loadAircraftCost', label: '装机耗时', width: 50, class: 'col-child-title'},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
               ]
             },
@@ -216,7 +215,8 @@ export default {
           ],
           // right
           [
-            {label: '操作', rowspan: 2, type: 'slot', width: 220}
+            {label: '操作', rowspan: 2, type: 'slot', width: 220},
+            // {label: '操作2', rowspan: 2, type: 'button', width: 220}
           ]
         ],
         data: []
@@ -225,6 +225,11 @@ export default {
   },
   mounted () {
     this.queryDataReq()
+    this.queryDataReqInterval()
+    this.$once('hook:beforeDestroy', () => {            
+      clearInterval(this.timer);
+      this.timer = null;
+    })
   },
   methods: {
     customQueryBefore () {
@@ -248,7 +253,7 @@ export default {
                 {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
                 {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
               ]
             }
@@ -268,11 +273,10 @@ export default {
                 // todo 自动分拣数
                 // todo 人工分拣数
                 // todo 起运时间
-                // todo 装机数
-                {key: 'loadTruckCost', label: '分拣耗时', width: 50, class: 'col-child-title'},
+                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
                 {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                {key: 'loadAircraftCost', label: '装机耗时', width: 50, class: 'col-child-title'},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
               ]
             },
@@ -306,7 +310,7 @@ export default {
                 {key: 'terminal',  label: '航站楼', width: 60, class: 'col-child-title'},
                 {key: 'stand',  label: '机位', width: 60, class: 'col-child-title'},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, class: 'col-child-title'},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 80, title: true, class: 'col-child-title'},
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, class: 'col-child-title'},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
               ]
             }
@@ -324,8 +328,8 @@ export default {
                 {key: 'unLoadAirNum',  label: '卸机数', width: 60, class: 'col-child-title'},
                 {key: 'unLoadAirCostTime',  label: '卸机耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-UNLOAD-AIRCRAFT', label: '已卸机/总数', width: 120, type: 'slot', class: 'col-child-title'},
-                {key: 'unLoadCarNum',  label: '卸机耗时', width: 60, class: 'col-child-title'},
-                {key: 'unLoadCarCostTime',  label: '卸机耗时', width: 60, class: 'col-child-title'},
+                {key: 'unLoadCarNum',  label: '卸车数', width: 60, class: 'col-child-title'},
+                {key: 'unLoadCarCostTime',  label: '卸车耗时', width: 60, class: 'col-child-title'},
                 {key: 'N-UPLOAD', label: '已卸车/总数', width: 120, type: 'slot', class: 'col-child-title'},
                 // todo 提取核验数
               ]
@@ -416,14 +420,14 @@ export default {
     selectKey: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          this.queryDataReq()
+          this.queryDataReqInterval()
         }
       }
     },
     selectKeyDay: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          this.queryDataReq()
+          this.queryDataReqInterval()
         }
       }
     }
