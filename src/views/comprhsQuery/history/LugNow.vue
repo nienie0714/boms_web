@@ -169,7 +169,7 @@ export default {
           width: 214,
         },
         {
-          key: 'counter',
+          key: 'counterNo',
           label: '值机柜台号',// todo 值机柜台号
           type: 'input',
           width: 214,
@@ -292,7 +292,7 @@ export default {
             {key: 'luggeType', label: '行李类型', width: 90, enumKey: 'inOutFlag', type:'slot'},
             // todo 是否标记
             {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN', type: 'slot'},
-            {key: 'counter',  label: '值机柜台号', width: 90},
+            {key: 'counterNo',  label: '值机柜台号', width: 90},
             {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
             // todo 安检状态
             {key: 'secure',  label: '安检状态', width: 100, title: true},
@@ -372,7 +372,7 @@ export default {
           {key: 'luggeType', label: '行李类型', width: 90, enumKey: 'inOutFlag', type:'slot'},
           // todo 是否标记
           {key: 'marking',  label: '是否标记', width: 90, enumKey: 'isYOrN'},
-          {key: 'counter',  label: '值机柜台号', width: 90},
+          {key: 'counterNo',  label: '值机柜台号', width: 90},
           {key: 'chute',  label: '行李滑槽号', width: 90, title: true},
           // todo 安检状态
           {key: 'secure',  label: '安检状态', width: 100, title: true},
