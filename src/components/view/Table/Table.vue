@@ -269,6 +269,12 @@ th.col-child-title {
     margin-right: -1px;
   }
 }
+.red-color {
+  color: #F75467;
+}
+.red-color-bold {
+  color: #F75467;
+}
 .mark {
   width: 30px;
   height: 30px;
