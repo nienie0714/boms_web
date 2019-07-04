@@ -76,7 +76,7 @@ export default {
       if (!this.defaultVal && this.defaultVal !== 0) {
         return
       } else {
-        this.$emit('click', this.defaultVal)
+        this.$emit('change', this.defaultVal)
       }
     }
   },

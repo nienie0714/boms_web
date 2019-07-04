@@ -2,7 +2,7 @@
   <div class="log-audit">
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
-      <div class="toolbar">
+      <div class="toolbar ">
         <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
       </div>
     </div>

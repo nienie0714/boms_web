@@ -153,6 +153,7 @@ export default {
           itemLabel: 'nameC',
           url: '/base/flightStatus/queryFlightStatus',
           // urlType: 'get'
+          param: {inOutFlag: "D"}
         },
         {
           key: 'terminal',
@@ -325,8 +326,8 @@ export default {
                 {key: 'ata', label: '实际', width: 80, format: [11, 5]},
                 {key: 'terminal',  label: '航站楼', width: 60},
                 {key: 'stand',  label: '机位', width: 60},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true}
               ]
             }
@@ -355,10 +356,10 @@ export default {
               colspan: 4,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60},
+                {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
           ])
@@ -436,6 +437,22 @@ export default {
     selectKey: {
       handler (value) {
         if (!_.isUndefined(value)) {
+          // 更新航班状态下拉框
+          _.forEach(this.queryParam, (item) => {
+            if (item.key == 'progressStatus') {
+              item.param = {inOutFlag: value}
+              console.log(item.param)
+              queryAll(item.url, item.param).then(res => {
+                if (res.data.code == 0) {
+                  this.$set(item, 'options', res.data.data)
+                } else {
+                  this.$msg.error({
+                    info: '获取' + item.label + '失败 !'
+                  })
+                }
+              })
+            }
+          })
           this.queryDataReqInterval()
         }
       }

@@ -1,7 +1,6 @@
 .flight, .luggages, .log-audit {
   .toolbar {
     height: 38px;
-    margin: 0 auto;
     align-self: flex-start;
     min-width: 62px;
     >button {
@@ -33,7 +32,7 @@
     &.current-item {
       box-sizing: border-box;
       margin: 2px;
-      background-color: $blue;
+      background: linear-gradient(to right, rgb(70, 166, 249), rgb(87, 140, 254));
       color: #fff !important;
       border-radius: 60px/50px;
       >div {
@@ -286,20 +285,25 @@
   border-radius: 50%;
 }
 // 普通
-.dot-color-1 {
+.dot-color-normal {
   background: #A3B6CC;
 }
 // 拉减
-.dot-color-2 {
-  background: #F79F2D;
+.dot-color-cancel {
+  background: #F75467;
+  // 黄色
 }
 // 追加
-.dot-color-3 {
+.dot-color-add {
   background: #3392FF;
 }
 // VIP
-.dot-color-4 {
+.dot-color-vip {
   background: #01B674;
+}
+// 挑找
+.dot-color-find {
+  background: #696DF7;
 }
 
 /* 覆盖iview样式 */

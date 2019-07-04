@@ -35,19 +35,19 @@
           </template>
           <template v-else-if="item.key=='luggeType'">
             <div class="dot-font" v-if="row[item.key] == '普通'">
-              <div class="dot-color-1"></div>
+              <div class="dot-color-normal"></div>
               <span>{{row[item.key]}}</span>
             </div>
             <div class="dot-font" v-else-if="row[item.key] == '拉减'">
-              <div class="dot-color-2"></div>
+              <div class="dot-color-cancel"></div>
               <span>{{row[item.key]}}</span>
             </div>
             <div class="dot-font" v-else-if="row[item.key] == '追加'">
-              <div class="dot-color-3"></div>
+              <div class="dot-color-add"></div>
               <span>{{row[item.key]}}</span>
             </div>
             <div class="dot-font" v-else-if="row[item.key] == 'VIP'">
-              <div class="dot-color-4"></div>
+              <div class="dot-color-vip"></div>
               <span>{{row[item.key]}}</span>
             </div>
             <div v-else>-</div>

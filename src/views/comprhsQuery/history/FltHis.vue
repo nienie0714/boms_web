@@ -116,6 +116,17 @@ export default {
           value: null
         },
         {
+          key: 'execDate',
+          key1: 'beginDate',
+          key2: 'endDate',
+          label: '航班日期',// 航班日期
+          type: 'elDateRange',
+          dateType: 'date',
+          format: 'yyyy-MM-dd',
+          valueFormat: 'yyyy-MM-dd',
+          width: 390
+        },
+        {
           key: 'abnormalStatus',
           label: '航班异常状态',// todo 航班异常状态
           type: 'select',
@@ -306,8 +317,8 @@ export default {
                 {key: 'ata', label: '实际', width: 80, format: [11, 5]},
                 {key: 'terminal',  label: '航站楼', width: 60},
                 {key: 'stand',  label: '机位', width: 60},
-                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true},// 进展
-                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true},
+                {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
+                {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
                 {key: 'chute',  label: '行李滑槽', width: 70, title: true}
               ]
             }
@@ -336,10 +347,10 @@ export default {
               colspan: 4,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60},
+                {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
           ])

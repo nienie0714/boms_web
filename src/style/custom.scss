@@ -103,7 +103,7 @@ button {
   cursor: pointer;
 }
 button[type=primary] {
-  background-color: $blue;
+  background: linear-gradient(to right, rgb(70, 166, 249), rgb(87, 140, 254));
   box-shadow: 0 0 20px rgba($color: $blue-shadow, $alpha: .4);
   // background:linear-gradient(-90deg,rgba(105,107,255,0.4),rgba(80,185,240,0.4));
   // box-shadow:0px 5px 15px 0px rgba(63,153,255,0.3);

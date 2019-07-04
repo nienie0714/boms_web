@@ -276,6 +276,7 @@ export default {
             break
             case 'update': this.typeName = '编辑'
             this.submit = true
+            this.$set(this, 'data', JSON.parse(JSON.stringify(this.form.data)))
             break
           }
           this.updateData()

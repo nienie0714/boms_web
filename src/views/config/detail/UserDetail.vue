@@ -43,7 +43,7 @@ export default {
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
-          {key: 'password',  label: '密码', type: 'input', inputType: 'password', maxlength: 255},
+          {key: 'password',  label: '密码', type: 'input', defaultVal: 1, inputType: 'password', maxlength: 255},
           {key: 'createtime', label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
@@ -61,10 +61,10 @@ export default {
           deptName: [
             {type: 'require', trigger: 'blur'}
           ],
-          password: [
-            {type: 'require', trigger: 'blur'},// 数字字母组合，区分大小写，不支持汉字
-            {type: 'regex', reg: /^[0-9A-Za-z]*$/, info: '必须为数字、字母'}
-          ],
+          // password: [ // disabled
+          //   {type: 'require', trigger: 'blur'},// 数字字母组合，区分大小写，不支持汉字
+          //   {type: 'regex', reg: /^[0-9A-Za-z]*$/, info: '必须为数字、字母'}
+          // ],
           roleIds: [
             {type: 'require', trigger: 'blur'}
           ]
@@ -74,6 +74,13 @@ export default {
     }
   },
   mounted () {
+    const pw = this.$store.getters.getConfigValue('defaultPw')
+    _.forEach(this.form.column, (item) => {
+      if (item.key == 'password') {
+        item.defaultVal = pw
+        this.$set(item, 'defaultVal', pw)
+      }
+    })
   },
   methods: {
     queryDept(value, callback) {
@@ -148,6 +155,7 @@ export default {
               this.$set(item, 'isHidden', true)
             } else if (type == 'insert') {
               this.$delete(item, 'isHidden')
+              this.$set(item, 'disabled', true)
             }
           }
           if (item.key == 'userName') {

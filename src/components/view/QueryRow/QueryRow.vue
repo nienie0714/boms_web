@@ -2,7 +2,7 @@
   <div class="query-row">
     <div v-for="item in dataHis" :key="item.key" class="query-item" :class="item.class">
       <input-tag  v-if="!item.hasOwnProperty('isHidden') || !item.isHidden" v-model.trim="item.value" :width="item.width" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
-      :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal"
+      :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :format="item.format" :valueFormat="item.valueFormat"
       @change="handleChange(item.value)" @enter="handleEnter(item, $event)"></input-tag>
     </div>
   </div>

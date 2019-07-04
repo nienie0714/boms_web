@@ -62,8 +62,9 @@ export default {
       
       let i = _.findIndex(this.topResource, ['router', localStorage.getItem('topMenuActive')])
       if (i == -1) {
-        this.activeIndex = 0
-        this.changeActive(0, this.topResource[0]) 
+        let j = _.findIndex(this.topResource, ['router', '/comprhsQuery'])
+        this.activeIndex = j
+        this.changeActive({index: j, item: this.topResource[j]})
       } else {
         this.activeIndex = i
         let data = {index: i, item: this.topResource[i]}

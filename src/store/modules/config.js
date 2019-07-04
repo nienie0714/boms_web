@@ -4,6 +4,7 @@ export default {
       {key: 'wsUrl', classify: 'websocket_url', name: 'boms_websocket', value: ''},
       // {key: 'mqUrl', classify: 'web_mq_url', name: 'aoms-webmq', value: ''},
       {key: 'dfs', classify: 'file-url', name: 'file_root_url', value: ''},
+      {key: 'defaultPw', classify: 'sys_user', name: 'default_password', value: ''},
       // {key: 'aptLoc', classify: 'apt_loc', name: 'aptIata-loc', value: ''}
     ],
     configValue: ''
