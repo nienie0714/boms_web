@@ -1,6 +1,6 @@
 <template>
   <div>
-    <my-dialog :visible="visible" :footer="false" :width="680" :position="'right'" class="flt-detail-dialog under-head-dialog" @handleClose="handleClose">
+    <my-dialog :visible="visible" :footer="false" :position="'right'" class="flt-detail-dialog under-head-dialog" @handleClose="handleClose">
       <template v-slot:header>
         <tabs :tabsData="tabsData" :defaultKey="isComp" @tabItemClick="tabItemClick"></tabs>
       </template>
@@ -82,18 +82,39 @@
               <div class="label" :title="row['route']">航线代码：{{row['route']}}</div>
             </div>
             <div v-if="row&&row['nodes']" class="container">
-              <div v-for="(item, index) in row['nodes']" :key="index" class="container node">
-                <canvas :id="'node'+index" width="100" height="100"></canvas>
-                <div class="font-pro">{{Math.floor(formatPro(item) * 100) + '%'}}</div>
-                <div v-if="index < (row['nodes'].length - 1)" class="img"></div>
+              <div v-for="(item, index) in row['nodes']" :key="index" class="container cross node">
+                <div>{{item['nodeCn']}}</div>
+                <div class="container">
+                  <canvas :id="'node'+index" width="80" height="80"></canvas>
+                  <div v-if="(item['nodeCn'] != '值机交运') && (Math.floor(formatPro(item) * 100) > 0)" class="font-pro">{{Math.floor(formatPro(item) * 100) + '%'}}</div>
+                  <div v-if="index < (row['nodes'].length - 1)" class="img"></div>
+                </div>
               </div>
             </div>
           </div>
           <div class="body-second">
             <tables :tableData="tableData" @handleDblClick="showLugDetail" :loading="tableData.loading">
               <template v-slot:slot-body="{index, row, item}">
-                <div v-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isMark')?'marking':'']"></div>
-                <div v-else-if="row[item.key] == 'Y'" :class="['mark', (item.key=='isMark')?'marking':'']"></div>
+                <div v-if="item.key == 'markingNum'" :class="['mark', (row[item.key] > 0)?'marking':'']"></div>
+                <template v-else-if="item.key=='luggeType'">
+                  <div class="dot-font" v-if="row[item.key] == '普通'">
+                    <div class="dot-color-normal"></div>
+                    <span>{{row[item.key]}}</span>
+                  </div>
+                  <div class="dot-font" v-else-if="row[item.key] == '拉减'">
+                    <div class="dot-color-cancel"></div>
+                    <span>{{row[item.key]}}</span>
+                  </div>
+                  <div class="dot-font" v-else-if="row[item.key] == '追加'">
+                    <div class="dot-color-add"></div>
+                    <span>{{row[item.key]}}</span>
+                  </div>
+                  <div class="dot-font" v-else-if="row[item.key] == 'VIP'">
+                    <div class="dot-color-vip"></div>
+                    <span>{{row[item.key]}}</span>
+                  </div>
+                  <div v-else>-</div>
+                </template>
               </template>
             </tables>
           </div>
@@ -215,7 +236,7 @@ export default {
       tableData: {
         key: 'lugNo',
         value: null,
-        url: '/integrated/luggage/queryAll',
+        url: '/integrated/luggage/queryAllDetail',
         loading: false,
         queryParam: {
           dynamicFlightId: null
@@ -223,10 +244,10 @@ export default {
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李号', width: 210, class: 'bold', title: true},
+            {key: 'lugNo',  label: '行李号', width: 200, class: 'bold', title: true},
             {key: 'progressStatusCn',  label: '保障状态', width: 170, color: '#3392ff'},
-            {key: 'isCancel',  label: '是否标记', width: 130},
-            {key: 'inOutFlag', label: '行李类型', width: 170}
+            {key: 'markingNum',  label: '是否标记', type: 'slot', width: 100},
+            {key: 'luggeType', label: '行李类型', type: 'slot', width: 170}
             // {key: 'destCn',  label: '目的站', width: 90, title: true},
             // {key: 'originCn',  label: '始发站', width: 90, title: true},
             // {key: 'truck',  label: '容器', width: 80, title: true},
@@ -281,26 +302,26 @@ export default {
               let ctx = c.getContext('2d')
 
               ctx.beginPath()
-              ctx.arc(50, 50, 45, -0.5 * Math.PI, 1.5 * Math.PI)
+              ctx.arc(40, 40, 35, -0.5 * Math.PI, 1.5 * Math.PI)
               ctx.fillStyle="#EDF1F5"
               ctx.fill()
 
               ctx.beginPath()
-              ctx.arc(50, 50, 49, -0.5 * Math.PI, (2 * value - 0.5) * Math.PI)
+              ctx.arc(40, 40, 39, -0.5 * Math.PI, (2 * value - 0.5) * Math.PI)
               ctx.strokeStyle = color
               ctx.lineWidth = 2
               ctx.stroke()
 
-              ctx.font = '15px normal'
-              ctx.textAlign = 'center'
-              ctx.fillStyle = '#899db2'
-              ctx.fillText(node['nodeCn'], 50, 42)
+              // ctx.font = '15px normal'
+              // ctx.textAlign = 'center'
+              // ctx.fillStyle = '#899db2'
+              // ctx.fillText(node['nodeCn'], 40, 32)
 
               let ctxNum = c.getContext('2d')
               ctxNum.font = '24px DINPRO-BOLD'
               ctxNum.textAlign = 'center'
               ctxNum.fillStyle = '#3d424c'
-              ctxNum.fillText((node['totalNum'] || 0) + (node['nodeAdditionNum'] || 0), 50, 74)
+              ctxNum.fillText((node['totalNum'] || 0) + (node['nodeAdditionNum'] || 0), 40, 48)
             })
           })
         }
@@ -314,9 +335,9 @@ export default {
         })
       } else {
         if (this.row.inOutFlag == 'D') {
-          this.$set(this.rowConf[1].list[2], 5, {key: 'chute', label: '滑槽号'})
+          this.$set(this.rowConf[0].list[1], 4, {key: 'chute', label: '滑槽号'})
         } else {
-          this.$set(this.rowConf[1].list[2], 5, {key: 'belt', label: '行李转盘'})
+          this.$set(this.rowConf[0].list[1], 4, {key: 'belt', label: '行李转盘'})
         }
       }
       this.visible = true
@@ -587,6 +608,23 @@ $bodyHead: 32px;
         }
         >div:last-child:not(:first-child) {
           margin-top: 30px;
+          
+          >.node {
+            >div:first-child {
+              width: 80px;
+              font-size: 16px;
+              color: #3D424D;
+              margin-bottom: 11px;
+            }
+            >div:last-child {
+              >.img {
+                margin: auto 4px auto 10px;
+                width: 10px;
+                height: 10px;
+                background-image: url(~@icon/lug/icon_next_arrow.png);
+              }
+            }
+          }
         }
         .bold {
           font-size: 24px;
@@ -598,6 +636,14 @@ $bodyHead: 32px;
         >div {
           >.table-body {
             overflow-x: hidden;
+          }
+        }
+        .mark {
+          $wh: 16px;
+          width: $wh;
+          height: $wh;
+          &.marking {
+            background-image: url(~@lug/mark_marking.png);
           }
         }
       }

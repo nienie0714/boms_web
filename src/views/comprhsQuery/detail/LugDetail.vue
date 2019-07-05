@@ -1,5 +1,12 @@
 <template>
   <my-dialog :visible="visible" :position="'right'" :title="title" :footer="false" class="lug-detail-dialog under-head-dialog" @handleClose="handleClose">
+    <template v-slot:header>
+      <div class="return container" @click="handleClose">
+        <div class="return-button"></div>
+        <div>返回</div>
+      </div>
+      <div class="title">{{title}}</div>
+    </template>
     <template>
       <div class="body-first">
         <div class="first-row">
@@ -9,10 +16,17 @@
               <div class="type-block">{{showValue(row, {key: 'luggage.progressStatusCn'})}}</div>
             </div>
             <div>
-              <div :class="'pull_down_' + (showValue(row, {key: 'luggage.isCancel'}) == 'Y' ? 'long' : 'gray')"></div>
-              <div :class="'added_' + (showValue(row, {key: 'luggage.isAddition'}) == 'Y' ? 'long' : 'gray')"></div>
-              <div :class="'find_' + (showValue(row, {key: 'luggage.isLookfor'}) == 'Y' ? 'long' : 'gray')"></div>
-              <div :class="'vip_' + (showValue(row, {key: 'luggage.isVip'}) == 'Y' ? 'long' : 'gray')"></div>
+              <!-- <div :class="'added_' + (showValue(row, {key: 'luggage.isAddition'}) == 'Y' ? 'long' : 'gray')"></div> -->
+              <div v-if="showValue(row, {key: 'luggage.isCancel'}) == 'Y'" :class="'pull_down_long'"></div>
+              <div v-if="showValue(row, {key: 'luggage.isAddition'}) == 'Y'" :class="'added_long'"></div>
+              <div v-if="showValue(row, {key: 'luggage.isVip'}) == 'Y'" :class="'vip_long'"></div>
+              <div v-if="showValue(row, {key: 'luggage.isLookfor'}) == 'Y'" :class="'find_long'"></div>
+              <div v-if="require('lodash').get(row, 'luggage.markingNum')>0" :class="'mark_long'"></div>
+              <div v-if="showValue(row, {key: 'luggage.isCancel'}) !== 'Y'
+              && showValue(row, {key: 'luggage.isAddition'}) !== 'Y'
+              && showValue(row, {key: 'luggage.isVip'}) !== 'Y'
+              && showValue(row, {key: 'luggage.isLookfor'}) !== 'Y'
+              && (require('lodash').get(row, 'luggage.markingNum')<=0)" :class="'normal'"></div>
             </div>
           </div>
           <div class="font-gray">RFID：{{showValue(row, {key: 'luggage.rfidNo'})}}</div>
@@ -32,31 +46,66 @@
               <div v-if="node.timeA">{{(node.timeA || emptyTime).substr(5, 11)}}</div>
             </div>
             <div class="node">
-              <div :class="'circle' + (node.timeA?' active':'')"></div>
-              <div v-if="node.lstLugMarkingVO&&node.lstLugMarkingVO.length>0&&node.lstLugMarkingVO[0].classifyCn"
-                :class="node.lstLugMarkingVO[0].classifyCn?'star':''"></div>
+              <div v-if="node.lstLugMarkingVO && node.lstLugMarkingVO.length > 0" class="mark-star"></div>
+              <div v-else :class="'circle' + (node.timeA?' active':'')"></div>
             </div>
           </div>
           <div class="right">
             <div :class="'label' + (node.timeA?' active':'')">{{node.nodeCn}}</div>
             <div class="row-block">
-              <div v-if="node.lstLugMarkingVO&&node.lstLugMarkingVO.length>0" class="row">
-                <div v-for="(col, nIdx) in nodeConf" :key="nIdx" :class="['col col-' + (col&&col.colWidth>0?col.colWidth:nodeConf.length), col.class]">
-                  <div class="text">{{col.label}}</div>
-                  <div class="text" :style="`color: ${col.color}`">{{showValue(node, col)}}</div>
-                </div>
+              <div class="row">
+                <template v-if="~require('lodash').has(nodeCont, node.nodeNo)">
+                  <div v-for="(col, nIdx) in nodeCont[node.nodeNo]" :key="nIdx" :class="['col col-']"><!--  + (col&&col.colWidth>0?col.colWidth:nodeConf.length), col.class -->
+                    <div class="text">{{col.label}}</div>
+                    <div v-if="['luggage.chute', 'luggage.truck'].includes(col.key)" class="text" :style="`color: ${col.color}`" :title="showValue(row, col)">{{showValue(row, col)}}</div>
+                    <div v-else class="text" :style="`color: ${col.color}`" :title="showValue(node, col)">{{showValue(node, col)}}</div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-for="(col, nIdx) in nodeConf" :key="nIdx" :class="['col col-']"><!--  + (col&&col.colWidth>0?col.colWidth:nodeConf.length), col.class -->
+                    <div class="text">{{col.label}}</div>
+                    <div class="text" :style="`color: ${col.color}`" :title="showValue(node, col)">{{showValue(node, col)}}</div>
+                  </div>
+                </template>
               </div>
-              <div v-if="node.lstLugMarkingVO&&node.lstLugMarkingVO.length>0" class="pic-list">
+              <div v-if="node[picConf[0]]" class="pic-list">
                 <div v-for="(pic, pIdx) in picConf" :key="pIdx">
-                  <template v-if="node.lstLugMarkingVO[0][pic]">
-                    <img :src="dfs + node.lstLugMarkingVO[0][pic]" @click="clickShowImg(dfs + node.lstLugMarkingVO[0][pic])"/>
+                  <template v-if="node[pic]">
+                    <img :src="dfs + node[pic]" @click="clickShowImg(dfs + node[pic])"/>
                   </template>
                 </div>
               </div>
-              <div v-if="showImg" class="show-img" @click="showImg = false">
-                <img :src="showImgPath"/>
-              </div>
             </div>
+            <div v-if="showImg" class="show-img" @click="showImg = false">
+              <img :src="showImgPath"/>
+            </div>
+            <template v-if="node.hasOwnProperty('lstLugMarkingVO')&&node.lstLugMarkingVO&&node.lstLugMarkingVO.length>0">
+              <div v-for="(mark, mIndex) in node.lstLugMarkingVO" :key="mIndex" class="row-block">
+                <div class="mark-type">
+                  <div>标记类型：</div>
+                  <div class="bold" style="color: #f79f2d;">{{mark.classifyCn}}</div>
+                </div>
+                <div class="row">
+                  <div v-for="(col, nIdx) in markConf" :key="nIdx" :class="['col col-']"><!--  + (col&&col.colWidth>0?col.colWidth:nodeConf.length), col.class -->
+                    <div class="text">{{col.label}}</div>
+                    <div class="text" :style="`color: ${col.color}`" :title="showValue(mark, col)">{{showValue(mark, col)}}</div>
+                  </div>
+                </div>
+                <div v-if="mark.markingCont" class="row">
+                  <div :class="['col col-1']"><!--  + (col&&col.colWidth>0?col.colWidth:nodeConf.length), col.class -->
+                    <div class="text">标记内容：</div>
+                    <div class="text" :title="mark.markingCont">{{mark.markingCont}}</div>
+                  </div>
+                </div>
+                <div v-if="mark[picConf[0]]" class="pic-list">
+                  <div v-for="(pic, pIdx) in picConf" :key="pIdx">
+                    <template v-if="mark[pic]">
+                      <img :src="dfs + mark[pic]" @click="clickShowImg(dfs + mark[pic])"/>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -81,19 +130,12 @@ export default {
         [
           {key: 'luggage.flightNo', label: '航班号', class: 'bold'},
           {key: 'luggage.execDate', label: '航班日期', format: [0, 10]},
-          {key: 'luggage.originCn', label: '始发站'},
-          {key: 'luggage.destCn', label: '目的站'},
-          {key: 'luggage.transferCn', label: '中转站'}
-        ],
-        [
           {key: 'luggage.counter', label: '值机柜台'},
           {key: 'luggage.chute', label: '行李滑槽'},
-          {key: 'luggage.gate', label: '登机口'},
-          {key: 'luggage.stand', label: '机位'},
-          {key: 'luggage.truck', label: '行李容器'}
+          {key: 'luggage.stand', label: '机位'}
         ],
         [
-          {key: 'luggage.markingNum', label: '标记次数', colWidth: 5},
+          {key: 'luggage.truck', label: '容器号', colWidth: 5},
           {key: 'luggage.nameCh', label: '旅客姓名', colWidth: 5},
           {key: 'luggage.idcardType', label: '证件类型', colWidth: 5},
           {key: 'luggage.idcardNo', label: '证件号码', colWidth: 3}
@@ -107,9 +149,57 @@ export default {
         ], */
       ],
       nodeConf: [
-        {key: 'lstLugMarkingVO[0].createName', label: '操作人：', colWidth: 3},
-        {key: 'lstLugMarkingVO[0].createtime', label: '操作时间：', format: [5, 11], colWidth: 2},
-        {key: 'lstLugMarkingVO[0].classifyCn', label: '标记类型：', colWidth: 3, class: 'bold', color: '#f79f2d'}
+        {key: 'createName', label: '操作人：', colWidth: 4},
+        {key: 'post', label: '岗位：', colWidth: 4},
+        {key: 'remark', label: '备注：', colWidth: 2}
+      ],
+      nodeCont: {
+        'N-CHECKIN': [ // 值机交运
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 4},
+          {key: 'remark', label: '备注：', colWidth: 2},
+        ],
+        'N-VERIFY-AUTO': [ // 安全检查
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 4},
+          {key: 'remark', label: '检查结果：', colWidth: 2}
+        ],
+        'N-LOAD-TRUCK': [ // 离港分拣
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 4},
+          {key: 'luggage.chute', label: '滑槽号：', colWidth: 2}
+        ],
+        'N-TRANSPORT': [ // 行李运输
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 4},
+          {key: 'luggage.truck', label: '容器号：', colWidth: 2}
+        ],
+        'N-LOAD-AIRCRAFT': [ // 卸车装机
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 2}
+        ],
+        'N-UNLOAD-AIRCRAFT': [ // 进港卸机
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 2},
+          {key: 'remark', label: '备注：', colWidth: 2}
+        ],
+        'N-TRANSPORT': [ // 行李运输
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 2}
+        ],
+        'N-UPLOAD': [ // 到达卸车
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 2}
+        ],
+        'N-SELF-CHECK': [ // 自提核验
+          {key: 'createName', label: '操作人：', colWidth: 4},
+          {key: 'post', label: '岗位：', colWidth: 2}
+        ]
+      },
+      markConf: [
+        {key: 'createName', label: '操作人：', colWidth: 4},
+        {key: 'post', label: '岗位：', colWidth: 4},
+        {key: 'createtime', label: '标记时间：', format: [5, 11], colWidth: 3}
       ],
       picConf: ['photo1', 'photo2', 'photo3'],
       showImg: false,
@@ -126,22 +216,20 @@ export default {
     },
     changeData () {
       if (this.row.luggage.inOutFlag == 'D') {
-        this.rowConf.splice(1, 1, [
+        this.rowConf.splice(0, 1, [
+          {key: 'luggage.flightNo', label: '航班号', class: 'bold'},
+          {key: 'luggage.execDate', label: '航班日期', format: [0, 10]},
           {key: 'luggage.counter', label: '值机柜台'},
           {key: 'luggage.chute', label: '行李滑槽'},
-          {key: 'luggage.gate', label: '登机口'},
-          {key: 'luggage.stand', label: '机位'},
-          {key: 'luggage.truck', label: '行李容器'}
+          {key: 'luggage.stand', label: '机位'}
         ])
-        // this.$set(this.rowConf, 1, )
       } else if (this.row.luggage.inOutFlag == 'A') {
-        this.rowConf.splice(1, 1, [
+        this.rowConf.splice(0, 1, [
+          {key: 'luggage.flightNo', label: '航班号', class: 'bold', colWidth: 5},
+          {key: 'luggage.execDate', label: '航班日期', format: [0, 10], colWidth: 5},
           {key: 'luggage.belt', label: '行李转盘', colWidth: 5},
-          {key: 'luggage.stand', label: '机位', colWidth: 5},
-          {key: 'luggage.truck', label: '行李容器', colWidth: 5}
+          {key: 'luggage.stand', label: '机位', colWidth: 5}
         ])
-        // this.$set(this.rowConf, 1, [
-        // ])
       }
       this.visible = true
     },
@@ -186,19 +274,50 @@ $bodyHead: 50px;
 $rowHeight: 80px;
 $ndRowOut: 20px;
 $ndRowIn: 8px;
-$circleWH: 6px;
+$circleWH: 10px;
+$markstarWH: 16px;
 $timeWidth: 40px;
 $transWidth: 0;
 .dialog {
   width: 30px;
   height: 50px;
 }
+.return {
+  $wh: 16px;
+  margin: auto 0;
+  position: absolute;
+  left: 20px;
+  font-size: $wh;
+  line-height: $bodyHead;
+  font-weight: bold;
+  color: #3D424D;
+  cursor: pointer;
+
+  >.return-button {
+    margin-top: ($bodyHead - $wh - 2) / 2;
+    margin-right: 6px;
+    width: $wh;
+    height: $wh;
+    background-image: url(~@icon/lug/icon_return_button.png);
+  }
+}
 .row {
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
   >.col {
     text-align: left;
     display: flex;
     align-items: center;
     font-size: 16px;
+  }
+  >.col- {
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+    >.text {
+      max-width: 85px;
+    }
   }
 }
 .body-first {
@@ -234,6 +353,7 @@ $transWidth: 0;
           font-weight: bold;
           background-color: rgba($color: $blue-shadow, $alpha: .2);
           border-radius: 6px;
+          box-sizing: content-box;
         }
       }
       >div:last-child {
@@ -247,31 +367,38 @@ $transWidth: 0;
         }
         .pull_down_long {
           background-image: url(~@icon/lug/icon_pull_down_long.png);
-          box-shadow: 0 0 10px rgba($color: $red-shadow, $alpha: .5);
+          // box-shadow: 0 0 10px rgba($color: $red-shadow, $alpha: .5);
         }
         .pull_down_gray {
           background-image: url(~@icon/lug/icon_pull_down_gray.png);
         }
         .added_long {
           background-image: url(~@icon/lug/icon_added_long.png);
-          box-shadow: 0 0 10px rgba($color: $blue-shadow, $alpha: .5);
+          // box-shadow: 0 0 10px rgba($color: $blue-shadow, $alpha: .5);
         }
         .added_gray {
           background-image: url(~@icon/lug/icon_added_gray.png);
         }
         .find_long {
           background-image: url(~@icon/lug/icon_find_long.png);
-          box-shadow: 0 0 10px rgba($color: $yellow-shadow, $alpha: .5);
+          // box-shadow: 0 0 10px rgba($color: $yellow-shadow, $alpha: .5);
         }
         .find_gray {
           background-image: url(~@icon/lug/icon_find_gray.png);
         }
         .vip_long {
           background-image: url(~@icon/lug/icon_vip_long.png);
-          box-shadow: 0 0 10px rgba($color: $green-shadow, $alpha: .5);
+          // box-shadow: 0 0 10px rgba($color: $green-shadow, $alpha: .5);
         }
         .vip_gray {
           background-image: url(~@icon/lug/icon_vip_gray.png);
+        }
+        .mark_long {
+          background-image: url(~@icon/lug/icon_mark_long.png);
+          // box-shadow: 0 0 10px rgba($color: $green-shadow, $alpha: .5);
+        }
+        .normal {
+          background-image: url(~@icon/lug/icon_mark_gray.png);
         }
       }
     }
@@ -320,10 +447,10 @@ $transWidth: 0;
 }
 .body-second {
   margin-top: 30px;
-  height: calc(100% - 330px);
+  height: calc(100% - 260px);
   overflow-x: hidden;
   >.row {
-    min-height: $rowHeight;
+    // min-height: $rowHeight;
     &:first-child {
       margin-top: 24px;
     }
@@ -335,8 +462,9 @@ $transWidth: 0;
       }
     }
     $padTop: 10px;
+    $leftW: 160px;
     >.left {
-      width: 25rem;
+      width: $leftW;
       padding: 0 $ndRowIn 0 $ndRowOut;
       display: flex;
       justify-content: flex-end;
@@ -368,6 +496,14 @@ $transWidth: 0;
         display: flex;
         flex-direction: column;
         position: relative;
+        .mark-star {
+          margin-left: 0;
+          margin-right: ($circleWH - $markstarWH) / 2;
+          margin-top: ($circleWH - $markstarWH) / 2;
+          width: $markstarWH;
+          height: $markstarWH;
+          background-image: url(~@lug/mark_marking.png);
+        }
         .circle {
           width: $circleWH;
           height: $circleWH;
@@ -394,37 +530,45 @@ $transWidth: 0;
       padding: 0 5px 0 12px;
     }
     >.right {
-      width: 75rem;
-      padding: ($padTop - $circleWH)  $ndRowOut 0 $ndRowIn;
+      width: calc(100% - #{$leftW});
+      padding: $padTop  $ndRowOut 0 $ndRowIn;
       text-align: left;
       >.label {
         $height: 16px;
         color: $gray-nd;
+        font-weight: bold;
         height: $height;
         line-height: $height;
         font-size: $height;
+        margin-bottom: 8px;
         &.active {
           color: $gray-st;
           font-size: $height;
-          font-weight: bold;
         }
       }
       >.row-block {
         $height: 16px;
         $size: 15px;
-        margin-top: 4px;
+        // margin-top: 8px;
         padding-top: 8px;
         padding-bottom: 6px;
         $left: 2 * $ndRowIn + $circleWH;
-        margin-left: -$left;
+        margin-left: 4-$left;
         padding-left: $left;
-        height: calc(100% - #{$height} - 12px);
+        // height: calc(100% - 12px);
+        >.mark-type {
+          display: flex;
+          font-size: 16px;
+          color: $gray-st;
+        }
         .text {
           color: $gray-nd;
           font-size: $size;
           height: $size;
           line-height: $size;
-
+          &:first-child {
+            white-space: nowrap;
+          }
           &:last-child {
             white-space: nowrap;
             overflow: hidden;

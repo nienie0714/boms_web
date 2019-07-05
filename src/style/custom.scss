@@ -177,6 +177,7 @@ textarea[disabled="disabled"] {
 @for $i from 1 through 9 {
   .row>.col-#{$i} {
     width: calc(100% / #{$i});
+    max-width: calc(100% / #{$i});
   }
 }
 @for $i from 1 through 9 {

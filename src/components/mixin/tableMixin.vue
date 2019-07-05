@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     changeTableHeight(table) {
-      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 36
+      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 20
     },
     // 获取查询参数
     getQueryData (arr) {
