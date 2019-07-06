@@ -34,6 +34,10 @@ export default {
         type: 'insert',
         data: null
       },
+      onlineDetail: {
+        visible: false,
+        data: null
+      },
       remove: {
         visible: false,
         data: null
@@ -223,6 +227,9 @@ export default {
       this.detail.type = type
       this.$set(this.detail, 'data', row || null)
       this.detail.visible = true
+    },
+    openList () {
+      this.onlineDetail.visible = true
     },
     openRemove (row) {
       this.remove.data = row

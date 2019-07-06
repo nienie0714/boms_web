@@ -72,8 +72,11 @@ export default {
           key1: 'beginDate',
           key2: 'endDate',
           label: '登录时间',
-          type: 'datepickers',
-          width: 278
+          type: 'elDateRange',
+          dateType: 'date',
+          format: 'yyyy-MM-dd HH:mm',
+          valueFormat: 'yyyy-MM-dd HH:mm',
+          width: 390,
         }
       ],
       tableData: {

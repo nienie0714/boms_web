@@ -130,7 +130,7 @@ export default {
         [
           {key: 'luggage.flightNo', label: '航班号', class: 'bold'},
           {key: 'luggage.execDate', label: '航班日期', format: [0, 10]},
-          {key: 'luggage.counter', label: '值机柜台'},
+          {key: 'luggage.counterNo', label: '值机柜台'},
           {key: 'luggage.chute', label: '行李滑槽'},
           {key: 'luggage.stand', label: '机位'}
         ],
@@ -324,7 +324,7 @@ $transWidth: 0;
   margin: 0 20px;
   padding: 20px 20px 8px 20px;
   border-radius: 12px;
-  box-shadow: 0 8px 50px rgba($color: $white-shadow, $alpha: .3);
+  box-shadow: 0 8px 30px rgba($color: $white-shadow, $alpha: .3);
   .first-row {
     text-align: left;
     margin-bottom: 20px;

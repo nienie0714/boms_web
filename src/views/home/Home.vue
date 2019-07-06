@@ -11,21 +11,65 @@
         </div>
         <div class="name">{{empName?empName:''}}</div>
       </div> -->
-       <Dropdown trigger="click" class="user">
-        <div class="img">
-          <img :src="require('@img/user/img_usr.png')"/>
-        </div>
-        <div class="name">{{empName?empName:''}}</div>
-        <DropdownMenu slot="list">
-            <DropdownItem @click.native="loginOut">退出登录</DropdownItem>
-        </DropdownMenu>
-    </Dropdown>
+      <div class="user">
+        <div class="onlineUser" @click="getOnlineUser"></div>
+        <Dropdown trigger="click">
+          <div class="img">
+            <img :src="require('@img/user/img_usr.png')"/>
+          </div>
+          <div class="name">{{empName?empName:''}}</div>
+          <DropdownMenu slot="list">
+              <DropdownItem @click.native="loginOut">退出登录</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
     </div>
     <div class="main">
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
     </div>
+    <!-- <online-list :visible="onlineDetail.visible" :data="onlineDetail.data"></online-list> -->
+    <my-dialog v-bind="$attrs" v-on="$listeners" :visible="onlineData.visible" :title="onlineData.title" :close="true" :header="false" :submit="false"
+    :position="'right'" :width="400" class="form-dialog under-head-dialog" @handleClose="handleClose">
+      <div class="online-header">
+        <div class="online-header_title">
+          当前在线用户数
+        </div>
+        <div class="online-header_body">
+          <div>
+            <img :src="require('@icon/online/phone.png')">
+            <div>36</div>
+          </div>
+          <div>
+            <img :src="require('@icon/online/mac.png')">
+            <div>8</div>
+          </div>
+        </div>
+        <div class="query-box">
+          <inputs type="text" v-model="filterValue" placeholder="输入关键字搜索" @change="changeFilter($event)" @enter="changeFilter($event)"></inputs>
+        </div>
+      </div>
+      <div class="online-table-header">
+        <div>
+          在线用户列表
+        </div>
+        <div>
+          共89条数据
+        </div>
+      </div>
+      <div class="table-cont container cross">
+        <tables :tableData="tableData" :loading="tableData.loading">
+          <template v-slot:slot-body="{index, row, item}">
+            <template v-if="item.key=='seatNo'">
+              <img v-if="row['seatNo'] == '34A'" :src="require('@icon/online/phone.png')">
+              <img v-else :src="require('@icon/online/mac.png')">
+              <span class="value">{{row['psgNameCh']}}</span>
+            </template>
+          </template>
+        </tables>
+      </div>
+    </my-dialog>
   </div>
 </template>
 
@@ -33,11 +77,19 @@
 import DropMenu from '@view/DropMenu/DropMenu'
 // import webSocketMixin from '../../components/mixin/webSocketMixin'
 import { postData } from '@/util/base'
+import QueryRow from '@view/QueryRow/QueryRow'
+import Tables from '@view/Table/Table'
+import tableMixin from '@mixin/tableMixin'
+import Inputs from '@view/Inputs/Inputs'
 
 export default {
   components: {
     DropMenu,
+    Tables,
+    // QueryRow
+    Inputs
   },
+  mixins: [tableMixin],
   data () {
     return {
       empName: '',
@@ -49,7 +101,45 @@ export default {
           icon: 'icon_comprhs_query'
         }
       ],
-      activeIndex: 0
+      activeIndex: 0,
+      onlineData: {
+        visible: false,
+        title: '当前在线用户数',
+      },
+      queryType: 'nopage',
+      // 请求路径
+      queryUrl: '/integrated/luggage/queryAll',
+      queryParam: [
+        {
+          key: 'flightNo',
+          label: '航班号',
+          type: 'input',
+          width: 214,
+          toUpper: true
+        }
+      ],
+      tableData: {
+        height: 600,
+        multSelection: [],
+        loading: false,
+        key: 'lugId',
+        column: [
+          // left
+          [
+            {key: 'lugNo',  label: '行李编号', width: 100, colClass: 'bold-underline', title: true},
+            {key: 'flightNo',  label: '航班号', width: 100, title: true},
+            {key: 'seatNo',  label: '旅客座位号', width: 200, title: true, type: 'slot'}
+          ],
+          // center
+          [
+          ],
+          // right
+          [
+          ]
+        ],
+        data: []
+      },
+      filterValue: ''
     }
   },
   // mixins: [webSocketMixin],
@@ -81,6 +171,17 @@ export default {
     },
     loginOut() {
       this.$router.push('/')
+    },
+    getOnlineUser() {
+      // todo
+      this.queryDataReq()
+      this.onlineData.visible = true
+    },
+    handleClose() {
+      this.onlineData.visible = false
+    },
+    changeFilter(value) {
+      debugger
     }
   }
 }
@@ -107,7 +208,12 @@ export default {
       align-items: center;
       padding: 0 20px 0 30px;
       background-image: url(~@img/header/bg_usr_center.png);
-      
+      .onlineUser {
+        width: 20px;
+        height: 20px;
+        background-color: #f00;
+        margin-right: 10px;
+      }
       .img {
         width: 36px;
         height: 36px;
@@ -129,6 +235,99 @@ export default {
     height: calc(100% - 80px);
     padding: 20px;
     background-color: #edf1f5;
+  }
+  // .dialog {
+  //   .main {
+  //     height: 100%!important;
+  //     overflow-x: hidden;
+  //     overflow-y: scroll; 
+  //     box-sizing: border-box;
+  //   } 
+  // } 
+  .form-dialog {
+    .online-header {
+      height: 150px;
+      background-image: url(~@icon/online/online-header.png);
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px;
+      margin-bottom: 30px;
+      .online-header_title {
+        height: 56px;
+        line-height: 56px;
+        text-align: left;
+        font-size:16px;
+        font-weight:400;
+        color:rgba(137,157,178,1);
+      }
+      .online-header_body {
+        display: flex;
+        margin-bottom: 20px;
+        >div {
+          height: 30px;
+          display: flex;
+          align-items: center;
+          &:nth-child(1) {
+            margin-right: 26px;
+          }
+          img {
+            margin-right: 8px;
+          }
+          >div {
+            font-size:32px;
+            font-weight:bold;
+            color:rgba(61,66,77,1);
+          }
+        }
+      }
+      .query-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .inputs > input {
+          border: 1px solid #dde6ed;
+          border-radius: 6px;
+          width: 100%;
+          background-color: rgba(241,245,248,1);
+          width: 368px!important;
+          &::-webkit-input-placeholder {
+            text-align: left;
+          }
+        }
+      }
+    }
+    .online-table-header {
+      display: flex;
+      padding: 0 16px;
+      >div:first-child {
+        font-size:16px;
+        font-weight:bold;
+        color:#3D424D;
+        margin-right: 5px;
+      }
+      >div:last-child {
+        font-size:16px;
+        color:#899DB2;
+      }
+    }
+    td {
+      height: 52px !important;
+      display: flex!important;
+      .type {
+        width: 10%;
+        margin-right: 16px;
+        img {
+          vertical-align:middle;
+        }
+      }
+      img {
+        vertical-align:middle;
+        margin-right: 16px;
+      }
+      .value {
+        flex: 1;
+      }
+    }
   }
 }
 </style>

@@ -273,7 +273,7 @@ export default {
     formatPro (obj) {
       let value = 0
       if (obj) {
-        let denominator = (obj['totalNum'] || 0) + (obj['nodeAdditionNum'] || 0)
+        let denominator = (obj['totalNum'] || 0) + (obj['totalAdditionNum'] || 0)
         let molecule = (obj['nodeNum'] || 0) + (obj['nodeAdditionNum'] || 0)
         if (denominator) {
           value = Math.floor(molecule / denominator * 100) / 100
@@ -321,7 +321,7 @@ export default {
               ctxNum.font = '24px DINPRO-BOLD'
               ctxNum.textAlign = 'center'
               ctxNum.fillStyle = '#3d424c'
-              ctxNum.fillText((node['totalNum'] || 0) + (node['nodeAdditionNum'] || 0), 40, 48)
+              ctxNum.fillText((node['nodeNum'] || 0) + (node['nodeAdditionNum'] || 0), 40, 48)
             })
           })
         }
@@ -618,7 +618,7 @@ $bodyHead: 32px;
             }
             >div:last-child {
               >.img {
-                margin: auto 4px auto 10px;
+                margin: auto 8px auto 14px;
                 width: 10px;
                 height: 10px;
                 background-image: url(~@icon/lug/icon_next_arrow.png);

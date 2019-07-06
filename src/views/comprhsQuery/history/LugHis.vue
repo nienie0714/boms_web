@@ -424,23 +424,23 @@ export default {
         line-height: $rowHeight !important;
       }
     }
-    td {
-      height: 52px !important;
-      .type {
-        font-size: 12px;
-        height: 12px;
-        line-height: 12px;
-        text-align: left;
-        color: $gray-nd;
-      }
-      .value {
-        margin-top: 8px;
-        font-size: 14px;
-        height: 14px;
-        line-height: 14px;
-        text-align: left;
-        color: $gray-st;
-      }
+  }
+  td {
+    height: 52px !important;
+    .type {
+      font-size: 12px;
+      height: 12px;
+      line-height: 12px;
+      text-align: left;
+      color: $gray-nd;
+    }
+    .value {
+      margin-top: 8px;
+      font-size: 14px;
+      height: 14px;
+      line-height: 14px;
+      text-align: left;
+      color: $gray-st;
     }
   }
 }
