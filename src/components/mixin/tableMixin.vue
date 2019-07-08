@@ -34,10 +34,6 @@ export default {
         type: 'insert',
         data: null
       },
-      onlineDetail: {
-        visible: false,
-        data: null
-      },
       remove: {
         visible: false,
         data: null
@@ -97,23 +93,25 @@ export default {
         return data
       } else {
         this.queryParam.forEach(item => {
-          if (item.value === '') {
-            if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
-              this.$set(data, item.key1, null)
-              this.$set(data, item.key2, null)
+          if (!(item.hasOwnProperty('isHidden') && item.isHidden)) {
+            if (item.value === '') {
+              if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+                this.$set(data, item.key1, null)
+                this.$set(data, item.key2, null)
+              } else {
+                this.$set(data, item.key, null)
+              }
+            } else if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+              if (item.value) {
+                this.$set(data, item.key1, item.value[0])
+                this.$set(data, item.key2, item.value[1])
+              } else {
+                this.$set(data, item.key1, null)
+                this.$set(data, item.key2, null)
+              }
             } else {
-              this.$set(data, item.key, null)
+              this.$set(data, item.key, item.value)
             }
-          } else if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
-            if (item.value) {
-              this.$set(data, item.key1, item.value[0])
-              this.$set(data, item.key2, item.value[1])
-            } else {
-              this.$set(data, item.key1, null)
-              this.$set(data, item.key2, null)
-            }
-          } else {
-            this.$set(data, item.key, item.value)
           }
         })
         this.queryData = data
@@ -126,9 +124,12 @@ export default {
       this.queryDataReq(status)
     },
     queryDataReqInterval(status){
-      clearInterval(this.timer)
+      this.timer = clearInterval(this.timer)
       this.queryDataReq(status)
       this.timer = setInterval(this.queryDataReq, 60000)
+    },
+    queryDataRefresh () {
+      this.queryDataReq(1)
     },
     queryDataReqClearInterval(){
       clearInterval(this.timer)
@@ -180,7 +181,8 @@ export default {
             pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
               this.tableData.multSelection = []
               if (response.data.code == 0) {
-                this.pageData.total = response.data.data.total
+                // this.pageData.total = response.data.data.total
+                this.$set(this.pageData, 'total', response.data.data.total)
                 if (response.data.data.hasOwnProperty('rows')) {
                   this.tableData.data = response.data.data.rows
                 } else {
@@ -228,9 +230,6 @@ export default {
       this.$set(this.detail, 'data', row || null)
       this.detail.visible = true
     },
-    openList () {
-      this.onlineDetail.visible = true
-    },
     openRemove (row) {
       this.remove.data = row
       this.remove.visible = true
@@ -273,8 +272,16 @@ export default {
     handleRemoveClose () {
       this.remove.visible = false
     },
+    // 导出前用户操作
+    customBeforExport() {
+      return true
+    },
+    // 导出
     openExport () {
-      this.exportData.visible = true
+      let result = this.customBeforExport()
+      if (result) {
+        this.exportData.visible = true
+      }
     },
     // 下载
     handleExport (total) {
@@ -311,6 +318,7 @@ export default {
         }
       }
     },
+    // 关闭导出
     handleExportClose () {
       this.exportData.visible = false
     },

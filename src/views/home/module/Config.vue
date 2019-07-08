@@ -33,7 +33,6 @@ export default {
     }
   },
   mounted () {
-    console.log('tag', 'mounted')
     this.title = this.$route.name
     this.getSecondMenu()
   },

@@ -82,7 +82,6 @@ export default {
   methods: {
     handleDetail() {
       this.dataHis = _.cloneDeep(this.form.detailColumn)
-      console.log(this.data)
     },
     updateData () {
       this.errors = {}

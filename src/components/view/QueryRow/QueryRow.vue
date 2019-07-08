@@ -3,7 +3,7 @@
     <div v-for="item in dataHis" :key="item.key" class="query-item" :class="item.class">
       <input-tag  v-if="!item.hasOwnProperty('isHidden') || !item.isHidden" v-model.trim="item.value" :width="item.width" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="'请输入'"
       :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :format="item.format" :valueFormat="item.valueFormat"
-      @change="handleChange(item.value)" @enter="handleEnter(item, $event)"></input-tag>
+      @change="handleChange(item, $event)" @enter="handleEnter(item, $event)"></input-tag>
     </div>
   </div>
 </template>
@@ -84,8 +84,11 @@ export default {
         this.$set(this, 'dataHis', _.partition(this.data, 'type')[0])
       }
     },
-    handleChange (value) {
-      this.$emit('change', value)
+    handleChange (item, val) {
+      if (item.toUpper) {
+        this.toUpper(item, val)
+      }
+      this.$emit('change', val)
     },
     handleEnter (item, val) {
       if (item.toUpper) {

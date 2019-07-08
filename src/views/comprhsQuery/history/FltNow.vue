@@ -26,7 +26,7 @@
             <div v-if="row[item.key] == null || row[item.key] == ''">-</div>
             <div v-else class="red-color">{{row[item.key]}}</div>
           </template>
-          <template v-else-if="['lugCommonTotal', 'lugAdditionTotal', 'lugCancelTotal', 'lugMarkingTotal'].includes(item.key)">
+          <template v-else-if="['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'lugMarkingTotal'].includes(item.key)">
             <div v-if="row[item.key] == null || row[item.key] == 0">-</div>
             <div v-else>{{row[item.key]}}</div>
           </template>
@@ -222,12 +222,12 @@ export default {
               colspan: 3,
               titleClass: 'th-col-title',
               child: [
-                {key: 'lugCommonTotal',  label: '普通', width: 60},
-                {key: 'lugAdditionTotal',  label: '追加', width: 60},
-                {key: 'lugCancelTotal',  label: '拉减', width: 60},
+                {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
+                {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
+                {key: 'allNodeCancelSum',  label: '拉减', width: 60, type: 'slot'},
                 // todo 挑找
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
-                {key: 'lugMarkingTotal',  label: '标记', width: 60},
+                {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
           ],
@@ -242,10 +242,12 @@ export default {
     }
   },
   mounted () {
-    this.queryDataReqInterval()
-    this.$once('hook:beforeDestroy', () => {            
-      clearInterval(this.timer);
-      this.timer = null;
+    this.timer = clearInterval(this.timer)
+    this.getFlightStatus()
+    this.queryDataRefresh()
+    this.timer = setInterval(this.queryDataRefresh, 60000)
+    this.$once('hook:beforeDestroy', () => {
+      this.timer = clearInterval(this.timer)
     })
   },
   methods: {
@@ -304,7 +306,7 @@ export default {
               child: [
                 {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
                 {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
-                {key: 'lugCancelTotal',  label: '拉减', width: 60, type: 'slot'},
+                {key: 'allNodeCancelSum',  label: '拉减', width: 60, type: 'slot'},
                 // todo 挑找
                 {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
                 {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
@@ -431,36 +433,43 @@ export default {
       } else {
         return 'linear-gradient(to right, #f8b53f, #f58c24)'
       }
+    },
+    getFlightStatus() {
+      // 更新航班状态下拉框
+      _.forEach(this.queryParam, (item) => {
+        if (item.key == 'progressStatus') {
+          item.param = {inOutFlag: this.selectKey}
+          queryAll(item.url, item.param).then(res => {
+            if (res.data.code == 0) {
+              this.$set(item, 'options', res.data.data)
+            } else {
+              this.$msg.error({
+                info: '获取' + item.label + '失败 !'
+              })
+            }
+          })
+        }
+      })
     }
   },
   watch: {
     selectKey: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          // 更新航班状态下拉框
-          _.forEach(this.queryParam, (item) => {
-            if (item.key == 'progressStatus') {
-              item.param = {inOutFlag: value}
-              console.log(item.param)
-              queryAll(item.url, item.param).then(res => {
-                if (res.data.code == 0) {
-                  this.$set(item, 'options', res.data.data)
-                } else {
-                  this.$msg.error({
-                    info: '获取' + item.label + '失败 !'
-                  })
-                }
-              })
-            }
-          })
-          this.queryDataReqInterval()
+          this.getFlightStatus()
+          this.timer = clearInterval(this.timer)
+          this.queryDataRefresh()
+          this.timer = setInterval(this.queryDataRefresh, 60000)
         }
       }
     },
     selectKeyDay: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          this.queryDataReqInterval()
+          this.getFlightStatus()
+          this.timer = clearInterval(this.timer)
+          this.queryDataRefresh()
+          this.timer = setInterval(this.queryDataRefresh, 60000)
         }
       }
     }

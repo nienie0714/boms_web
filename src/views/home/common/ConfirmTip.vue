@@ -56,3 +56,12 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.confirm-dialog {
+  .body {
+    >div {
+      font-size: 16px;
+    }
+  }
+}
+</style>

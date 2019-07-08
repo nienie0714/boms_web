@@ -40,7 +40,7 @@ function request (request) {
         f: c
       })
     }
-      // u: request.url + '&' + request.method + '&' + request.data, f: c})
+    // u: request.url + '&' + request.method + '&' + request.data, f: c})
   })
   return request
 }
@@ -100,7 +100,7 @@ function responseErr (error) {
 }
 
 const axiosReq = axios.create({
-  baseURL: forwardURL + '/boms',
+  baseURL: forwardURL + '/boms-web',
   headers: {
     'Content-Type': 'application/json;charset-UTF-8',
     'Access-Control-Allow-Origin': '*',

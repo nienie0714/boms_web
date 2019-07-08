@@ -105,7 +105,8 @@ export default {
 
       >span {
         // background-color: #f5f7f9;
-        width: calc(100% - 32px);
+        // width: calc(100% - 32px);
+        width: 100%;
         padding: 8px 16px;
         border-radius: 4px;
       }

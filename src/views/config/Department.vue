@@ -192,7 +192,6 @@ export default {
         this.$msg.error({
           info: '请求异常 !'
         })
-        console.log(err)
       })
     },
     update (data) {
@@ -215,7 +214,6 @@ export default {
         this.$msg.error({
           info: '请求异常 !'
         })
-        console.log(err)
       })
     },
     handleRemove (row) {

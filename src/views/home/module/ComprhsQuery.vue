@@ -2,7 +2,8 @@
   <div class="comprhs-query module container">
     <div :class="['header', hidden ? 'hidden' : '']">
       <div class="module-img">
-        <div class="title">{{title}}</div>
+        <div class="title">信息共享平台</div>
+        <div class="sub-title">Information platform</div>
       </div>
       <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
@@ -32,7 +33,7 @@ export default {
   data () {
     return {
       name: '',
-      title: '信息查询',
+      title: '信息共享平台',
       hidden: false,
       value: '',
       menuData: null,

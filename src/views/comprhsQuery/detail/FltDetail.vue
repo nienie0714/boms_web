@@ -95,8 +95,8 @@
           <div class="body-second">
             <tables :tableData="tableData" @handleDblClick="showLugDetail" :loading="tableData.loading">
               <template v-slot:slot-body="{index, row, item}">
-                <div v-if="item.key == 'markingNum'" :class="['mark', (row[item.key] > 0)?'marking':'']"></div>
-                <template v-else-if="item.key=='luggeType'">
+                <div v-if="item.key == 'markingNum'" :class="['mark', (row[item.key] > 0)?'marking':'']"><span v-if="row[item.key] <= 0">否</span></div>
+                <template v-else-if="item.key=='luggeTypeCn'">
                   <div class="dot-font" v-if="row[item.key] == '普通'">
                     <div class="dot-color-normal"></div>
                     <span>{{row[item.key]}}</span>
@@ -140,7 +140,7 @@ export default {
     Lug
   },
   mixins: [utilMixin],
-  props: ['row', 'isComp'],
+  props: ['row', 'isComp', 'isHistory'],
   data () {
     return {
       emptyTime: '----/--/-- --:--:--',
@@ -247,7 +247,7 @@ export default {
             {key: 'lugNo',  label: '行李号', width: 200, class: 'bold', title: true},
             {key: 'progressStatusCn',  label: '保障状态', width: 170, color: '#3392ff'},
             {key: 'markingNum',  label: '是否标记', type: 'slot', width: 100},
-            {key: 'luggeType', label: '行李类型', type: 'slot', width: 170}
+            {key: 'luggeTypeCn', label: '行李类型', type: 'slot', width: 170}
             // {key: 'destCn',  label: '目的站', width: 90, title: true},
             // {key: 'originCn',  label: '始发站', width: 90, title: true},
             // {key: 'truck',  label: '容器', width: 80, title: true},
@@ -328,6 +328,9 @@ export default {
         _.forEach(this.tableData.queryParam, (value, key) => {
           this.$set(this.tableData.queryParam, key, this.row[key])
         })
+        if (this.isHistory) {
+          this.tableData.queryParam.execRange = -2
+        }
         queryAll(this.tableData.url, this.tableData.queryParam).then(res => {
           if (res.data.code == 0) {
             this.tableData.data = res.data.data
@@ -354,6 +357,11 @@ export default {
         if (res.data.code == 0) {
           this.showComp.row = res.data.data
           this.showComp.visible = true
+        } else {
+          this.$msg.error({
+            info: '获取详情失败 !',
+            tip: res.data.msg
+          })
         }
       })
     },
@@ -642,6 +650,8 @@ $bodyHead: 32px;
           $wh: 16px;
           width: $wh;
           height: $wh;
+          display: flex;
+          align-items: center;
           &.marking {
             background-image: url(~@lug/mark_marking.png);
           }

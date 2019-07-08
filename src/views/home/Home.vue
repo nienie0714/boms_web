@@ -29,9 +29,7 @@
         <router-view></router-view>
       </keep-alive>
     </div>
-    <!-- <online-list :visible="onlineDetail.visible" :data="onlineDetail.data"></online-list> -->
-    <my-dialog v-bind="$attrs" v-on="$listeners" :visible="onlineData.visible" :title="onlineData.title" :close="true" :header="false" :submit="false"
-    :position="'right'" :width="400" class="form-dialog under-head-dialog" @handleClose="handleClose">
+    <my-dialog :visible="onlineData.visible" :header="false" :footer="false" :position="'right'" :width="400" class="form-dialog under-head-dialog" @handleClose="handleClose">
       <div class="online-header">
         <div class="online-header_title">
           当前在线用户数
@@ -47,9 +45,10 @@
           </div>
         </div>
         <div class="query-box">
-          <inputs type="text" v-model="filterValue" placeholder="输入关键字搜索" @change="changeFilter($event)" @enter="changeFilter($event)"></inputs>
+          <inputs type="text" v-model="filterValue" placeholder="输入关键字搜索" @enter="changeFilter($event)"></inputs>
         </div>
       </div>
+      <div class="close" @click="handleClose"><span class="icon iconfont icon-close icon-button"></span></div>
       <div class="online-table-header">
         <div>
           在线用户列表
@@ -58,7 +57,7 @@
           共89条数据
         </div>
       </div>
-      <div class="table-cont container cross">
+      <div class="body-second">
         <tables :tableData="tableData" :loading="tableData.loading">
           <template v-slot:slot-body="{index, row, item}">
             <template v-if="item.key=='seatNo'">
@@ -181,7 +180,7 @@ export default {
       this.onlineData.visible = false
     },
     changeFilter(value) {
-      debugger
+      console.log(value)
     }
   }
 }
@@ -236,15 +235,10 @@ export default {
     padding: 20px;
     background-color: #edf1f5;
   }
-  // .dialog {
-  //   .main {
-  //     height: 100%!important;
-  //     overflow-x: hidden;
-  //     overflow-y: scroll; 
-  //     box-sizing: border-box;
-  //   } 
-  // } 
   .form-dialog {
+    >.main {
+      height: 100%!important;
+    }
     .online-header {
       height: 150px;
       background-image: url(~@icon/online/online-header.png);
@@ -287,8 +281,6 @@ export default {
         .inputs > input {
           border: 1px solid #dde6ed;
           border-radius: 6px;
-          width: 100%;
-          background-color: rgba(241,245,248,1);
           width: 368px!important;
           &::-webkit-input-placeholder {
             text-align: left;
@@ -328,7 +320,52 @@ export default {
         flex: 1;
       }
     }
+    .body-second {
+      overflow: hidden;
+      >div {
+        >.table-body {
+          overflow-x: hidden;
+        }
+      }
+    }
+    .close {
+      $wh: 20px;
+      $tr: 12px;
+      position: absolute;
+      height: $wh;
+      width: $wh;
+      top: $tr;
+      right: $tr;
+      display: flex;
+      align-items: center;
+      >.icon {
+        font-weight: 900;
+        font-size: 20px;
+      }
+    }
   }
 }
 </style>
-
+<style lang="scss">
+.query-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .inputs > input {
+    border: 1px solid #dde6ed;
+    border-radius: 6px;
+    width: 368px!important;
+    background-color: #F1F5F8;
+    &::-webkit-input-placeholder {
+      text-align: left;
+    }
+  }
+}
+.home {
+  .dialog {
+    >.main {
+      height: 100%!important;
+    }
+  }
+}
+</style>

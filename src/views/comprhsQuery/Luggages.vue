@@ -1,7 +1,7 @@
 <template>
   <div class="luggages">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" :defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
     <LugHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugHis>

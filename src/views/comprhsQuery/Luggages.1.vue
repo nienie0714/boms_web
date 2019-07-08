@@ -243,6 +243,11 @@ export default {
         queryAll(this.showComp.lugUrl, idObj).then(res => {
           if (res.data.code == 0) {
             this.showComp.row = res.data.data
+          } else {
+            this.$msg.error({
+              info: '获取详情失败 !',
+              tip: res.data.msg
+            })
           }
         })
       }

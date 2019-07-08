@@ -4,6 +4,7 @@
       <div class="icon"></div>
       <div class="label">导出</div>
     </div>
+    <slot name="setlist"></slot>
     <!-- <div class="tool-button remove">
       <div class="icon"></div>
       <div class="label">删除</div>
@@ -56,6 +57,15 @@ export default {
     &.export {
       >.icon {
         background-image: url(~@icon/toolbar/icon_export.png);
+      }
+      >.label {
+        color: $gray-nd;
+      }
+    }
+
+    &.setlist {
+      >.icon {
+        background-image: url(~@icon/toolbar/icon_setlist.png);
       }
       >.label {
         color: $gray-nd;

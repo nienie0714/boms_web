@@ -119,6 +119,7 @@ export default {
           let arr = Array.from({length: count}, (item, index) => index + 1)
           this.list.splice(0, this.list.length, ...arr)
         } else {
+          this.list = []
           this.$emit('click', 0)
         }
         this.computeList()
