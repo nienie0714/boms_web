@@ -12,6 +12,10 @@
           <input v-model.trim="userName" placeholder="请输入用户名" @blur="getPasswordByUsername" @keyup.enter="login"/>
           <input v-model.trim="password" :type="type" placeholder="请输入密码" @focus="type='text'" @blur="type='password'" @keyup.enter="login"/>
         </div>
+        <div class="validator">
+          <input v-model.trim="image" type="text" placeholder="请输入验证码" @keyup.enter="login"/>
+          <a href="javascript:;" class="verification-code" @click="changeCodeImg()"><img id="image" :src="imageUrl" /></a>
+        </div>
         <div class="remember">
           <div>
             <div :class="remember?'radio is-checked':'radio'" @click="remember = !remember"></div>
@@ -28,23 +32,28 @@
 </template>
 
 <script>
-import { queryAll } from '@/util/base'
+import { queryAll, getQueryAll } from '@/util/base'
+import Vue from 'vue'
 export default {
   data () {
     return {
       loginUrl: 'auth',
+      imageUrl: '/createImage',
       remember: false,
       userName: '',
       password: '',
+      image: '',
+      vsCode: '',
       type: 'password',
-      loading: false
+      loading: false,
+      uuid: ''
     }
   },
   mounted () {
     localStorage.setItem('token', '')
     localStorage.setItem('username', '')
     window.name = this.$route.name
-    this.getAuthCode()
+    this.changeCodeImg()
   },
   methods: {
     getPasswordByUsername () {
@@ -55,12 +64,26 @@ export default {
     },
     login () {
       if (this.userName && this.userName != '') {
+        if (this.password == '') {
+          this.$msg.error({
+            info: '请输入密码'
+          })
+          return
+        }
+        // if (this.image == '') {
+        //   this.$msg.error({
+        //     info: '请输入验证码'
+        //   })
+        //   return
+        // }
         if (this.remember) {
           localStorage.setItem(this.userName, this.password)
         }
         let data = {
           username: this.userName,
-          password: this.password
+          password: this.password,
+          image: this.image,
+          uuid: this.uuid
         }
         // postData
         queryAll(this.loginUrl, data).then(res => {
@@ -69,11 +92,12 @@ export default {
             localStorage.setItem('empName', res.data.data.empName ? res.data.data.empName : '')
             localStorage.setItem('empId', res.data.data.empId ? res.data.data.empId : '')
             localStorage.setItem('username', this.userName)
+            this.uuid = ''
             this.$router.push('/home')
           } else if (res.data.code == -1) {
             this.$msg.error({
               info: '登录失败',
-              tip: '用户名或密码错误 !'
+              tip: res.data.msg
             })
           } else {
             this.$msg.error({
@@ -89,8 +113,28 @@ export default {
         })
       }
     },
-    getAuthCode() {
-      
+    changeCodeImg() {
+      this.uuid = this.getUUID()
+      var vue = new Vue({})
+      vue.axios.get(this.imageUrl, {
+        params: {
+          uuid: this.uuid,
+        },
+        responseType: 'arraybuffer'
+      }).then(response => {
+        return 'data:image/png;base64,' + btoa(
+          new Uint8Array(response.data)
+            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+      }).then(data => {
+        document.getElementById('image').src = data
+      })
+    },
+    getUUID() {
+      return 'xxxx-xxxx-xxxx-xxxx-xxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+      });
     }
   }
 }
@@ -118,7 +162,7 @@ export default {
     margin: auto;
     border-radius: 12px;
     width: 360px;
-    height: 440px;
+    height: 486px;
     background-color: #fff;
     align-items: center;
     .card-icon {
@@ -165,6 +209,19 @@ export default {
         }
         input:last-child {
           margin-top: 20px;
+        }
+      }
+      .validator {
+        margin-top: 20px;
+        display: flex;
+        input {
+          border: 1px solid $gray-rs;
+          height: 42px;
+          width: 229px;
+          margin-right: 5px;
+          &:hover, &:focus {
+            border-color: rgba(51, 146, 255, 0.8);
+          }
         }
       }
       .remember {

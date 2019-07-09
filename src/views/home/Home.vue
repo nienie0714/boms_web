@@ -37,11 +37,11 @@
         <div class="online-header_body">
           <div>
             <img :src="require('@icon/online/phone.png')">
-            <div>36</div>
+            <div>{{onlineData.APPNUM}}</div>
           </div>
           <div>
             <img :src="require('@icon/online/mac.png')">
-            <div>8</div>
+            <div>{{onlineData.WEBNUM}}</div>
           </div>
         </div>
         <div class="query-box">
@@ -54,16 +54,17 @@
           在线用户列表
         </div>
         <div>
-          共89条数据
+          共{{this.tableData.data.length}}条数据
         </div>
       </div>
       <div class="body-second">
         <tables :tableData="tableData" :loading="tableData.loading">
           <template v-slot:slot-body="{index, row, item}">
-            <template v-if="item.key=='seatNo'">
-              <img v-if="row['seatNo'] == '34A'" :src="require('@icon/online/phone.png')">
-              <img v-else :src="require('@icon/online/mac.png')">
-              <span class="value">{{row['psgNameCh']}}</span>
+            <div v-if="item.key == 'index'">{{ index + 1 }}</div>
+            <template v-if="item.key=='mac'">
+              <img v-if="row['machine'] == 1" :src="require('@icon/online/phone.png')">
+              <img v-if="row['webMachine'] == 1" :src="require('@icon/online/mac.png')">
+              <span class="value">{{row['mac']}}</span>
             </template>
           </template>
         </tables>
@@ -104,14 +105,16 @@ export default {
       onlineData: {
         visible: false,
         title: '当前在线用户数',
+        APPNUM: 0,
+        WEBNUM: 0
       },
       queryType: 'nopage',
       // 请求路径
-      queryUrl: '/integrated/luggage/queryAll',
+      queryUrl: '/online/userOnline/queryOnlineUser',
       queryParam: [
         {
-          key: 'flightNo',
-          label: '航班号',
+          key: 'userName',
+          label: '用户名',
           type: 'input',
           width: 214,
           toUpper: true
@@ -121,13 +124,14 @@ export default {
         height: 600,
         multSelection: [],
         loading: false,
-        key: 'lugId',
+        key: 'userName',
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李编号', width: 100, colClass: 'bold-underline', title: true},
-            {key: 'flightNo',  label: '航班号', width: 100, title: true},
-            {key: 'seatNo',  label: '旅客座位号', width: 200, title: true, type: 'slot'}
+            {key: 'index',  label: '序号', width: 30, title: true, type: 'slot'},
+            {key: 'userName',  label: '用户名', width: 70, title: true},
+            {key: 'empName',  label: '姓名', width: 100, title: true},
+            {key: 'mac',  label: '设备/MAC地址', width: 200, title: true, type: 'slot'}
           ],
           // center
           [
@@ -138,7 +142,7 @@ export default {
         ],
         data: []
       },
-      filterValue: ''
+      filterValue: null
     }
   },
   // mixins: [webSocketMixin],
@@ -162,6 +166,7 @@ export default {
     })
   },
   methods: {
+    // 一级菜单路由切换
     changeActive ({index, item}) {
       this.activeIndex = index
       if (item && item.hasOwnProperty('router')) {
@@ -171,16 +176,30 @@ export default {
     loginOut() {
       this.$router.push('/')
     },
+    // 用户在线列表
     getOnlineUser() {
-      // todo
+      this.filterValue = null
       this.queryDataReq()
+      this.queryDataNum()
       this.onlineData.visible = true
+    },
+    // 用户在线数量
+    queryDataNum() {
+      postData('/online/userOnline/queryOnlineNum', {}).then(res => {
+        this.onlineData.APPNUM = res.data.data.APPNUM || 0
+        this.onlineData.WEBNUM = res.data.data.WEBNUM || 0
+      })
+    },
+    customQueryBefore () {
+      this.$set(this.queryData, 'userName', this.filterValue)
+    },
+    changeFilter(value) {
+      this.filterValue = value
+      this.queryDataReq()
+      this.queryDataNum()
     },
     handleClose() {
       this.onlineData.visible = false
-    },
-    changeFilter(value) {
-      console.log(value)
     }
   }
 }
