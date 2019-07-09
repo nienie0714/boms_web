@@ -128,7 +128,7 @@ export default {
         column: [
           // left
           [
-            {key: 'index',  label: '序号', width: 30, title: true, type: 'slot'},
+            {key: 'index',  label: '序号', width: 30, type: 'slot'},
             {key: 'userName',  label: '用户名', width: 70, title: true},
             {key: 'empName',  label: '姓名', width: 100, title: true},
             {key: 'mac',  label: '设备/MAC地址', width: 200, title: true, type: 'slot'}
@@ -240,6 +240,7 @@ export default {
       }
       .name {
         width: calc(100% - 50px);
+        max-width: 48px;
         margin-left: 14px;
         color: #fff;
         font-size: 16px;

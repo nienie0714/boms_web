@@ -99,6 +99,22 @@ export function filterDeep (arr, key) {
   return max
 }
 
+// 递归查询当前节点深度
+export function filterNodeDeep (arr, id, key, cKey, pDeep) {
+  let data = arr
+  let deep = ((pDeep === 0) || (pDeep > 0)) ? (pDeep + 1) : 0
+  let result = -1
+  for (let i = 0; i < data.length - 1; i ++) {
+    if (data[i].hasOwnProperty(key) && data[i][key] == id) {
+      result = deep
+    } else if (data[i].hasOwnProperty(cKey) && data[i][cKey] && data[i][cKey].length > 0) {
+      result = filterNodeDeep(data[i][cKey], id, key, cKey, deep)
+    }
+    if (result > -1) break
+  }
+  return result
+}
+
 // 递归按顺序组装数组
 export function flattenDeepChild (arr, key) {
   let tmp = []

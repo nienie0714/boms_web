@@ -70,12 +70,12 @@ export default {
           })
           return
         }
-        // if (this.image == '') {
-        //   this.$msg.error({
-        //     info: '请输入验证码'
-        //   })
-        //   return
-        // }
+        if (this.image == '') {
+          this.$msg.error({
+            info: '请输入验证码'
+          })
+          return
+        }
         if (this.remember) {
           localStorage.setItem(this.userName, this.password)
         }
@@ -95,6 +95,13 @@ export default {
             this.uuid = ''
             this.$router.push('/home')
           } else if (res.data.code == -1) {
+            this.$msg.error({
+              info: '登录失败',
+              tip: res.data.msg
+            })
+          } else if (res.data.code == -2) {
+            // 验证码超时，自动刷新
+            this.changeCodeImg()
             this.$msg.error({
               info: '登录失败',
               tip: res.data.msg

@@ -17,7 +17,20 @@
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
+        <template v-slot:slot-body="{index, row, item}">
+          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          <template v-else-if="item.key=='logSummary'">
+            <div class="img-label">
+              <img :src="require('@icon/log/icon_query.png')" v-if="row[item.key].includes('查询')"/>
+              <img :src="require('@icon/log/icon_add.png')" v-else-if="row[item.key].includes('新增')"/>
+              <img :src="require('@icon/log/icon_update.png')" v-else-if="row[item.key].includes('修改')"/>
+              <img :src="require('@icon/log/icon_delete.png')" v-else-if="row[item.key].includes('删除')"/>
+              <span>{{row[item.key]}}</span>
+            </div>
+          </template>
+        </template>
+      </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="exportData.visible" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
@@ -87,9 +100,10 @@ export default {
         column: [
           // left
           [
+            {key: 'index',  label: '序号', width: 80, type: 'slot'},
             {key: 'logUser',  label: '用户名', width: 200},
             {key: 'empName', label: '姓名', width: 200},
-            {key: 'logSummary',  label: '操作类型', width: 300},
+            {key: 'logSummary',  label: '操作类型', width: 300, type: 'slot'},
             {key: 'logDetail',  label: '操作内容', width: 500},
             {key: 'logTime',  label: '操作时间', width: 250},
           ],
@@ -115,5 +129,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.img-label {
+  height: 48px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    margin-right: 8px;
+  }
+}
 </style>

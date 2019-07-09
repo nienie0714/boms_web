@@ -1,7 +1,7 @@
 <template>
   <div class="log-audit">
     <div class="left-tree">
-      <tree :data="data" :nodeLabel="'text'" :activeId="activeId" @clickNode="clickNode"></tree>
+      <tree :data="data" :nodeLabel="'text'" :activeId="activeId" @clickNode="clickNode" :expendAll="true"></tree>
     </div>
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
@@ -20,7 +20,11 @@
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove">
+        <template v-slot:slot-body="{index, row, item}">
+          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+        </template>
+      </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
@@ -80,9 +84,10 @@ export default {
         column: [
           // left
           [
-            {key: 'deptName',  label: '单位/部门', width: 355},
-            {key: 'empName', label: '姓名', width: 355},
-            {key: 'post',  label: '职务名称', width: 355},
+            {key: 'index',  label: '序号', width: 80, type: 'slot'},
+            {key: 'deptName',  label: '单位/部门', width: 325},
+            {key: 'empName', label: '姓名', width: 325},
+            {key: 'post',  label: '职务名称', width: 325},
             {key: 'phone',  label: '联系方式', width: 355}
           ],
           // center

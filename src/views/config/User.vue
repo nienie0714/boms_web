@@ -17,7 +17,11 @@
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
+        <template v-slot:slot-body="{index, row, item}">
+          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+        </template>
+      </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
@@ -81,10 +85,11 @@ export default {
         column: [
           // left
           [
-            {key: 'userName',  label: '用户名', width: 365},
-            {key: 'empName', label: '姓名', width: 365},
-            {key: 'deptName',  label: '部门', width: 365},
-            {key: 'roleNames',  label: '角色', width: 365},
+            {key: 'index',  label: '序号', width: 80, type: 'slot'},
+            {key: 'userName',  label: '用户名', width: 330},
+            {key: 'empName', label: '姓名', width: 330},
+            {key: 'deptName',  label: '部门', width: 330},
+            {key: 'roleNames',  label: '角色', width: 400},
           ],
           // center
           [

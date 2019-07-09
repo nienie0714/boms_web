@@ -9,6 +9,7 @@
         <span>{{node[nodeLabel]}}</span>
       </div>
       <tree v-if="node.hasOwnProperty(nodeChild) && node[nodeChild]" v-show="node.hasOwnProperty('open') && node.open" ref="treeChild" class="tree-child"
+      :deep="deep + 1" :expendAll="expendAll" :expendLevel="expendLevel"
       :data="node[nodeChild]" :selected="selected" :disabled="disabled || (node.hasOwnProperty(disabledKey) ? node[disabledKey] : false)" :nodeKey="nodeKey" :nodeLabel="nodeLabel" :nodeChild="nodeChild"
       :selectNodeId="selectNodeId" :selectNode="selectNode" :halfSelectNodeId="halfSelectNodeId" :activeId="activeId" :autoSelectNodeId="autoSelectChildNodeId" :allSelectNodeId="allSelectNodeId"
       @clickNode="clickNode" @selectCheckBox="selectChildCheckBox"></tree>
@@ -30,6 +31,14 @@ export default {
     selected: {
       type: Boolean,
       default: false
+    },
+    expendAll: {
+      type: Boolean,
+      default: false
+    },
+    expendLevel: {
+      type: Number,
+      default: -1
     },
     disabled: {
       type: Boolean,
@@ -74,6 +83,10 @@ export default {
     activeId: {
       type: Array,
       default: function () {return []}
+    },
+    deep: {
+      type: Number,
+      default: 0
     }
   },
   model: {
@@ -116,7 +129,7 @@ export default {
       } else {
         this.selectNode.push(node)
         this.selectNodeId.push(node[this.nodeKey])
-        if (node.hasOwnProperty(this.nodeChild)) {
+        if (node.hasOwnProperty(this.nodeChild) && node[this.nodeChild] && node[this.nodeChild].length > 0) {
           let tmp = []
           let arr = []
           let set = new Set()
@@ -206,11 +219,15 @@ export default {
       this.activeId.push(node[this.nodeKey])
       this.$emit('clickNode', node)
     },
-    showChild (node) {
-      if (node.hasOwnProperty('open') && node.open) {
-        node.open = false
-      } else {
+    showChild (node, status) {
+      if (status) {
         this.$set(node, 'open', true)
+      } else {
+        if (node.hasOwnProperty('open') && node.open) {
+          node.open = false
+        } else {
+          this.$set(node, 'open', true)
+        }
       }
     }
   },
@@ -229,6 +246,11 @@ export default {
             } else {
               this.autoSelectChildNodeId.push(id)
             }
+          })
+        }
+        if ((this.deep < this.expendLevel) || this.expendAll) {
+          this.tree.forEach(node => {
+            this.showChild(node, true)
           })
         }
       },

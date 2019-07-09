@@ -17,7 +17,11 @@
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
+        <template v-slot:slot-body="{index, row, item}">
+          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+        </template>
+      </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
@@ -66,8 +70,9 @@ export default {
           // left
           [
             {key: 'roleId',  label: 'id', width: 2, hidden: true},
-            {key: 'name',  label: '角色名称', width: 845},
-            {key: 'description', label: '角色描述', width: 845}
+            {key: 'index',  label: '序号', width: 80, type: 'slot'},
+            {key: 'name',  label: '角色名称', width: 700},
+            {key: 'description', label: '角色描述', width: 700}
           ],
           // center
           [

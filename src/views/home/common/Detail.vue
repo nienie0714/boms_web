@@ -22,7 +22,9 @@
           <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
           <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
           <div v-else-if="item.type == 'tree'" class="tree-wrapper">
-            <my-tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]" :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"></my-tree>
+            <my-tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]"
+            :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"
+            :expendAll="item.expendAll" :expendLevel="item.expendLevel"></my-tree>
           </div>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
           :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
