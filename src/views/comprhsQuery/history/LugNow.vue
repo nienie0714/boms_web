@@ -349,7 +349,7 @@ export default {
     this.timer = clearInterval(this.timer)
     this.queryDataRefresh()
     this.getFlightStatus()
-    this.timer = setInterval(this.queryDataRefresh, 600000000)
+    this.timer = setInterval(this.queryDataRefresh, 60000)
     this.$once('hook:beforeDestroy', () => {            
       this.timer = clearInterval(this.timer)
     })
@@ -443,7 +443,7 @@ export default {
       this.timer = clearInterval(this.timer)
       this.queryDataRefresh()
       this.getFlightStatus()
-      this.timer = setInterval(this.queryDataRefresh, 600000000)
+      this.timer = setInterval(this.queryDataRefresh, 60000)
     },
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
@@ -505,7 +505,7 @@ export default {
           this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
           this.getFlightStatus()
-          this.timer = setInterval(this.queryDataRefresh, 600000000)
+          this.timer = setInterval(this.queryDataRefresh, 60000)
         }
       }
     }
