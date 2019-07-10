@@ -24,16 +24,16 @@
                   <div class="opr-popover">
                     <el-main>
                       <div class="opr-popover-all">
-                        <el-header>航班信息</el-header>
+                        <el-header>行李信息</el-header>
                         <el-main>
                           <ul>
-                            <div v-for="(field, index) in tableData.otherFields" :key="field.prop">
+                            <div v-for="(field, index) in tableData.column[1]" :key="field.key">
                               <li v-if="field.label" :class="(oprPopoverIndex == index) ? 'opr-popover-li-click' : ''">
                                 <div class="opr-popover-li-left">{{ substrValue(field.label, 9) }}</div>
                                 <div class="opr-popover-li-right">
-                                  <div :class="field.hidden?'button-close':'button-show'" @click="handleEye(field, index, 'right')"></div>
-                                  <div class="button-up" @click="handleUp(field, index, 'right')"></div>
-                                  <div class="button-top" @click="handleTop(field, index, 'right')"></div>
+                                  <div :class="field.hidden?'button-close':'button-show'" @click="handleEye(field, index)"></div>
+                                  <div class="button-up" @click="handleUp(field, index)"></div>
+                                  <div class="button-top" @click="handleTop(field, index)"></div>
                                 </div>
                               </li>
                             </div>
@@ -43,7 +43,7 @@
                     </el-main>
                     <el-footer>
                       <div class="footer-left">
-                        <el-button type="info" plain @click="queryCustomeColor()">恢复默认值</el-button>
+                        <el-button type="info" plain @click="getDefaultRow()">恢复默认值</el-button>
                       </div>
                       <div class="footer-right">
                         <el-button type="info" plain @click="closeDefaultRow()">关闭</el-button>
@@ -51,7 +51,11 @@
                       </div>
                     </el-footer>
                   </div>
-                  <div class="opr-header-button" slot="reference">编辑表头</div>
+                  <!-- <div class="opr-header-button" slot="reference">编辑表头</div> -->
+                  <div class="tool-button setlist" slot="reference">
+                    <div class="icon"></div>
+                    <div class="label">设置列</div>
+                  </div>
                 </el-popover>
               </template>
             </toolbar>
@@ -122,7 +126,7 @@ import Tabs from '@view/Tabs/Tabs'
 import Tables from '@view/Table/Table'
 import tableMixin from '@mixin/tableMixin'
 import lugTableMixin from '@mixin/lugTableMixin'
-import { queryAll } from '@/util/base'
+import { queryAll, download } from '@/util/base'
 import Lug from '../detail/LugDetail'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 
@@ -135,13 +139,14 @@ export default {
     Lug,
     ConfirmTip
   },
-  mixins: [tableMixin],
+  mixins: [tableMixin, lugTableMixin],
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/luggage/queryAll',
+      exportUrl: '/integrated/luggage/exportExcel',
       // 菜单对应按钮权限
       permissions: {
         insert: false,
@@ -273,6 +278,10 @@ export default {
           class: 'mt14'
         },
       ],
+      // 获取默认隐藏/显示列路径
+      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      // 保存默认隐藏/显示列路径
+      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
       tableData: {
         height: 600,
         multSelection: [],
@@ -340,10 +349,13 @@ export default {
     this.timer = clearInterval(this.timer)
     this.queryDataRefresh()
     this.getFlightStatus()
-    this.timer = setInterval(this.queryDataRefresh, 60000)
+    this.timer = setInterval(this.queryDataRefresh, 600000000)
     this.$once('hook:beforeDestroy', () => {            
       this.timer = clearInterval(this.timer)
     })
+  },
+  created() {
+    this.getDefaultRow()
   },
   methods: {
     getFlightStatus() {
@@ -375,10 +387,10 @@ export default {
         this.queryParam[9].isHidden = false
 
         this.$set(this.tableData.column, 1, [
-          {key: 'seatNo',  label: '旅客座位号', width: 100, title: true},
-          {key: 'execDate',  label: '航班日期', width: 100, format: [0, 10]},
+          {key: 'seatNo',  label: '旅客座位号', width: 120, title: true},
+          {key: 'execDate',  label: '航班日期', width: 120, format: [0, 10]},
           // todo 航线
-          {key: 'routeCn',  label: '航线', width: 120, title: true},
+          {key: 'routeCn',  label: '航线', width: 140, title: true},
           // todo 航班状态
           {key: 'flightStatusCn',  label: '航班状态', width: 110, title: true, type:'slot'},
           // todo 航班异常状态
@@ -387,7 +399,7 @@ export default {
           {key: 'stand',  label: '机位', width: 110, title: true},
           {key: 'luggeTypeCn', label: '行李类型', width: 100, enumKey: 'inOutFlag', type:'slot'},
           // todo 是否标记
-          {key: 'markingNum',  label: '是否标记', width: 90, type: 'slot'},
+          {key: 'markingNum',  label: '是否标记', width: 100, type: 'slot'},
           {key: 'belt',  label: '行李转盘号', width: 110, title: true},
           // todo 卸机时间
           {key: 'checkDate',  label: '卸机时间', width: 120, title: true, format: [0, 16]},
@@ -431,7 +443,7 @@ export default {
       this.timer = clearInterval(this.timer)
       this.queryDataRefresh()
       this.getFlightStatus()
-      this.timer = setInterval(this.queryDataRefresh, 60000)
+      this.timer = setInterval(this.queryDataRefresh, 600000000)
     },
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
@@ -464,15 +476,18 @@ export default {
       this.exportInfo = `是否确认导出 ${this.tableData.data.length} 条数据？`
       return true
     },
-    openSetList() {
-      debugger
-    },
-    customOtherFields () {
-      return 'otherFields'
+    handleExport () {
+      download(this.exportUrl, this.queryData).then(response => {
+        this.downFile(response, '导出')
+        this.$msg.success({
+          info: '导出成功 !'
+        })
+        this.handleExportClose()
+      })
     },
     // 保存显示/隐藏列 save保存事件
     saveDefaultRow () {
-      this.saveDefaultRowReq('otherFields')
+      this.saveDefaultRowReq()
     },
   },
   watch: {
@@ -480,6 +495,7 @@ export default {
       handler (value) {
         if (!_.isUndefined(value)) {
           this.tabItemClick(value)
+          this.getDefaultRow()
         }
       }
     },
@@ -489,7 +505,7 @@ export default {
           this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
           this.getFlightStatus()
-          this.timer = setInterval(this.queryDataRefresh, 60000)
+          this.timer = setInterval(this.queryDataRefresh, 600000000)
         }
       }
     }
@@ -510,6 +526,28 @@ export default {
     height: 38px;
     align-self: flex-start;
     min-width: 87px;
+    .tool-button {
+      display: inline-flex;
+      padding: 0 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .setlist {
+      display: flex;
+      >.icon {
+        background-image: url(~@icon/toolbar/icon_setlist.png);
+        width: 20px;
+        height: 20px;
+      }
+      >.label {
+        margin-left: 6px;
+        font-size: 14px;
+        color: $gray-nd;
+      }
+      &:hover {
+        opacity: .8;
+      }
+    }
   }
   >div>.table {
     .table-header {
@@ -551,3 +589,6 @@ export default {
   }
 }
 </style>
+<style>
+</style>
+

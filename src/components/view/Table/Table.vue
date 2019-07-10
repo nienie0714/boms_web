@@ -232,7 +232,8 @@ export default {
         this.changeColumn(column)
         this.getTableWidth()
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     'tableData.data': {
       handler (data) {

@@ -61,10 +61,11 @@
         <tables :tableData="tableData" :loading="tableData.loading">
           <template v-slot:slot-body="{index, row, item}">
             <div v-if="item.key == 'index'">{{ index + 1 }}</div>
-            <template v-if="item.key=='mac'">
-              <img v-if="row['machine'] == 1" :src="require('@icon/online/phone.png')">
-              <img v-if="row['webMachine'] == 1" :src="require('@icon/online/mac.png')">
-              <span class="value">{{row['mac']}}</span>
+            <template v-if="item.key=='machine'">
+              <div class="img-label">
+                <img v-if="row['machine'] == 1" :src="require('@icon/online/phone.png')">
+                <img v-if="row['webMachine'] == 1" :src="require('@icon/online/mac.png')">
+              </div>
             </template>
           </template>
         </tables>
@@ -131,7 +132,8 @@ export default {
             {key: 'index',  label: '序号', width: 30, type: 'slot'},
             {key: 'userName',  label: '用户名', width: 70, title: true},
             {key: 'empName',  label: '姓名', width: 100, title: true},
-            {key: 'mac',  label: '设备/MAC地址', width: 200, title: true, type: 'slot'}
+            {key: 'machine',  label: '设备', width: 100, type: 'slot'},
+            {key: 'mac',  label: 'MAC地址', width: 100, title: true}
           ],
           // center
           [
@@ -221,22 +223,24 @@ export default {
       margin: 15px 0 0 20px;
     }
     >.user {
-      width: 178px;
+      width: 220px;
       display: flex;
       align-items: center;
       padding: 0 20px 0 30px;
       background-image: url(~@img/header/bg_usr_center.png);
       .onlineUser {
-        width: 20px;
-        height: 20px;
-        background-color: #f00;
-        margin-right: 10px;
+        width: 24px;
+        height: 24px;
+        background-image: url(~@img/header/icon_online_user.png);
+        margin-right: 32px;
+        cursor: pointer;
       }
       .img {
         width: 36px;
         height: 36px;
         border-radius: 50%;
         overflow: hidden;
+        cursor: pointer;
       }
       .name {
         width: calc(100% - 50px);
@@ -247,6 +251,7 @@ export default {
         white-space:nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
+        cursor: pointer;
       }
     }
   }
@@ -361,6 +366,16 @@ export default {
       >.icon {
         font-weight: 900;
         font-size: 20px;
+      }
+    }
+    .img-label {
+      height: 48px;
+      line-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        margin-right: 0px;
       }
     }
   }

@@ -26,6 +26,11 @@
               <img :src="require('@icon/log/icon_add.png')" v-else-if="row[item.key].includes('新增')"/>
               <img :src="require('@icon/log/icon_update.png')" v-else-if="row[item.key].includes('修改')"/>
               <img :src="require('@icon/log/icon_delete.png')" v-else-if="row[item.key].includes('删除')"/>
+              <img :src="require('@icon/log/icon_export.png')" v-else-if="row[item.key].includes('导出')"/>
+              <img :src="require('@icon/log/icon_import.png')" v-else-if="row[item.key].includes('导入')"/>
+              <img :src="require('@icon/log/icon_reset.png')" v-else-if="row[item.key].includes('重置')"/>
+              <img :src="require('@icon/log/icon_login.png')" v-else-if="row[item.key].includes('登录')"/>
+              <img :src="require('@icon/log/icon_logout.png')" v-else-if="row[item.key].includes('登出')"/>
               <span>{{row[item.key]}}</span>
             </div>
           </template>

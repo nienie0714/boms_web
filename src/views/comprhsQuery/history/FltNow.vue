@@ -7,6 +7,53 @@
       </div>
     </div>
     <div class="table-cont container cross">
+      <div class="table-title">
+        <div class="left">
+          <span class="label">查询结果</span>
+          <span class="info">共{{tableData.data.length}}条</span>
+        </div>
+        <div class="right">
+          <div class="toolbar">
+            <toolbar :permissions="permissions" @openExport="openExport">
+              <template v-slot:setlist>
+                <el-popover placement="bottom" width="310" trigger="click" v-model="defaultRow">
+                  <div class="opr-popover">
+                    <el-main>
+                      <div class="opr-popover-all">
+                        <el-header>行李信息</el-header>
+                        <el-main>
+                          <ul>
+                            <div v-for="(field, index) in tableData.column[1]" :key="field.key">
+                              <li v-if="field.label" :class="(oprPopoverIndex == index) ? 'opr-popover-li-click' : ''">
+                                <div class="opr-popover-li-left">{{ substrValue(field.label, 9) }}</div>
+                                <div class="opr-popover-li-right">
+                                  <div :class="field.hidden?'button-close':'button-show'" @click="handleEye(field, index, 'right')"></div>
+                                  <div class="button-up" @click="handleUp(field, index, 'right')"></div>
+                                  <div class="button-top" @click="handleTop(field, index, 'right')"></div>
+                                </div>
+                              </li>
+                            </div>
+                          </ul>
+                        </el-main>
+                      </div>
+                    </el-main>
+                    <el-footer>
+                      <div class="footer-right">
+                        <el-button type="info" plain @click="closeDefaultRow()">关闭</el-button>
+                        <el-button type="primary" @click="saveDefaultRow()">保存</el-button>
+                      </div>
+                    </el-footer>
+                  </div>
+                  <div class="tool-button setlist" slot="reference">
+                    <div class="icon"></div>
+                    <div class="label">设置列</div>
+                  </div>
+                </el-popover>
+              </template>
+            </toolbar>
+          </div>
+        </div>
+      </div>
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
@@ -45,26 +92,32 @@
       </tables>
     </div>
     <flt :isComp="showComp.is" :row="showComp.row"></flt>
+    <confirm-tip :visible="exportData.visible" :data="exportData.data" :info="exportInfo" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
   </div>
 </template>
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
+import Toolbar from '@view/Toolbar/Toolbar'
 import Tables from '@view/Table/Table'
 import tableMixin from '@mixin/tableMixin'
-import { queryAll } from '@/util/base'
+import lugTableMixin from '@mixin/lugTableMixin'
+import { queryAll, download } from '@/util/base'
 import Flt from '../detail/FltDetail'
 import CsProgress from '@view/CsProgress/CsProgress'
+import ConfirmTip from '@/views/home/common/ConfirmTip'
 import _ from 'lodash'
 
 export default {
   components: {
     QueryRow,
+    Toolbar,
     Tables,
     Flt,
-    CsProgress
+    CsProgress,
+    ConfirmTip
   },
-  mixins: [tableMixin],
+  mixins: [tableMixin, lugTableMixin],
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
@@ -72,6 +125,14 @@ export default {
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
+      exportUrl: '/integrated/dynamicFlight/exportExcel',
+      // 菜单对应按钮权限
+      permissions: {
+        insert: false,
+        export: true,
+        setlist: true
+      },
+      exportInfo: '是否确认导出0条数据？',
       showComp: {
         is: null,
         lugUrl: '/integrated/dynamicFlight/flightLugStat',
@@ -450,7 +511,28 @@ export default {
           })
         }
       })
-    }
+    },
+    customBeforExport() {
+      this.exportInfo = `是否确认导出 ${this.tableData.data.length} 条数据？`
+      return true
+    },
+    handleExport () {
+      download(this.exportUrl, this.queryData).then(response => {
+        this.downFile(response, '导出')
+        this.$msg.success({
+          info: '导出成功 !'
+        })
+        this.handleExportClose()
+      })
+    },
+    customUpdateTableWidth () {},
+    customOtherFields () {
+      return 'otherFields'
+    },
+    // 保存显示/隐藏列 save保存事件
+    saveDefaultRow () {
+      this.saveDefaultRowReq('otherFields')
+    },
   },
   watch: {
     selectKey: {
@@ -504,12 +586,32 @@ export default {
         margin-top: 14px;
       }
     }
-    .toolbar {
-      // height: 100%;
-      // flex: 1;
-      // display: flex;
-      // align-items: flex-start;
-      // justify-content: center;
+  }
+  .toolbar {
+    height: 38px;
+    align-self: flex-start;
+    min-width: 87px;
+    .tool-button {
+      display: inline-flex;
+      padding: 0 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .setlist {
+      display: flex;
+      >.icon {
+        background-image: url(~@icon/toolbar/icon_setlist.png);
+        width: 20px;
+        height: 20px;
+      }
+      >.label {
+        margin-left: 6px;
+        font-size: 14px;
+        color: $gray-nd;
+      }
+      &:hover {
+        opacity: .8;
+      }
     }
   }
   >div>.table {
@@ -566,5 +668,136 @@ export default {
       }
     }
   }
+}
+/* 编辑表头内容列宽度 */
+.opr-popover-all {
+  width: 100%;
+}
+.el-main {
+  height: 100%;
+  padding: 0;
+}
+.el-header {
+  padding: 0
+}
+.opr-popover {
+  height: 400px;
+}
+.opr-popover>main>div {
+  width: 100%;
+  height: 100%;
+  float: left;
+  overflow: hidden;
+}
+.opr-popover>main header {
+  height: 16px !important;
+  line-height: 16px;
+  margin: 20px 0 12px 20px;
+  color: #7a939e;
+}
+.opr-popover>main main {
+  height: calc(100% - 48px);
+  color: #90A3B6;
+}
+.opr-popover>main {
+  height: calc(100% - 66px);
+  font-size: 16px;
+}
+.opr-popover>footer {
+  height: 34px !important;
+  width: calc(100% - 40px);
+  margin: 12px 20px 20px 20px;
+  padding: 0;
+  color: #90A3B6;
+  font-weight: bold;
+}
+.opr-popover>main ul {
+  list-style: none;
+  height: 100%;
+  margin: 0 0 0 20px;
+  padding: 0;
+}
+.opr-popover>main ul>div {
+  margin-left: -10px;
+}
+.opr-popover>main li {
+  width: calc(100% - 10px);
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+.opr-popover>main li:hover {
+  background-color: rgba(60, 166, 200, 0.3);
+}
+.opr-popover>main li.opr-popover-li-click {
+  background-color: rgba(60, 166, 200, 0.2);
+}
+.opr-popover-li-left {
+  float: left;
+}
+.opr-popover-li-right {
+  float: right;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.opr-popover-li-right>div {
+  float: left;
+  height: 30px;
+  width: 30px;
+  margin: 4px 0 4px 0;
+  border: 1px solid #447385;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.opr-popover-li-right>div:not(:last-of-type) {
+  margin: 4px 10px 4px 0;
+}
+.opr-popover-li-right>div:hover {
+  opacity: 0.8;
+}
+.opr-popover>footer>.footer-left {
+  float: left;
+}
+.opr-popover>footer>.footer-left>div {
+  width: 100px;
+}
+.opr-popover>footer>.footer-right {
+  float: right;
+}
+.opr-popover>footer>.footer-right>div {
+  float: left;
+  width: 70px;
+}
+.opr-popover>footer>.footer-right>div:not(:last-of-type) {
+  margin-right: 10px;
+}
+</style>
+<style>
+.el-button {
+  padding: 7px 15px;
+  height: 30px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 6px;
+}
+.button-show {
+  background: url('~@img/setlist/icon_eye_white.png');
+  background-color: rgba(56, 195, 245, 0.2);
+  box-shadow: 0px 0px 6px rgba(60, 166, 200, 0.7) inset !important;
+  border: 1px solid rgba(60, 166, 200, 0.7) !important;
+}
+.button-close {
+  background: url('~@img/setlist/icon_eye_gray.png');
+}
+.button-up {
+  background: url('~@img/setlist/icon_up_gray.png');
+}
+.button-up-2 {
+  background: url('~@img/setlist/icon_up_gray_02.png');
+}
+.button-top {
+  background: url('~@img/setlist/icon_top_gray.png');
 }
 </style>
