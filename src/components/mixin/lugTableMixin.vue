@@ -1,7 +1,6 @@
 <script>
 import { postData, queryAll } from '@/util/base'
 import _ from 'lodash'
-import { filter } from 'minimatch';
 
 export default {
   data () {
@@ -128,7 +127,7 @@ export default {
       this.oprPopoverIndex = index - 1
     },
     // 置顶列 top点击事件
-    handleTop (field, index, sign) {
+    handleTop (field, index) {
       this.tableData.column[1].splice(index, 1)
       this.tableData.column[1].splice(0, 0, field)
       this.$set(this.tableData.column, 1, this.tableData.column[1])

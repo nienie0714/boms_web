@@ -340,10 +340,14 @@
   height: 400px;
 }
 .opr-popover>main>div {
-  width: 100%;
+  width: 50%;
   height: 100%;
   float: left;
   overflow: hidden;
+}
+/* 编辑表头内容列宽度 */
+.opr-popover-all {
+  width: 100%!important;
 }
 .opr-popover>main header {    
   height: 16px !important;
