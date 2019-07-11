@@ -14,9 +14,65 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <!-- <div class="toolbar">
-            <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
-          </div> -->
+          <div class="toolbar">
+            <toolbar :permissions="permissions" @openExport="openExport">
+              <template v-slot:setlist>
+                <el-popover placement="bottom" width="520" trigger="click" v-model="defaultRow" :style="{right: '0px', left: '1380px'}">
+                  <div class="opr-popover">
+                    <el-main>
+                      <div class="opr-popover-left">
+                        <el-header>运行情况</el-header>
+                        <el-main>
+                          <ul>
+                            <div v-for="(field, index) in tableData.column[1][0].child" :key="field.key">
+                              <li v-if="index > (leftAutoNum - 1)" :class="((oprPopoverDirect == 'left') && (oprPopoverIndex == index)) ? 'opr-popover-li-click' : ''">
+                                <div class="opr-popover-li-left">{{ substrValue(field.label, 5) }}</div>
+                                <div class="opr-popover-li-right">
+                                  <div :class="field.hidden?'button-close':'button-show'" @click="handleEye(field, index, 'left')"></div>
+                                  <div class="button-up" @click="handleUp(field, index, 'left')"></div>
+                                  <div class="button-top" @click="handleTop(field, index, 'left')"></div>
+                                </div>
+                              </li>
+                            </div>
+                          </ul>
+                        </el-main>
+                      </div>
+                      <div class="opr-popover-right">
+                        <el-header>行李信息</el-header>
+                        <el-main>
+                          <ul>
+                            <div v-for="(field, index) in tableData.column[1][1].child" :key="field.key">
+                              <li v-if="index < rightAutoNum" :class="((oprPopoverDirect == 'left') && (oprPopoverIndex == index)) ? 'opr-popover-li-click' : ''">
+                                <div class="opr-popover-li-left">{{ substrValue(field.label, 5) }}</div>
+                                <div class="opr-popover-li-right">
+                                  <div :class="field.hidden?'button-close':'button-show'" @click="handleEye(field, index, 'right')"></div>
+                                  <div class="button-up" @click="handleUp(field, index, 'right')"></div>
+                                  <div class="button-top" @click="handleTop(field, index, 'right')"></div>
+                                </div>
+                              </li>
+                            </div>
+                          </ul>
+                        </el-main>
+                      </div>
+                    </el-main>
+                    <el-footer>
+                      <div class="footer-left">
+                        <el-button type="info" plain @click="getDefaultRow()">恢复默认值</el-button>
+                      </div>
+                      <div class="footer-right">
+                        <el-button type="info" plain @click="closeDefaultRow()">关闭</el-button>
+                        <el-button type="primary" @click="saveDefaultRow()">保存</el-button>
+                      </div>
+                    </el-footer>
+                  </div>
+                  <div class="tool-button setlist" slot="reference">
+                    <div class="icon"></div>
+                    <div class="label">设置列</div>
+                  </div>
+                </el-popover>
+              </template>
+            </toolbar>
+          </div>
         </div>
       </div>   
       <div class="table-cont whole-table-cont container cross">
@@ -64,10 +120,12 @@
 
 <script>
 import QueryRow from '@view/QueryRow/QueryRow'
+import Toolbar from '@view/Toolbar/Toolbar'
 import Pagination from '@view/Pagination/Pagination'
 import Tables from '@view/Table/Table'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
+import flightTableMixin from '@mixin/flightTableMixin'
 import { queryAll } from '@/util/base'
 import Inputs from '@view/Inputs/Inputs'
 import CsProgress from '@view/CsProgress/CsProgress'
@@ -77,12 +135,13 @@ import _ from 'lodash'
 export default {
   components: {
     QueryRow,
+    Toolbar,
     Pagination,
     Flt,
     Tables,
     CsProgress
   },
-  mixins: [tableMixin, formMixin],
+  mixins: [tableMixin, formMixin, flightTableMixin],
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
@@ -154,6 +213,10 @@ export default {
           url: '/base/terminal/queryAll'
         }
       ],
+      // 获取默认隐藏/显示列路径
+      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      // 保存默认隐藏/显示列路径
+      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
       tableData: {
         // height: 600,
         multSelection: [],
@@ -198,16 +261,16 @@ export default {
                 // todo 自动分拣数
                 // todo 人工分拣数
                 // todo 起运时间
-                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
-                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'loadTruckCost', label: '分拣耗时', width: 60},
+                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot'},
+                {key: 'loadAircraftCount',  label: '装机数', width: 60},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 60},
+                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-right'}
               ]
             },
             {
               label: '行李类型',
-              colspan: 3,
+              colspan: 5,
               titleClass: 'th-col-title',
               child: [
                 {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
@@ -239,6 +302,8 @@ export default {
   mounted () {
     this.getFlightStatus()
     this.queryDataReq()
+  },
+  created() {
   },
   methods: {
     customQueryBefore () {
@@ -320,7 +385,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true}
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])
@@ -356,6 +421,7 @@ export default {
             }
           ])
       }
+      this.getDefaultRow()
     },
     changeComp (comp, row) {
       this.axiosChildArr.forEach(ever => {
@@ -439,7 +505,11 @@ export default {
           })
         }
       })
-    }
+    },
+    // 保存显示/隐藏列 save保存事件
+    saveDefaultRow () {
+      this.saveDefaultRowReq()
+    },
   },
   watch: {
     selectKey: {

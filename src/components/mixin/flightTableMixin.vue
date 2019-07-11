@@ -52,134 +52,146 @@ export default {
     getDefaultRow () {
       var _this = this
       queryAll('/online/userOnline/queryOnlineUser', {}).then(response => {
-        // let hiddenotherFields = _this.tableData.column[1]
-        // console.log(_this.tableData.column[1], _this.tableData.column[1][0].child)
-        // // let responseUl = ['seatNo', 'execDate', 'routeCn', 'checkDate', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'counterNo', 'chuteNo', 'secure', 'truckDate', 'airDate']
-        // // let responseUlA = ['seatNo', 'execDate', 'routeCn', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'belt', 'checkDate', 'upLoadDate']
-        // let runList = ['lugTotal', 'unLoadAirNum', 'unLoadAirCostTime', 'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
-        // let lugList = ['lugCommonTotal', 'lugAdditionTotal', 'vipFlag', 'lugMarkingTotal']
-        // let runLength = runList.length
-        // let lugLength = lugList.length
         if (response.data.code == 0) {
+          // let runListA = ['unLoadAirCostTime', 'lugTotal', 'unLoadAirNum', 'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
+          // flightAR = ['lugTotal', 'unLoadAirNum','unLoadAirCostTime',  'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
+          // flightAL = ['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'vipFlag', 'lugMarkingTotal']
+          // flightDR = ['lugTotal', 'checkinCount', 'loadTruckCost', 'N-LOAD-TRUCK', 'loadAircraftCount', 'loadAircraftCost', 'N-LOAD-AIRCRAFT']
+          // flightDL = ['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'vipFlag', 'lugMarkingTotal']
+          
+          let runListD = ['N-LOAD-TRUCK', 'checkinCount', 'lugTotal', 'loadTruckCost', 'loadAircraftCount', 'loadAircraftCost', 'N-LOAD-AIRCRAFT']
+          // let lugListD = []
+          let lugListD = ['lugAdditionTotal', 'lugCommonTotal', 'allNodeCancelSum', 'vipFlag', 'lugMarkingTotal']
+          // let runListD = []
+          
+          // 运行情况--------------------------------------------------------------------
           var result = 0
-          var showflightfields = []
-          let hiddenflightfields = _this.tableData.fields.slice(_this.leftAutoNum)
-          response.data.data.flightFields.forEach(item => {
+          let showotherFields = []
+          let hiddenotherFields = _this.tableData.column[1][0].child
+          runListD.forEach(item => {
             result = -1
-            for (let i = 0; i < hiddenflightfields.length; i++) {
-              if (hiddenflightfields[i].prop == item) {
+            for (let i = 0; i < hiddenotherFields.length; i++) {
+              if (hiddenotherFields[i].key == item) {
                 result = i
               }
             }
             if (result > -1) {
-              hiddenflightfields[result].hidden = false
-              showflightfields.push(hiddenflightfields[result])
-              hiddenflightfields.splice(result, 1)
+              hiddenotherFields[result].hidden = false
+              showotherFields.push(hiddenotherFields[result])
+              hiddenotherFields.splice(result, 1)
             }
           })
-          hiddenflightfields.forEach(item => {
+          hiddenotherFields.forEach(item => {
             item.hidden = true
           })
-          _this.tableData.fields.splice(_this.leftAutoNum, _this.tableData.fields.length - _this.leftAutoNum)
-          _this.tableData.fields = _this.tableData.fields.concat(showflightfields, hiddenflightfields)
-
-          if (_this.rightAutoNum) {
-            let key = _this.customOtherFields()
-            let showFlightOtherFields = []
-            let hiddenFlightOtherfields = _this.tableData[key].slice(0, _this.rightAutoNum)
-
-            response.data.data[key].forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenFlightOtherfields.length; i++) {
-                if (hiddenFlightOtherfields[i].prop == item) {
-                  result = i
+          _this.tableData.column[1][0].child = showotherFields.concat(hiddenotherFields)
+          _this.tableData.column[1][0].colspan = runListD.length
+          if(showotherFields.length > 0) {
+            // 有运行情况列
+            // 行李类型--------------------------------------------------------------------
+            var result2 = 0
+            let showotherFields2 = []
+            let hiddenotherFields2 = _this.tableData.column[1][1].child
+            lugListD.forEach(item => {
+              result2 = -1
+              for (let i = 0; i < hiddenotherFields2.length; i++) {
+                if (hiddenotherFields2[i].key == item) {
+                  result2 = i
                 }
               }
-              if (result > -1) {
-                hiddenFlightOtherfields[result].hidden = false
-                showFlightOtherFields.push(hiddenFlightOtherfields[result])
-                hiddenFlightOtherfields.splice(result, 1)
+              if (result2 > -1) {
+                hiddenotherFields2[result2].hidden = false
+                showotherFields2.push(hiddenotherFields2[result2])
+                hiddenotherFields2.splice(result2, 1)
               }
             })
-            hiddenFlightOtherfields.forEach(item => {
+            hiddenotherFields2.forEach(item => {
               item.hidden = true
             })
-            _this.tableData[key].splice(0, _this.rightAutoNum, ...showFlightOtherFields, ...hiddenFlightOtherfields)
-
-            let showotherFields = []
-            let hiddenotherFields = _this.tableData[key].slice(_this.rightAutoNum)
-            response.data.data[key].forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].prop == item) {
-                  result = i
-                }
-              }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
-              }
-            })
-            hiddenotherFields.forEach(item => {
-              item.hidden = true
-            })
-            _this.tableData[key].splice(_this.rightAutoNum, _this.tableData[key].length - _this.rightAutoNum, ...showotherFields, ...hiddenotherFields)
+            if (lugListD.length == 0) {
+              // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
+              // 有运行情况  没有行李列
+              _this.tableData.column[1][1].colspan = 0
+              _this.tableData.column[1][1].hidden = true
+            } else {
+              // 有运行情况  有行李列
+              _this.tableData.column[1][1].child = showotherFields2.concat(hiddenotherFields2)
+              _this.tableData.column[1][1].colspan = lugListD.length
+            }
           } else {
-            let key = _this.customOtherFields()
-            let showotherFields = []
-            let hiddenotherFields = _this.tableData[key]
-            response.data.data[key].forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].prop == item) {
-                  result = i
+            // 没有运行情况 有行李列-----------------------------------------------------------
+            _this.tableData.column[1][0].colspan = 0
+            _this.tableData.column[1][0].hidden = true
+            // this.$delete(_this.tableData.column[1], 0)
+            var result1_2 = 0
+            let showotherFields1_2 = []
+            let hiddenotherFields1_2 = _this.tableData.column[1][1].child
+            lugListD.forEach(item => {
+              result1_2 = -1
+              for (let i = 0; i < hiddenotherFields1_2.length; i++) {
+                if (hiddenotherFields1_2[i].key == item) {
+                  result1_2 = i
                 }
               }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
+              if (result1_2 > -1) {
+                hiddenotherFields1_2[result1_2].hidden = false
+                showotherFields1_2.push(hiddenotherFields1_2[result1_2])
+                hiddenotherFields1_2.splice(result1_2, 1)
               }
             })
-            hiddenotherFields.forEach(item => {
+            hiddenotherFields1_2.forEach(item => {
               item.hidden = true
             })
-            _this.tableData[key] = showotherFields.concat(hiddenotherFields)
+
+            if (lugListD.length == 0) {
+              // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
+              // 没有运行情况  没有行李列
+              _this.tableData.column[1][1].colspan = 0
+              _this.tableData.column[1][1].hidden = true
+              // bug  table出现断档
+            } else {
+              // 没有运行情况  有行李列
+              _this.tableData.column[1][1].child = showotherFields1_2.concat(hiddenotherFields1_2)
+              _this.tableData.column[1][1].colspan = lugListD.length
+            }
           }
+          this.lastRunAddRBorder()
         }
         this.setShowFields(2)
-        this.updateTableWidth()
       })
     },
     // 显示/隐藏列 eye点击事件
     handleEye (field, index, sign, isShow) {
-      if (isShow) {
-        field.hidden = false
-      } else {
-        field.hidden = !field.hidden
-      }
-      var widthSum = 0
       if (sign == 'left') {
-        this.tableData.fields.forEach(item => {
-          if (!item.hidden) {
-            widthSum += parseInt(item.width)
+        this.tableData.column[1][0].child[index] = Object.assign({}, this.tableData.column[1][0].child[index], {hidden: !field.hidden})
+        if (field.hidden) {
+          // 显示
+          this.tableData.column[1][0].hidden = false
+          this.$set(this.tableData.column[1][0], 'colspan', this.tableData.column[1][0].colspan + 1)
+        } else {
+          // 隐藏
+          this.$set(this.tableData.column[1][0], 'colspan', this.tableData.column[1][0].colspan - 1)
+          if(this.tableData.column[1][0].colspan <= 0) {
+            this.tableData.column[1][0].hidden = true
           }
-        })
-        this.divLeftTableStyle.width = widthSum + 2 + 'px'
-        this.divLeftTableStyle.minWidth = widthSum + 2 + 'px'
-        this.divRightTableStyle.width = 'calc(100% - ' + this.divLeftTableStyle.width + ' - ' + this.divOprTableStyle.width + ')'
+        }
+        this.lastRunAddRBorder()
+        this.$set(this.tableData.column[1], 0, this.tableData.column[1][0])
       } else if (sign == 'right') {
-        var key = this.customOtherFields()
-        var otherFieldsWidth = 0
-        this.tableData[key].forEach(item => {
-          if (!item.hidden) {
-            otherFieldsWidth += parseInt(item.width)
+        this.tableData.column[1][1].child[index] = Object.assign({}, this.tableData.column[1][1].child[index], {hidden: !field.hidden})
+        if (field.hidden) {
+          // 显示
+          this.tableData.column[1][1].hidden = false
+          this.$set(this.tableData.column[1][1], 'colspan', this.tableData.column[1][1].colspan + 1)
+        } else {
+          // 隐藏
+          this.$set(this.tableData.column[1][1], 'colspan', this.tableData.column[1][1].colspan - 1)
+          if(this.tableData.column[1][1].colspan <= 0) {
+            this.tableData.column[1][1].hidden = true
           }
-        })
-        this.rightTableWidthStyle.width = otherFieldsWidth + 'px'
-        this.rightTableBlockWidthStyle.left = otherFieldsWidth + 'px'
-        this.rightTableBlockWidthStyle.width = 'calc(100% - ' + otherFieldsWidth + 'px)'
+        }
+        this.lastRunAddRBorder()
+        this.$set(this.tableData.column[1], 1, this.tableData.column[1][1])
       }
       this.oprPopoverDirect = sign
       this.oprPopoverIndex = index
@@ -189,133 +201,50 @@ export default {
     // 前置列 up点击事件
     handleUp (field, index, sign) {
       if (sign == 'left' && index > this.leftAutoNum) {
-        this.tableData.fields.splice(index, 1)
-        this.tableData.fields.splice(index - 1, 0, field)
+        this.tableData.column[1][0].child.splice(index, 1)
+        this.tableData.column[1][0].child.splice(index - 1, 0, field)
+        this.$set(this.tableData.column[1], 0, this.tableData.column[1][0])
         this.oprPopoverIndex = index - 1
       } else if (sign == 'right' && index > 0) {
-        let key = this.customOtherFields()
-        if (this.rightAutoNum && (index > this.rightAutoNum)) {
-          this.tableData[key].splice(index, 1)
-          this.tableData[key].splice(index - 1, 0, field)
-          this.oprPopoverIndex = index - 1
-        } else {
-          this.tableData[key].splice(index, 1)
-          this.tableData[key].splice(index - 1, 0, field)
-          this.oprPopoverIndex = index - 1
-        }
+        this.tableData.column[1][1].child.splice(index, 1)
+        this.tableData.column[1][1].child.splice(index - 1, 0, field)
+        this.$set(this.tableData.column[1], 1, this.tableData.column[1][1])
       }
+      this.lastRunAddRBorder()
+      this.oprPopoverIndex = index - 1
       this.oprPopoverDirect = sign
     },
     // 置顶列 top点击事件
     handleTop (field, index, sign) {
       if (sign == 'left' && index > this.leftAutoNum) {
-        this.tableData.fields.splice(index, 1)
-        this.tableData.fields.splice(this.leftAutoNum, 0, field)
-        this.oprPopoverIndex = this.leftAutoNum
+        this.tableData.column[1][0].child.splice(index, 1)
+        this.tableData.column[1][0].child.splice(0, 0, field)
       } else if (sign == 'right' && index > 0) {
-        if (this.rightAutoNum && (index >= this.rightAutoNum)) {
-          let key = this.customOtherFields()
-          this.tableData[key].splice(index, 1)
-          this.tableData[key].splice(this.rightAutoNum, 0, field)
-          this.oprPopoverIndex = this.rightAutoNum
-        } else {
-          let key = this.customOtherFields()
-          this.tableData[key].splice(index, 1)
-          this.tableData[key].splice(0, 0, field)
-          this.oprPopoverIndex = 0
-        }
+        this.tableData.column[1][1].child.splice(index, 1)
+        this.tableData.column[1][1].child.splice(0, 0, field)
       }
+      this.lastRunAddRBorder()
+      this.oprPopoverIndex = 0
       this.oprPopoverDirect = sign
     },
-    // 获取默认隐藏/显示列  初始化、刷新页面/恢复默认值 按钮方法
-    getDefaultRow1 () {
-      var _this = this
-      queryAll('/online/userOnline/queryOnlineUser', {}).then(response => {
-        if (response.data.code == 0) {
-          var result = 0
-          let showotherFields = []
-          let hiddenotherFields = _this.tableData.column[1]
-          console.log(_this.tableData.column[1], _this.tableData.column[1][0].child)
-          // let responseUl = ['seatNo', 'execDate', 'routeCn', 'checkDate', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'counterNo', 'chuteNo', 'secure', 'truckDate', 'airDate']
-          // let responseUlA = ['seatNo', 'execDate', 'routeCn', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'belt', 'checkDate', 'upLoadDate']
-          let runList = ['lugTotal', 'unLoadAirNum', 'unLoadAirCostTime', 'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
-          let lugList = ['lugCommonTotal', 'lugAdditionTotal', 'vipFlag', 'lugMarkingTotal']
-          let runLength = runList.length
-          let lugLength = lugList.length
-          // let responseUlA = res.data.data.LuggageA ||  []
-          // let responseUlD = res.data.data.LuggageD ||  []
-          if (this.selectKey == 'A') {
-            responseUlA.forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].key == item) {
-                  result = i
-                }
-              }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
-              }
-            })
-            hiddenotherFields.forEach(item => {
-              item.hidden = true
-            })
-          } else {
-            responseUlD.forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].key == item) {
-                  result = i
-                }
-              }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
-              }
-            })
-            hiddenotherFields.forEach(item => {
-              item.hidden = true
-            })
-          }
-          _this.tableData.column[1] = showotherFields.concat(hiddenotherFields)
-        } else {
-          this.$msg.error({
-            info: '获取动态列设置信息失败 !'
-          })
-        }
-        this.setShowFields(2)
-      }).catch(res => {
-          this.$msg.error({
-            info: '获取动态列设置信息失败 !'
-          })
+    // center table 最后一列添加右border
+    lastRunAddRBorder() {
+      // 运行情况最后一列
+      _.forEach(this.tableData.column[1][0].child, (item, index) => {
+        this.$delete(item, 'class')
       })
-    },
-    // 显示/隐藏列 eye点击事件
-    handleEye1 (field, index, isShow) {
-      if (isShow) {
-        field.hidden = false
-      } else {
-        this.tableData.column[1][index] = Object.assign({}, this.tableData.column[1][index], {hidden: !field.hidden})
-        this.$set(this.tableData.column, 1, this.tableData.column[1])
+      let lastRunItemIndex = _.findLastIndex(this.tableData.column[1][0].child, function(o) { return o.hidden == false; });
+      if (~lastRunItemIndex) {
+        this.$set(this.tableData.column[1][0].child[lastRunItemIndex], 'class', 'col-child-right')
       }
-      this.oprPopoverIndex = index
-      this.setShowFields(2)
-    },
-    // 前置列 up点击事件
-    handleUp1 (field, index) {
-      this.tableData.column[1].splice(index, 1)
-      this.tableData.column[1].splice(index - 1, 0, field)
-      this.$set(this.tableData.column, 1, this.tableData.column[1])
-      this.oprPopoverIndex = index - 1
-    },
-    // 置顶列 top点击事件
-    handleTop1 (field, index) {
-      this.tableData.column[1].splice(index, 1)
-      this.tableData.column[1].splice(0, 0, field)
-      this.$set(this.tableData.column, 1, this.tableData.column[1])
-      this.oprPopoverIndex = 0
+      // 行李信息最后一列
+      _.forEach(this.tableData.column[1][1].child, (item, index) => {
+        this.$delete(item, 'class')
+      })
+      let lastLugItemIndex = _.findLastIndex(this.tableData.column[1][1].child, function(o) { return o.hidden == false; });
+      if (~lastLugItemIndex) {
+        this.$set(this.tableData.column[1][1].child[lastLugItemIndex], 'class', 'col-child-right')
+      }
     },
     // 超出设置长度省略字符变为...
     substrValue (value, length) {

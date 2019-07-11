@@ -124,7 +124,9 @@ export default {
             let i = _.findIndex(this.selectNodeId, (i) => {return i == node})
             this.selectNodeId.splice(i, 1)
           })
-          this.halfSelectNodeId.splice(indexHalf, 1)
+          if (~indexHalf) {
+            this.halfSelectNodeId.splice(indexHalf, 1)
+          }
         }
       } else {
         this.selectNode.push(node)
@@ -143,7 +145,9 @@ export default {
           tmp = JSON.parse(JSON.stringify(this.selectNodeId))
           set = [...tmp, ...keys]
           this.selectNodeId.splice(0, this.selectNodeId.length, ...new Set(set))
-          this.halfSelectNodeId.splice(indexHalf, 1)
+          if (~indexHalf) {
+            this.halfSelectNodeId.splice(indexHalf, 1)
+          }
         }
       }
       let all = [...this.selectNodeId, ...this.halfSelectNodeId]

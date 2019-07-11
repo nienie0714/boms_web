@@ -55,6 +55,9 @@
                       </div>
                     </el-main>
                     <el-footer>
+                      <div class="footer-left">
+                        <el-button type="info" plain @click="getDefaultRow()">恢复默认值</el-button>
+                      </div>
                       <div class="footer-right">
                         <el-button type="info" plain @click="closeDefaultRow()">关闭</el-button>
                         <el-button type="primary" @click="saveDefaultRow()">保存</el-button>
@@ -244,6 +247,10 @@ export default {
           // urlType: 'get'
         }
       ],
+      // 获取默认隐藏/显示列路径
+      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      // 保存默认隐藏/显示列路径
+      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
       tableData: {
         height: 600,
         multSelection: [],
@@ -288,16 +295,16 @@ export default {
                 // todo 自动分拣数
                 // todo 人工分拣数
                 // todo 起运时间
-                {key: 'loadTruckCost', label: '分拣耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot', class: 'col-child-title'},
-                {key: 'loadAircraftCount',  label: '装机数', width: 60, class: 'col-child-title'},
-                {key: 'loadAircraftCost', label: '装机耗时', width: 60, class: 'col-child-title'},
-                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-title'},
+                {key: 'loadTruckCost', label: '分拣耗时', width: 60},
+                {key: 'N-LOAD-TRUCK', label: '已分拣/值机', width: 120, type: 'slot'},
+                {key: 'loadAircraftCount',  label: '装机数', width: 60},
+                {key: 'loadAircraftCost', label: '装机耗时', width: 60},
+                {key: 'N-LOAD-AIRCRAFT', label: '已装机/值机', width: 120, type: 'slot', class: 'col-child-right'}
               ]
             },
             {
               label: '行李类型',
-              colspan: 3,
+              colspan: 5,
               titleClass: 'th-col-title',
               child: [
                 {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
@@ -329,7 +336,6 @@ export default {
     })
   },
   created() {
-    this.getDefaultRow()
   },
   methods: {
     customQueryBefore () {
@@ -411,7 +417,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true}
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])
@@ -447,6 +453,7 @@ export default {
             }
           ])
       }
+      this.getDefaultRow()
     },
     changeComp (comp, row) {
       this.axiosChildArr.forEach(ever => {
@@ -545,13 +552,9 @@ export default {
         this.handleExportClose()
       })
     },
-    customUpdateTableWidth () {},
-    customOtherFields () {
-      return 'otherFields'
-    },
     // 保存显示/隐藏列 save保存事件
     saveDefaultRow () {
-      this.saveDefaultRowReq('otherFields')
+      this.saveDefaultRowReq()
     },
   },
   watch: {

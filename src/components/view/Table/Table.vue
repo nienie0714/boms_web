@@ -10,7 +10,7 @@
             <tr v-for="(col, cIndex) in column" :key="cIndex">
               <th v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
               :rowspan="item.rowspan" :colspan="item.colspan"
-              :class="['row_height_'+(item.rowspan?item.rowspan:1), item.titleClass, item.class]"
+              :class="['row_height_'+(item.rowspan || 1), item.titleClass, item.class]"
               :style="`width:${item.width?(item.width+'px'):'auto'}; max-width:${item.width?(item.width+'px'):'auto'};`">
                 <template v-if="tableData.type=='mult' && itemIndex == 0">
                   <div :class="(tableData.multSelection.length == tableData.data.length && tableData.data.length > 0)?'radio is-checked':'radio'" @click="selectAuto"></div>
@@ -21,6 +21,21 @@
                 <template>{{item.label}}</template>
               </th>
             </tr>
+          </thead>
+        </table>
+        <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
+          <thead>
+            <template v-if="!column || (column.length <= 0)">
+              <tr>
+                <th :rowspan="column.rowspan || 1" :class="['row_height_'+(column.rowspan || 1), column.titleClass, column.class]"></th>
+              </tr>
+            </template>
+            <template v-else>
+              <tr v-for="(col, cIndex) in column" :key="cIndex">
+                <th :rowspan="col[col.length - 1].rowspan || 1"
+                :class="['row_height_'+(col[col.length - 1].rowspan || 1), (cIndex === 0) ? col[0].titleClass : '', 'th-col-title-block']"> </th>
+              </tr>
+            </template>
           </thead>
         </table>
       </div>
@@ -50,7 +65,7 @@
             <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
             @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
               <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
-              :title="item.title?(item.titleText?item.titleText:showValue(row, item)):false"
+              :title="item.title?(item.titleText || showValue(row, item)):false"
               :class="[item.colClass, item.class]"
               :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
               + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
@@ -69,6 +84,13 @@
                 </template>
                 <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
               </td>
+            </tr>
+          </tbody>
+        </table>
+        <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
+          <tbody>
+            <tr v-for="(row, index) in spliceData.data" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
+              <td :style="`width: calc(100% - ${centerWidth}px); max-width: calc(100% - ${centerWidth}px);`"></td>
             </tr>
           </tbody>
         </table>
@@ -278,6 +300,13 @@ th.col-child-title {
     margin-right: -1px;
   }
 }
+.col-child-left {
+  border: {
+    left: 1px solid #E7EDF2;
+    margin-left: -1px;
+    margin-right: -1px;
+  }
+}
 .mark {
   width: 30px;
   height: 30px;
@@ -456,6 +485,9 @@ $rowHeight: 40px;
     height: 32px;
     line-height: 32px;
   }
+  .th-col-title-block {
+    box-sizing: content-box;
+  }
   // .row_height_2 {
   //   max-height: 2 * $rowHeight - 21;
   //   height: 2 * $rowHeight - 21;
@@ -464,6 +496,10 @@ $rowHeight: 40px;
 }
 .center-table {
   flex: 1;
+  position: relative;
+}
+.center-table>table {
+  position: absolute;
 }
 .left-table, .table-header .center-table, .table-header .right-table {
   overflow: hidden;
