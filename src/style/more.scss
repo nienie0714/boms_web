@@ -6,6 +6,9 @@
     >button {
       height: 100%;
       line-height: 100%;
+      &:not(:last-child) {
+        margin-right: 10px;
+      }
     }
   }
   .tab-group {

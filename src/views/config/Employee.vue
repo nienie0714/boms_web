@@ -6,6 +6,7 @@
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
+        <button type="info" @click="cleanQueryData">重置</button>
         <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
       </div>
     </div>

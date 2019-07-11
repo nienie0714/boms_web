@@ -279,9 +279,9 @@ export default {
         },
       ],
       // 获取默认隐藏/显示列路径
-      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      queryDefaultRowUrl: '/sys/sysUserCustom/querySysUserCustom',
       // 保存默认隐藏/显示列路径
-      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
+      saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
         height: 600,
         multSelection: [],
@@ -348,6 +348,7 @@ export default {
     }
     this.timer = clearInterval(this.timer)
     this.queryDataRefresh()
+    this.tabItemClick()
     this.getFlightStatus()
     this.timer = setInterval(this.queryDataRefresh, 60000)
     this.$once('hook:beforeDestroy', () => {            
@@ -379,7 +380,7 @@ export default {
       this.selectKeyDay = key
     },
     tabItemClick (key) {
-      if (key == 'A') {
+      if (this.selectKey ==  'A') {
         this.queryParam[5].isHidden = true
         this.queryParam[6].isHidden = true
         this.queryParam[7].isHidden = true
@@ -478,7 +479,7 @@ export default {
     },
     handleExport () {
       download(this.exportUrl, this.queryData).then(response => {
-        this.downFile(response, '导出')
+        this.downFile(response, '行李保障信息导出')
         this.$msg.success({
           info: '导出成功 !'
         })

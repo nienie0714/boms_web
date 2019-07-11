@@ -35,30 +35,39 @@ export default {
         }
       })
       var data = {
-        inOutFlag: this.selectKey
+        type: 'Luggage'
       }
-      this.$set(data, 'fields', fields)
+      if (this.selectKey == 'A') {
+        this.$set(data, 'luggageA', fields)
+      } else {
+        this.$set(data, 'luggageD', fields)
+      }
       queryAll(this.saveDefaultRowUrl, data).then(response => {
         if (response.data.code == 0) {
           this.defaultRow = false
-          this.showSuccess('保存')
+          this.$msg.success({
+            info: '保存成功 !'
+          })
         } else {
-          this.showError('保存')
+          this.$msg.error({
+            info: '保存失败 !',
+            tip: res.data.msg
+          })
         }
       })
     },
     // 获取默认隐藏/显示列  初始化、刷新页面/恢复默认值 按钮方法
     getDefaultRow () {
       var _this = this
-      queryAll(this.saveDefaultRowUrl, {}).then(response => {
+      queryAll(this.queryDefaultRowUrl, {type: 'Luggage'}).then(response => {
         if (response.data.code == 0) {
           var result = 0
           let showotherFields = []
           let hiddenotherFields = _this.tableData.column[1]
           // let responseUl = ['seatNo', 'execDate', 'routeCn', 'checkDate', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'counterNo', 'chuteNo', 'secure', 'truckDate', 'airDate']
           // let responseUlA = ['seatNo', 'execDate', 'routeCn', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'belt', 'checkDate', 'upLoadDate']
-          let responseUlA = res.data.data.LuggageA ||  []
-          let responseUlD = res.data.data.LuggageD ||  []
+          let responseUlA = response.data.data.luggageA ||  []
+          let responseUlD = response.data.data.luggageD ||  []
           if (this.selectKey == 'A') {
             responseUlA.forEach(item => {
               result = -1
@@ -97,7 +106,8 @@ export default {
           _this.tableData.column[1] = showotherFields.concat(hiddenotherFields)
         } else {
           this.$msg.error({
-            info: '获取动态列设置信息失败 !'
+            info: response.data.msg,
+            tip: '已为当前用户展示所有列信息'
           })
         }
         this.setShowFields(2)

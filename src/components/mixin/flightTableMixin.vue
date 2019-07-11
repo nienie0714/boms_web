@@ -29,29 +29,48 @@ export default {
       this.defaultRow = false
     },
     saveDefaultRowReq (key) {
-      var fields = []
-      this.tableData.column[1].forEach(item => {
+      // 运行信息
+      var runList = []
+      this.tableData.column[1][0].child.forEach(item => {
         if (!item.hidden) {
-          fields.push(item.key)
+          runList.push(item.key)
+        }
+      })
+      // 行李信息
+      var lugList = []
+      this.tableData.column[1][1].child.forEach(item => {
+        if (!item.hidden) {
+          lugList.push(item.key)
         }
       })
       var data = {
-        inOutFlag: this.selectKey
+        type: 'flight'
       }
-      this.$set(data, 'fields', fields)
+      if (this.selectKey == 'A') {
+        this.$set(data, 'flightAR', runList)
+        this.$set(data, 'flightAL', lugList)
+      } else {
+        this.$set(data, 'flightDR', runList)
+        this.$set(data, 'flightDL', lugList)
+      }
       queryAll(this.saveDefaultRowUrl, data).then(response => {
         if (response.data.code == 0) {
           this.defaultRow = false
-          this.showSuccess('保存')
+          this.$msg.success({
+            info: '保存成功 !'
+          })
         } else {
-          this.showError('保存')
+          this.$msg.error({
+            info: '保存失败 !',
+            tip: res.data.msg
+          })
         }
       })
     },
     // 获取默认隐藏/显示列  初始化、刷新页面/恢复默认值 按钮方法
     getDefaultRow () {
       var _this = this
-      queryAll('/online/userOnline/queryOnlineUser', {}).then(response => {
+      queryAll(this.queryDefaultRowUrl, {type: 'flight'}).then(response => {
         if (response.data.code == 0) {
           // let runListA = ['unLoadAirCostTime', 'lugTotal', 'unLoadAirNum', 'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
           // flightAR = ['lugTotal', 'unLoadAirNum','unLoadAirCostTime',  'N-UNLOAD-AIRCRAFT', 'unLoadCarNum', 'unLoadCarCostTime', 'N-UPLOAD']
@@ -59,16 +78,21 @@ export default {
           // flightDR = ['lugTotal', 'checkinCount', 'loadTruckCost', 'N-LOAD-TRUCK', 'loadAircraftCount', 'loadAircraftCost', 'N-LOAD-AIRCRAFT']
           // flightDL = ['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'vipFlag', 'lugMarkingTotal']
           
-          let runListD = ['N-LOAD-TRUCK', 'checkinCount', 'lugTotal', 'loadTruckCost', 'loadAircraftCount', 'loadAircraftCost', 'N-LOAD-AIRCRAFT']
-          // let lugListD = []
-          let lugListD = ['lugAdditionTotal', 'lugCommonTotal', 'allNodeCancelSum', 'vipFlag', 'lugMarkingTotal']
-          // let runListD = []
-          
+          let runList = []
+          let lugList = []
+          if (this.selectKey == 'A') {
+            runList = response.data.data.flightAR
+            lugList = response.data.data.flightAL
+          } else {
+            runList = response.data.data.flightDR
+            lugList = response.data.data.flightDL
+          }
+
           // 运行情况--------------------------------------------------------------------
           var result = 0
           let showotherFields = []
           let hiddenotherFields = _this.tableData.column[1][0].child
-          runListD.forEach(item => {
+          runList.forEach(item => {
             result = -1
             for (let i = 0; i < hiddenotherFields.length; i++) {
               if (hiddenotherFields[i].key == item) {
@@ -85,14 +109,14 @@ export default {
             item.hidden = true
           })
           _this.tableData.column[1][0].child = showotherFields.concat(hiddenotherFields)
-          _this.tableData.column[1][0].colspan = runListD.length
+          _this.tableData.column[1][0].colspan = runList.length
           if(showotherFields.length > 0) {
             // 有运行情况列
             // 行李类型--------------------------------------------------------------------
             var result2 = 0
             let showotherFields2 = []
             let hiddenotherFields2 = _this.tableData.column[1][1].child
-            lugListD.forEach(item => {
+            lugList.forEach(item => {
               result2 = -1
               for (let i = 0; i < hiddenotherFields2.length; i++) {
                 if (hiddenotherFields2[i].key == item) {
@@ -108,7 +132,7 @@ export default {
             hiddenotherFields2.forEach(item => {
               item.hidden = true
             })
-            if (lugListD.length == 0) {
+            if (lugList.length == 0) {
               // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
               // 有运行情况  没有行李列
               _this.tableData.column[1][1].colspan = 0
@@ -116,7 +140,7 @@ export default {
             } else {
               // 有运行情况  有行李列
               _this.tableData.column[1][1].child = showotherFields2.concat(hiddenotherFields2)
-              _this.tableData.column[1][1].colspan = lugListD.length
+              _this.tableData.column[1][1].colspan = lugList.length
             }
           } else {
             // 没有运行情况 有行李列-----------------------------------------------------------
@@ -126,7 +150,7 @@ export default {
             var result1_2 = 0
             let showotherFields1_2 = []
             let hiddenotherFields1_2 = _this.tableData.column[1][1].child
-            lugListD.forEach(item => {
+            lugList.forEach(item => {
               result1_2 = -1
               for (let i = 0; i < hiddenotherFields1_2.length; i++) {
                 if (hiddenotherFields1_2[i].key == item) {
@@ -143,7 +167,7 @@ export default {
               item.hidden = true
             })
 
-            if (lugListD.length == 0) {
+            if (lugList.length == 0) {
               // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
               // 没有运行情况  没有行李列
               _this.tableData.column[1][1].colspan = 0
@@ -152,7 +176,7 @@ export default {
             } else {
               // 没有运行情况  有行李列
               _this.tableData.column[1][1].child = showotherFields1_2.concat(hiddenotherFields1_2)
-              _this.tableData.column[1][1].colspan = lugListD.length
+              _this.tableData.column[1][1].colspan = lugList.length
             }
           }
           this.lastRunAddRBorder()

@@ -110,10 +110,9 @@ button[type=primary] {
   color: #fff;
 }
 button[type=info] {
-  background-color: transparent;
-  text-decoration: underline;
-  box-shadow: none;
-  color: $blue;
+  background-color: #fff;
+  box-shadow:0px 5px 20px 0px rgba(99,126,153,0.25);
+  color: rgba(137,157,178,1);
 }
 button[name=loading] {
   display: flex;

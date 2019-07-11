@@ -112,6 +112,8 @@ export default {
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/online/userOnline/queryOnlineUser',
+      timer: null,
+      heartUrl: '/online/userOnline/check',
       queryParam: [
         {
           key: 'userName',
@@ -149,6 +151,7 @@ export default {
   },
   // mixins: [webSocketMixin],
   mounted () {
+    this.timer = clearInterval(this.timer)
     this.empName = localStorage.getItem('empName')
     // 获取顶级菜单
     postData('sys/sysResource/queryHasSysResource', {url: null, resourceType: 0}).then(response => {
@@ -165,6 +168,12 @@ export default {
         let data = {index: i, item: this.topResource[i]}
         this.changeActive(data)
       }
+    })
+
+    this.heartBeat()
+    this.timer = setInterval(this.heartBeat, 60000)
+    this.$once('hook:beforeDestroy', () => {
+      this.timer = clearInterval(this.timer)
     })
   },
   methods: {
@@ -202,6 +211,19 @@ export default {
     },
     handleClose() {
       this.onlineData.visible = false
+    },
+    // 心跳监测
+    heartBeat() {
+      let data = {
+        mac: null,
+        userName: localStorage.getItem('username'),
+        machine: 1
+      }
+      postData(this.heartUrl, data).then(response => {
+        if(response.data.code == -1) {
+          this.$router.push('/')
+        }
+      })
     }
   }
 }

@@ -208,6 +208,29 @@ export default {
           }
       // }
     },
+    // 清空查询参数并发送查询请求
+    cleanQueryData () {
+      var data = this.queryParam
+      this.queryParam.forEach((item, index) => {
+        if (item.hasOwnProperty('defaultValue')) {
+          data[index].value = item.defaultValue
+        } else {
+          if (typeof (item.value) == 'number') {
+            data[index].value = null
+          } else if (typeof (item.value) == 'string') {
+            data[index].value = null
+          } else if (typeof (item.value) == 'boolean') {
+            data[index].value = false
+          } else if (typeof (item.value) == 'undefined') {
+            data[index].value = item.value
+          } else {
+            data[index].value = null
+          }
+        }
+      })
+      this.queryParam = data
+      this.queryDataReq()
+    },
     // 获取按钮权限
     queryResourcePerm (path) {
       let data = {

@@ -214,9 +214,9 @@ export default {
         }
       ],
       // 获取默认隐藏/显示列路径
-      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      queryDefaultRowUrl: '/sys/sysUserCustom/querySysUserCustom',
       // 保存默认隐藏/显示列路径
-      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
+      saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
         // height: 600,
         multSelection: [],

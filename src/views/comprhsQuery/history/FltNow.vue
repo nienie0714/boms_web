@@ -248,9 +248,9 @@ export default {
         }
       ],
       // 获取默认隐藏/显示列路径
-      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      queryDefaultRowUrl: '/sys/sysUserCustom/querySysUserCustom',
       // 保存默认隐藏/显示列路径
-      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
+      saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
         height: 600,
         multSelection: [],
@@ -338,8 +338,6 @@ export default {
     this.$once('hook:beforeDestroy', () => {
       this.timer = clearInterval(this.timer)
     })
-  },
-  created() {
   },
   methods: {
     customQueryBefore () {
@@ -548,7 +546,7 @@ export default {
     },
     handleExport () {
       download(this.exportUrl, this.queryData).then(response => {
-        this.downFile(response, '导出')
+        this.downFile(response, '航班保障信息导出')
         this.$msg.success({
           info: '导出成功 !'
         })

@@ -244,9 +244,9 @@ export default {
         },
       ],
       // 获取默认隐藏/显示列路径
-      queryDefaultRowUrl: 'sysconfig/Luggage/list',
+      queryDefaultRowUrl: '/sys/sysUserCustom/querySysUserCustom',
       // 保存默认隐藏/显示列路径
-      saveDefaultRowUrl: 'sysconfig/Luggage/saveAll',
+      saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
         height: 600,
         multSelection: [],
@@ -318,6 +318,7 @@ export default {
     }
     this.getFlightStatus()
     this.queryDataReq()
+    this.tabItemClick()
   },
   created() {
     this.getDefaultRow()
@@ -344,7 +345,7 @@ export default {
       this.selectKeyDay = key
     },
     tabItemClick (key) {
-      if (key == 'A') {
+      if (this.selectKey ==  'A') {
         this.queryParam[5].isHidden = true
         this.queryParam[6].isHidden = true
         this.queryParam[7].isHidden = true
