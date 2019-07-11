@@ -302,15 +302,17 @@ export default {
   mounted () {
     this.getFlightStatus()
     this.queryDataReq()
+    this.tabItemClick()
   },
   created() {
+    this.getDefaultRow()
   },
   methods: {
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
       this.$set(this.queryData, 'execRange', this.selectKeyDay)
     },
-    customAfterQuery () {
+    tabItemClick () {
       if (this.selectKey == 'D') {
         this.$set(this.tableData.column, 0, [
             {
@@ -421,7 +423,6 @@ export default {
             }
           ])
       }
-      this.getDefaultRow()
     },
     changeComp (comp, row) {
       this.axiosChildArr.forEach(ever => {
@@ -516,7 +517,9 @@ export default {
       handler (value) {
         if (!_.isUndefined(value)) {
           this.getFlightStatus()
+          this.tabItemClick()
           this.queryDataReq()
+          this.getDefaultRow()
         }
       }
     },

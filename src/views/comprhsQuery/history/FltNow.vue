@@ -275,7 +275,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-title'}
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ],
@@ -326,10 +326,14 @@ export default {
       }
     }
   },
+  created() {
+    this.getDefaultRow()
+  },
   mounted () {
     this.timer = clearInterval(this.timer)
     this.getFlightStatus()
     this.queryDataRefresh()
+    this.tabItemClick()
     this.timer = setInterval(this.queryDataRefresh, 60000)
     this.$once('hook:beforeDestroy', () => {
       this.timer = clearInterval(this.timer)
@@ -342,7 +346,7 @@ export default {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
       this.$set(this.queryData, 'execRange', this.selectKeyDay)
     },
-    customAfterQuery () {
+    tabItemClick () {
       if (this.selectKey == 'D') {
         this.$set(this.tableData.column, 0, [
             {
@@ -453,7 +457,6 @@ export default {
             }
           ])
       }
-      this.getDefaultRow()
     },
     changeComp (comp, row) {
       this.axiosChildArr.forEach(ever => {
@@ -562,6 +565,7 @@ export default {
       handler (value) {
         if (!_.isUndefined(value)) {
           this.getFlightStatus()
+          this.tabItemClick()
           this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
           this.timer = setInterval(this.queryDataRefresh, 60000)
