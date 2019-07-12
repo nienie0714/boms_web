@@ -15,14 +15,12 @@
                 <template v-if="tableData.type=='mult' && itemIndex == 0">
                   <div :class="(tableData.multSelection.length == tableData.data.length && tableData.data.length > 0)?'radio is-checked':'radio'" @click="selectAuto"></div>
                 </template>
-                <!-- <template v-else-if="tableData.type=='button'">
-                  <el-button type="primary" plain>主要按钮</el-button>
-                </template> -->
                 <template>{{item.label}}</template>
               </th>
             </tr>
           </thead>
         </table>
+        <!-- table占位 -->
         <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
           <thead>
             <template v-if="!column || (column.length <= 0)">
@@ -87,6 +85,7 @@
             </tr>
           </tbody>
         </table>
+        <!-- table占位 -->
         <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
           <tbody>
             <tr v-for="(row, index) in spliceData.data" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
@@ -156,15 +155,21 @@ export default {
       _.forEach(this.columnData, (column, index) => {
         if (index==this.columnData.length-1) {
           _.forEach(column, (o) => {
-            this.rightWidth += o.width
+            if (!o.hidden) {
+              this.rightWidth += o.width
+            }
           })
         } else if (index == 0) {
           _.forEach(column, (o) => {
-            this.leftWidth += o.width
+            if (!o.hidden) {
+              this.leftWidth += o.width
+            }
           })
         } else {
           _.forEach(column, (o) => {
-            this.centerWidth += o.width
+            if (!o.hidden) {
+              this.centerWidth += o.width
+            }
           })
         }
       })
