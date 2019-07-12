@@ -112,7 +112,7 @@ export default {
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/online/userOnline/queryOnlineUser',
-      timer: null,
+      heartTimer: null,
       heartUrl: '/online/userOnline/check',
       queryParam: [
         {
@@ -151,7 +151,7 @@ export default {
   },
   // mixins: [webSocketMixin],
   mounted () {
-    this.timer = clearInterval(this.timer)
+    this.heartTimer = clearInterval(this.heartTimer)
     this.empName = localStorage.getItem('empName')
     // 获取顶级菜单
     postData('sys/sysResource/queryHasSysResource', {url: null, resourceType: 0}).then(response => {
@@ -171,15 +171,16 @@ export default {
     })
 
     this.heartBeat()
-    this.timer = setInterval(this.heartBeat, 60000)
+    this.heartTimer = setInterval(this.heartBeat, 60000)
     this.$once('hook:beforeDestroy', () => {
-      this.timer = clearInterval(this.timer)
+      this.heartTimer = clearInterval(this.heartTimer)
     })
   },
   methods: {
     // 一级菜单路由切换
     changeActive ({index, item}) {
       this.activeIndex = index
+      console.log(this.timer)
       if (item && item.hasOwnProperty('router')) {
         this.$router.push(item.router)
       }

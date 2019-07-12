@@ -1,7 +1,7 @@
 <template>
   <div class="pagination">
     <div class="page-options">
-      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options" :width="160"></inputTag>
+      <inputTag v-model="currentSize" :prepend="'条/页'" :type="'select'" :options="options" :width="160" :clearable="false"></inputTag>
     </div>
     <div class="page-list">
       <div :class="['prev', num <= 1 ? 'disabled' : '']" @click.self="(num > 1) && clickButton('prev')">上一页</div>

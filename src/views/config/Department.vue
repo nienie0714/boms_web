@@ -154,11 +154,13 @@ export default {
       data: [],
       activeId: [],
       topId: '',
-      deleteFlag: false
+      deleteFlag: false,
+      parentTreeId: null
     }
   },
   mounted () {
     this.getDeptTree()
+    console.log(this.timer)
   },
   methods: {
     getDeptTree (id) {
@@ -169,6 +171,7 @@ export default {
       })
     },
     clickNode (node) {
+      this.parentTreeId = node.id
       this.queryDataReq()
     },
     customQueryBefore () {

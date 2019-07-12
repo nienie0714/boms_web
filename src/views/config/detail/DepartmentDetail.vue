@@ -1,5 +1,5 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" :visible="visible" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ export default {
     Detail
   },
   mixins: [utilMixin],
-  props: ['data', 'type'],
+  props: ['data', 'type', 'visible'],
   data () {
     return {
       title: '部门管理',
@@ -83,6 +83,20 @@ export default {
         this.changeData()
       },
       immediate: true
+    }, 
+    visible: {
+      handler (visible) {
+        if (visible && this.type == 'update') {
+          this.$set(this.data, 'deptParentId', 100)
+          this.form.column.forEach((item, index) => {
+            if (item.key == 'deptParentId') {
+              this.$set(item, 'value', 100)
+              
+              // this.$set(this, 'data', JSON.parse(JSON.stringify(this.form.data)))
+            }
+          })
+        }
+      }
     },
     type: {
       handler (type) {
@@ -94,8 +108,15 @@ export default {
               item.isHidden = true
             }
           }
-          if (item.key == 'deptId') {
-             if (type == 'update') {
+          if (item.key == 'deptParentId') {
+            if (type == 'update' || type == 'detail') {
+              this.$delete(item, 'disabled')
+            } else if (type == 'insert') {
+              this.$set(item, 'disabled', true)
+            }
+          }
+          if (item.key == 'deptNo') {
+            if (type == 'update' || type == 'detail') {
               this.$set(item, 'disabled', true)
             } else if (type == 'insert') {
               this.$delete(item, 'disabled')

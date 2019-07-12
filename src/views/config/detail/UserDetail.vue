@@ -130,11 +130,7 @@ export default {
         if (visible && this.type == 'update') {
           this.form.column.forEach((item, index) => {
             if (item.key == 'empId') {
-              if (this.type == 'update') {
-                this.$set(item, 'param', {empId: this.data.empId})
-              } else if (this.type == 'insert') {
-                this.$set(item, 'param', {})
-              }
+              this.$set(item, 'param', {empId: this.data.empId})
             }
           })
         }

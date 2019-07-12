@@ -81,11 +81,11 @@ export default {
           let runList = []
           let lugList = []
           if (this.selectKey == 'A') {
-            runList = response.data.data.flightAR
-            lugList = response.data.data.flightAL
+            runList = response.data.data.flightAR || []
+            lugList = response.data.data.flightAL || []
           } else {
-            runList = response.data.data.flightDR
-            lugList = response.data.data.flightDL
+            runList = response.data.data.flightDR || []
+            lugList = response.data.data.flightDL || []
           }
 
           // 运行情况--------------------------------------------------------------------
