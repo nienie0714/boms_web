@@ -1,7 +1,10 @@
 <template>
   <div class="config module container">
     <div :class="['header', hidden ? 'hidden' : '']">
-      <div class="module-img"></div>
+      <div class="module-img">
+        <div class="title">配置管理</div>
+        <div class="sub-title">Config settings</div>
+      </div>
       <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
@@ -82,7 +85,14 @@ export default {
 .config {
   >.header {
     >.module-img {
-      background-color: $blue-shadow;
+      // background-color: $blue-shadow;
+      background-image: url(~@img/img/img_config.png);
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      .sub-title {
+        margin-left: 16px;
+        text-align: left;
+      }
     }
   }
 }

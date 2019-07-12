@@ -104,17 +104,9 @@ export default {
             })
           }
           _this.tableData.column[1] = showotherFields.concat(hiddenotherFields)
-        } else {
-          this.$msg.error({
-            info: response.data.msg,
-            tip: '已为当前用户展示所有列信息'
-          })
         }
         this.setShowFields(2)
       }).catch(res => {
-          this.$msg.error({
-            info: '获取动态列设置信息失败 !'
-          })
       })
     },
     // 显示/隐藏列 eye点击事件
