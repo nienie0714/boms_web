@@ -93,6 +93,22 @@ export default {
             }
           })
         }
+        if (visible && this.type == 'update') {
+          // 修改顶级部门 隐藏上级部门字段(判断无顶级部门)
+          if (_.isNull(this.data.deptParentId)) {
+            this.form.column.forEach((item, index) => {
+              if (item.key == 'deptParentId') {
+                this.$set(item, 'isHidden', true)
+              }
+            })
+          } else {
+            this.form.column.forEach((item, index) => {
+              if (item.key == 'deptParentId') {
+                this.$delete(item, 'isHidden')
+              }
+            })
+          }
+        }
       }
     },
     type: {
