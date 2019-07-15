@@ -3,6 +3,7 @@
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
+        <button type="info" @click="cleanQueryData">重置</button>
         <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
       </div>
     </div>
@@ -14,7 +15,7 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <div class="toolbar">
+          <div class="toolbar subtoolbar">
             <toolbar :permissions="permissions" @openExport="openExport">
               <template v-slot:setlist>
                 <el-popover placement="bottom" width="520" trigger="click" v-model="defaultRow" :style="{right: '0px', left: '1380px'}">
@@ -183,7 +184,7 @@ export default {
           dateType: 'date',
           format: 'yyyy-MM-dd',
           valueFormat: 'yyyy-MM-dd',
-          width: 390
+          width: 304
         },
         {
           key: 'abnormalStatus',
@@ -561,16 +562,18 @@ export default {
       // &:last-child {
       //   margin-top: 14px;
       // }
+      .el-date-editor--datetimerange.el-input__inner {
+        width: 221px;
+      }
       &.mt14 {
         margin-top: 14px;
       }
     }
     .toolbar {
-      // height: 100%;
-      // flex: 1;
-      // display: flex;
-      // align-items: flex-start;
-      // justify-content: center;
+      min-width: 160px;
+      &.subtoolbar {
+        min-width: 120px!important;
+      }
     }
   }
   .row_height_2 {

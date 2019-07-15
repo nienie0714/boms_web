@@ -3,6 +3,7 @@
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar">
+        <button type="info" @click="cleanQueryData">重置</button>
         <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
       </div>
     </div>
@@ -622,7 +623,7 @@ export default {
   .toolbar {
     height: 38px;
     align-self: flex-start;
-    min-width: 87px;
+    min-width: 160px;
     .tool-button {
       display: inline-flex;
       padding: 0 20px;
