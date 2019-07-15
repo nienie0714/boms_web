@@ -124,8 +124,13 @@ export default {
     setShowFields () {},
     // 前置列 up点击事件
     handleUp (field, index) {
-      this.tableData.column[1].splice(index, 1)
-      this.tableData.column[1].splice(index - 1, 0, field)
+      if (index > 0) {
+        this.tableData.column[1].splice(index, 1)
+        this.tableData.column[1].splice(index - 1, 0, field)
+      } else {
+        this.tableData.column[1].splice(index, 1)
+        this.tableData.column[1].splice(this.tableData.column[1].length, 0, field)
+      }
       this.$set(this.tableData.column, 1, this.tableData.column[1])
       this.oprPopoverIndex = index - 1
     },
