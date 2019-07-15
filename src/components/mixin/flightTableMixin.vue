@@ -168,7 +168,6 @@ export default {
             })
 
             if (lugList.length == 0) {
-              // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
               // 没有运行情况  没有行李列
               _this.tableData.column[1][1].colspan = 0
               _this.tableData.column[1][1].hidden = true
