@@ -131,11 +131,11 @@ export default {
         column: [
           // left
           [
-            {key: 'index',  label: '序号', width: 30, type: 'slot'},
+            {key: 'index',  label: '序号', width: 60, type: 'slot'},
             {key: 'userName',  label: '用户名', width: 70, title: true},
             {key: 'empName',  label: '姓名', width: 100, title: true},
             {key: 'machine',  label: '设备', width: 100, type: 'slot'},
-            {key: 'mac',  label: 'MAC地址', width: 100, title: true}
+            {key: 'mac',  label: 'MAC地址', width: 70, title: true}
           ],
           // center
           [
