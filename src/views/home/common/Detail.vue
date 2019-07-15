@@ -177,13 +177,17 @@ export default {
           }
         }
       })
-      // setTimeout(()=>{ // 等待唯一性校验接口返回
       if (!_.isEmpty(this.errors)) {
         return
       } else {
+        // 表单字段隐藏时不提交
+        hiddenKeys.forEach((item, index) => {
+          if (this.data.hasOwnProperty(item)) {
+            this.$delete(this.data, item)
+          }
+        })
         this.$emit('handleSubmit', {data: this.data, type: this.type})
       }
-      // }, 1000)
     },
     handleError (key, value) {
       this.$delete(this.errors, key)

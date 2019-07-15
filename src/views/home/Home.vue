@@ -182,6 +182,9 @@ export default {
       this.activeIndex = index
       console.log(this.timer)
       if (item && item.hasOwnProperty('router')) {
+        if (item.router == '/config') {
+          this.timer = clearInterval(this.timer)
+        }
         this.$router.push(item.router)
       }
     },

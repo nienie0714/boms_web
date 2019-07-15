@@ -145,6 +145,14 @@ export default {
           tmp = JSON.parse(JSON.stringify(this.selectNodeId))
           set = [...tmp, ...keys]
           this.selectNodeId.splice(0, this.selectNodeId.length, ...new Set(set))
+          set.forEach(id => {
+            let i = _.findIndex(this.halfSelectNodeId, (o) => {
+              return o === id
+            })
+            if (~i) {
+              this.halfSelectNodeId.splice(i, 1)
+            }
+          })
           if (~indexHalf) {
             this.halfSelectNodeId.splice(indexHalf, 1)
           }

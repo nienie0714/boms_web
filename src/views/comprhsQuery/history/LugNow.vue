@@ -509,6 +509,12 @@ export default {
           this.timer = setInterval(this.queryDataRefresh, 60000)
         }
       }
+    },
+    $route (to, from) {
+      // 离开信息平台路由，停止发送轮询
+      if (to.path != '/comprhsQuery') {
+        this.timer = clearInterval(this.timer)
+      }
     }
   }
 }
