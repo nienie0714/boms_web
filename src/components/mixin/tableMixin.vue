@@ -250,7 +250,7 @@ export default {
     },
     openDetail ({type, row}) {
       this.detail.type = type
-      this.$set(this.detail, 'data', row || null)
+      this.$set(this.detail, 'data', row || {})
       this.detail.visible = true
     },
     openRemove (row) {

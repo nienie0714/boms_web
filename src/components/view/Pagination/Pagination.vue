@@ -166,6 +166,14 @@ $h: 34px;
       >.prepend {
         line-height: $h;
       }
+      .el-input__inner {
+        height: 30px;
+        line-height: 30px;
+        border: none;
+      }
+      .el-input__icon {
+        line-height: 35px;
+      }
     }
 
     .input-list, .selects {

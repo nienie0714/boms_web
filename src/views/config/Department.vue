@@ -27,7 +27,7 @@
         </template>
       </tables>
     </div>
-    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
+    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" :parentTreeId="parentTreeId" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
   </div>
 </template>
@@ -154,18 +154,24 @@ export default {
       data: [],
       activeId: [],
       topId: '',
+      topTree: null,
       deleteFlag: false,
       parentTreeId: null
     }
   },
   mounted () {
-    this.getDeptTree()
+    this.getDeptTree(1)
   },
   methods: {
-    getDeptTree (id) {
+    getDeptTree (init) {
       queryAll(this.deptTreeUrl).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
+          this.topId = res.data.data[0].id
+          if (init && this.data.length > 0) {
+            this.parentTreeId =  res.data.data[0].id
+            this.activeId.push(this.data[0].id)
+          }
         }
       })
     },
@@ -237,7 +243,7 @@ export default {
           if (this.hasOwnProperty('queryDataReq')) {
             this.getDeptTree()
             if(data.ids == this.activeId[0]){
-              this.activeId[0] = 100
+              this.activeId[0] = this.topId
             }
             this.queryDataReq()
           }

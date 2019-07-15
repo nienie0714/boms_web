@@ -93,7 +93,7 @@ export default {
       
       this.dataHis.forEach(item => {
         if (this.type == 'insert') {
-          this.$set(this.data, item.key, item.hasOwnProperty('default') ? item.default : null)
+          this.$set(this.data, item.key, item.hasOwnProperty('defaultVal') ? item.defaultVal : null)
           if (item.hasOwnProperty('saveKey')) {
             if (item.type == 'tree') {
               this.$set(this.data, item.saveKey, [])
@@ -276,7 +276,6 @@ export default {
             case 'insert': this.typeName = '新增'
             this.submit = true
             if (this.form.key) {
-              this.data = {}
               this.$set(this.data, this.form.key, null)
             }
             break

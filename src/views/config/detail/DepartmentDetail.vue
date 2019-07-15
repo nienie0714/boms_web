@@ -13,7 +13,7 @@ export default {
     Detail
   },
   mixins: [utilMixin],
-  props: ['data', 'type', 'visible'],
+  props: ['data', 'type', 'visible', 'parentTreeId'],
   data () {
     return {
       title: '部门管理',
@@ -86,13 +86,10 @@ export default {
     }, 
     visible: {
       handler (visible) {
-        if (visible && this.type == 'update') {
-          this.$set(this.data, 'deptParentId', 100)
+        if (visible && this.type == 'insert') {
           this.form.column.forEach((item, index) => {
             if (item.key == 'deptParentId') {
-              this.$set(item, 'value', 100)
-              
-              // this.$set(this, 'data', JSON.parse(JSON.stringify(this.form.data)))
+              this.$set(item, 'defaultVal', this.parentTreeId)
             }
           })
         }
