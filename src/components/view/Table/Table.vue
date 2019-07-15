@@ -173,6 +173,7 @@ export default {
           })
         }
       })
+      console.log(this.leftWidth, this.centerWidth)
     },
     changeData () {
       this.spliceData.data = this.tableData.data.slice(0, this.spliceData.index)

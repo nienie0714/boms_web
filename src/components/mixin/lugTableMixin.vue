@@ -104,6 +104,7 @@ export default {
             })
           }
           _this.tableData.column[1] = showotherFields.concat(hiddenotherFields)
+          this.$set(this.tableData.column, 1, this.tableData.column[1])
         }
         this.setShowFields(2)
       }).catch(res => {

@@ -39,7 +39,7 @@ export default {
         ],
         column: [
           {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
-          {key: 'roleIds', label: '角色', type: 'inputlistmore', itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
+          {key: 'roleIds', label: '角色', type: 'select', multiple: true, itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
           {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', method: this.queryDept},
           // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},

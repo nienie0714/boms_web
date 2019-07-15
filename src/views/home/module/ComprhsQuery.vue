@@ -13,7 +13,6 @@
         <div class="icon"></div>
         <div>{{title}}</div>
       </div>
-      <!-- <input-tag v-model="value" :prepend="'测试'" :type="'inputlist'" :options="options" :id="'key'" :label="'label'"></input-tag>{{value}} -->
       <component :is="name"></component>
     </div>
   </div>

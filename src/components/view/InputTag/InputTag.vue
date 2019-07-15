@@ -2,23 +2,21 @@
   <div class="input-tag" :style="`width: ${width}px`">
     <div v-if="prepend" class="prepend">{{prepend}}</div>
     <div class="value">
-      <inputs v-if="type == 'input' || type == 'datetime-local' || type == 'date'" :type="type" v-model="currentValue"
+      <inputs v-if="type == 'input'" :type="type" v-model="currentValue"
       :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled"
       :maxlength="maxlength" :minlength="minlength" max="max" min="min"
       @change="change($event)" @enter="enter($event)"></inputs>
-      <date-pickers v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
       <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></tab-button>
-      <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list>
-      <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects>
-      <Select v-else-if="type == 'select'" v-model="currentValue" :disabled="disabled" :size="'large'" :filterable="filterable" :clearable="clearable" @on-change="change($event)">
-          <Option v-for="(item, index) in options" :value="id ? item[id] : item" :key="index">{{label ? item[label] : (id ? item[id] : item)}}</Option>
-      </Select>
-      <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more>
-      <DatePicker v-else-if="type == 'datepickers'" v-model="currentValue" format="yyyy-MM-dd" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
-      <DatePicker v-else-if="type == 'datepickersHM'" v-model="currentValue" format="yyyy-MM-dd HH:mm" type="daterange" placement="bottom-end" :placeholder="placeholder" :size="'large'" @on-change="change($event)"></DatePicker>
-      <Date-range-picker v-if="type == 'error'" v-model="currentValue[key]" :currentValue="currentValue" :dateRange="item"></Date-range-picker>
+      <el-select v-else-if="type == 'select'" v-model="currentValue" :disabled="disabled" :multiple="multiple" :collapse-tags="multipleShow" :filterable="filterable" :clearable="clearable" @change="change($event)">
+        <el-option v-for="(item, index) in options" :value="id ? item[id] : item" :key="index" :label="label ? item[label] : (id ? item[id] : item)"> </el-option>
+      </el-select>
+      <date-pickers v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
       <el-date-picker v-if="type == 'elDateRange'" v-model="currentValue" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat">
       </el-date-picker>
+      <!-- <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects> -->
+      <!-- <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list> -->
+      <!-- <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more> -->
+      <!-- <Date-range-picker v-if="type == 'error'" v-model="currentValue[key]" :currentValue="currentValue" :dateRange="item"></Date-range-picker> -->
     </div>
     <div v-if="append" class="append">{{append}}</div>
   </div>
@@ -26,22 +24,16 @@
 
 <script>
 import Inputs from '@view/Inputs/Inputs'
-import DatePickers from '@view/DatePicker/DatePicker'
 import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
 import Selects from '@view/Selects/Selects'
 import InputListMore from '@view/InputListMore/InputListMore'
-import DateRangePicker from '@view/DateRangePicker/DateRangePicker'
+// import DateRangePicker from '@view/DateRangePicker/DateRangePicker'
 
 export default {
   components: {
     Inputs,
-    DatePickers,
-    TabButton,
-    InputList,
-    Selects,
-    InputListMore,
-    DateRangePicker
+    TabButton
   },
   props: {
     width: {
@@ -72,9 +64,20 @@ export default {
       type: String,
       default: ''
     },
+    // 单选
     options: {
       type: Array,
       default: function () { return [] }
+    },
+    // 多选
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    // 多选显示方式
+    multipleShow: {
+      type: Boolean,
+      default: true
     },
     id: {
       type: String,

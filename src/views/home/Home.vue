@@ -180,7 +180,6 @@ export default {
     // 一级菜单路由切换
     changeActive ({index, item}) {
       this.activeIndex = index
-      console.log(this.timer)
       if (item && item.hasOwnProperty('router')) {
         if (item.router == '/config') {
           this.timer = clearInterval(this.timer)

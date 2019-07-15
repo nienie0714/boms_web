@@ -160,7 +160,6 @@ export default {
   },
   mounted () {
     this.getDeptTree()
-    console.log(this.timer)
   },
   methods: {
     getDeptTree (id) {

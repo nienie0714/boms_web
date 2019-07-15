@@ -8,7 +8,7 @@
             <div class="his-info-title">{{obj.label}}</div>
             <div class="his-info-cont">
               <template v-if="obj.type == 'tree'">
-                <Tree :data="obj.value"></Tree>
+                <el-tree :data="obj.value" :props="{children: 'children',label: 'text'}"></el-tree>
               </template>
               <template v-else>
                 {{obj.value}}
@@ -28,6 +28,7 @@
           </div>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
           :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
+          :multiple="item.multiple"
           @change="handleChange(item, $event)"></input-tag>
           <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
         </div>
@@ -180,12 +181,12 @@ export default {
       if (!_.isEmpty(this.errors)) {
         return
       } else {
-        // 表单字段隐藏时不提交
-        hiddenKeys.forEach((item, index) => {
-          if (this.data.hasOwnProperty(item)) {
-            this.$delete(this.data, item)
-          }
-        })
+        // 表单字段隐藏时不提交 roleId  password
+        // hiddenKeys.forEach((item, index) => {
+        //   if (this.data.hasOwnProperty(item)) {
+        //     this.$delete(this.data, item)
+        //   }
+        // })
         this.$emit('handleSubmit', {data: this.data, type: this.type})
       }
     },

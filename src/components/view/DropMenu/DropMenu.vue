@@ -79,6 +79,7 @@ export default {
     justify-content: center;
     align-items: center;
     color: #fff;
+    cursor: pointer;
     &.active {
       background-image: url(~@img/header/bg_menu_selected.png);
     }
