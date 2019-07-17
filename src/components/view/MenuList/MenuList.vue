@@ -27,11 +27,8 @@ export default {
     }
   },
   mounted () {
-    document.addEventListener('click', this.hiddenMenu)
-    // this.handleClick(this.defaults)
   },
   destroyed () {
-    document.removeEventListener('click', this.hiddenMenu)
   },
   methods: {
     handleRemoveHover () {

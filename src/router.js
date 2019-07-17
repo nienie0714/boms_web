@@ -72,6 +72,11 @@ var router = new Router({
               // ]
             }
           ]
+        },
+        {
+          path: '/protection',
+          name: '保障业务协同管理',
+          component: r => require.ensure([], () => r(require('@/views/home/module/Protection'), 'Protection'))
         }
       ]
     }

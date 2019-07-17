@@ -4,7 +4,7 @@
     <div class="value">
       <inputs v-if="type == 'input'" :type="type" v-model="currentValue"
       :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled"
-      :maxlength="maxlength" :minlength="minlength" max="max" min="min"
+      :maxlength="maxlength" :minlength="minlength"
       @change="change($event)" @enter="enter($event)"></inputs>
       <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></tab-button>
       <el-select v-else-if="type == 'select'" v-model="currentValue" :disabled="disabled" :multiple="multiple" :collapse-tags="multipleShow" :filterable="filterable" :clearable="clearable" @change="change($event)">
@@ -13,6 +13,7 @@
       <date-pickers v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
       <el-date-picker v-if="type == 'elDateRange'" v-model="currentValue" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat">
       </el-date-picker>
+      <el-input-number v-if="type == 'number'" v-model.trim.lazy="currentValue" controls-position="right" @change="change($event)" :min="minNumber" :max="maxNumber"></el-input-number>
       <!-- <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects> -->
       <!-- <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list> -->
       <!-- <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more> -->
@@ -123,6 +124,14 @@ export default {
       type: String,
       default: null
     },
+    minNumber: {
+      type: Number,
+      default: -Infinity
+    },
+    maxNumber: {
+      type: Number,
+      default: Infinity
+    },
     dateValue: {
       type: Array,
       default: ()=>{
@@ -155,6 +164,13 @@ export default {
       this.$emit('enter', val)
     }
   },
+  watch: {
+    maxNumber: {
+      handler (data) {
+        debugger
+      }
+    }
+  },
   computed: {
     currentValue: {
       get: function () {
@@ -166,7 +182,6 @@ export default {
     }
   }
 }
-// "001001001", "99999999901", "99999999904", "99999999905", "99999999906", "99999999907"
 </script>
 <style lang="scss">
 .input-tag {
@@ -296,6 +311,17 @@ export default {
       height: 38px;
       line-height: 38px;
       border: none;
+    }
+    
+    .el-input-number {
+      width: 90px!important;
+    }
+    .el-input-number.is-controls-right .el-input__inner {
+      padding-right: 20px;
+      padding-left: 5px;
+    }
+    .el-input-number__decrease, .el-input-number__increase {
+      width: 20px;
     }
   }
   &:focus-within, &:hover {

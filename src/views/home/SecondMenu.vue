@@ -4,7 +4,6 @@
     <!-- <tree :data="data" :selected="true" :selectNodeId="selectNodeId" @clickNode="clickNode"></tree> -->
   </div>
 </template>
-
 <script>
 import MenuList from '@view/MenuList/MenuList'
 import { postData } from '@/util/base'
