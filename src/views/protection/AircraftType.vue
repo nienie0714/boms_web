@@ -12,17 +12,17 @@
           </div>
         </div>
       </div>
-      <Report :tableData="tableData" :loading="tableData.loading">
+      <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="['unloadAcftIntervals', 'loadAcftIntervals', 'unloadTruckIntervals', 'loadTruckIntervals'].includes(item.key)">
+          <!-- <template v-if="item.key == 'unloadAcftIntervals'"> -->
             <el-popover placement="bottom" width="232" trigger="manual" v-model="popList[index][item.key]">
               <div class="td-popover">
                 <el-main>
                   <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
                     <div class="pop-aircraft">机型</div>
                     <div class="pop-aircraft-value">{{row.aircraftIcao}}</div>
-                    <input-tag v-model.number="editData[item.key]" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'"></input-tag>
-                    <!-- <el-input-number v-model="editData[item.key]" controls-position="right"></el-input-number> -->
+                    <input-tag v-model.number="editData[item.key]" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
                   </el-form>
                 </el-main>
                 <el-footer>
@@ -38,17 +38,16 @@
             </el-popover>
           </template>
         </template>
-      </Report>
+      </tables>
     </div>
     <confirm-tip :visible="exportData.visible" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
   </div>
 </template>
 
 <script>
-import Report from '@view/Report/Report'
+import Tables from '@view/Table/Table'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
-import formMixin from '@mixin/formMixin'
 import { queryAll, update } from '@/util/base'
 import Inputs from '@view/Inputs/Inputs'
 import InputTag from '@view/InputTag/InputTag'
@@ -56,12 +55,12 @@ import _ from 'lodash'
 
 export default {
   components: {
-    Report,
+    Tables,
     ConfirmTip,
     Inputs,
     InputTag
   },
-  mixins: [tableMixin, formMixin],
+  mixins: [tableMixin],
   data () {
     return {
       // 请求路径
@@ -77,10 +76,10 @@ export default {
       ],
       filterValue: null,
       tableData: {
-        height: 600,
+        height: 660,
         multSelection: [],
         loading: false,
-        key: 'logId',
+        key: 'aircraftIcao',
         column: [
           // left
           [
@@ -95,7 +94,7 @@ export default {
           ],
           // right
           [
-            {label: '', type: 'opr', width: 8}
+            {label: '', key: 'scroll', width: 8}
           ]
         ],
         data: []
@@ -129,8 +128,9 @@ export default {
       this.closeAllPop()
       this.popList[index][key] = true
       this.editData = {}
-      this.editData.aircraftIcao = row.aircraftIcao
-      this.editData[key] = row[key]
+      // this.editData.aircraftIcao = row.aircraftIcao
+      // this.editData[key] = row[key]
+      this.editData = Object.assign({}, row)
     },
     closeEditPop(index, key) {
       this.popList[index][key] = false

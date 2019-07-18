@@ -1,7 +1,7 @@
 <template>
   <div class="log-audit">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" defaultKey="T1" @tabItemClick="tabItemClickDay"></tabs>
     </div>
     <div class="table-cont container cross">
       <div class="table-title">
@@ -13,15 +13,41 @@
         </div>
       </div>
       <!-- <Report :tableData="tableData" :loading="tableData.loading"></Report> -->
-      <div class="table container cross" :style="`height: 660px;background :rgba(255,255,255,1);`">
-        <div>
+      <div class="table container cross" :style="`height: 690px;background :rgba(255,255,255,1);overflow-y: auto;`">
+        <div v-for="(item, index) in data" :key="index">
           <el-row class="table-other-header">
             <el-col :span="2"><div class="bold color-gray">机位</div></el-col>
-            <el-col :span="1" v-for="(index) in 20" :key="index"><div class="bold">001</div></el-col>
+            <el-col :span="1" v-for="(val, i) in data[index]" :key="i"><div class="bold">{{data[index][i].standNo}}</div></el-col>
           </el-row>
           <el-row class="table-other-table">
             <el-col :span="2"><div class="color-gray">标准时间约束</div></el-col>
-            <el-col :span="1" v-for="(index) in 20" :key="index"><div>001</div></el-col>
+            <el-col :span="1" v-for="(val2, i2) in data[index]" :key="i2">
+              <!-- <div>{{data[index][i2].intervals}}</div> -->
+                <el-popover placement="bottom" width="232" trigger="manual" v-model="data[index][i2].pop"> <!-- popList[index][item.key]-->
+                <div class="td-popover">
+                  <el-main>
+                    <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
+                      <div class="edit-form-half">
+                        <div class="pop-aircraft">分拣大厅</div>
+                        <div class="pop-aircraft-value">{{selectKeyDay}}分拣大厅</div>
+                      </div>
+                      <div class="edit-form-half">
+                        <div class="pop-aircraft">机位</div>
+                        <div class="pop-aircraft-value">{{data[index][i2].standNo}}</div>
+                      </div>
+                      <input-tag v-model.number="editData.intervals" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
+                    </el-form>
+                  </el-main>
+                  <el-footer>
+                    <div class="footer-all">
+                      <button type="info" @click="closeEditPop(index, i2)">取消</button>
+                      <button type="primary" @click="saveEditPop(index, i2)">确定</button>
+                    </div>
+                  </el-footer>
+                </div>
+                <div slot="reference" @click="openPop(index, i2)">{{data[index][i2].intervals}}</div>
+              </el-popover>
+            </el-col>
           </el-row>
         </div>
       </div>
@@ -32,59 +58,98 @@
 <script>
 import Tabs from '@view/Tabs/Tabs'
 import Report from '@view/Report/Report'
-// import tableMixin from '@mixin/tableMixin'
-// import formMixin from '@mixin/formMixin'
-import { queryAll } from '@/util/base'
+import { queryAll, update } from '@/util/base'
 import Inputs from '@view/Inputs/Inputs'
+import InputTag from '@view/InputTag/InputTag'
 import _ from 'lodash'
 
 export default {
   components: {
     Tabs,
-    // Report
+    InputTag
   },
-  // mixins: [formMixin],
   data () {
     return {
-      queryUrl: '/integrated/luggage/queryAll',
+      queryUrl: '/base/lugTransportInterval/queryLugTransportInterval',
       queryData: {},
       tabsDataDay: [
         {
-          key: 0,
+          key: 'T1',
           label: 'T1分拣大厅'
         },
         {
-          key: 1,
+          key: 'T2',
           label: 'T2分拣大厅'
         },
         {
-          key: 2,
+          key: 'T3',
           label: 'T3分拣大厅'
         }
-      ]
+      ],
+      data: [],
+      editData: {},
     }
   },
   mounted () {
-    this.selectKeyDay = this.tabsDataDay[1].key
+    this.selectKeyDay = this.tabsDataDay[0].key
     this.queryDataReq()
   },
   methods: {
-    customQueryBefore () {
-    },
     tabItemClickDay (key) {
       this.selectKeyDay = key
+      this.queryDataReq()
     },
     queryDataReq () {
       this.$set(this.queryData, 'terminalNo', this.selectKeyDay)
       queryAll(this.queryUrl, this.queryData).then(response => {
         if (response.data.code == 0) {
-
+          this.data = _.chunk(response.data.data, 20)
+          this.closeAllPop()
         } else {
-          // this.$msg.error({
-          //   info: '获取机位信息失败 !',
-          //   tip: res.data.msg
-          // })
+          this.$msg.error({
+            info: '获取机位信息失败 !',
+            tip: response.data.msg
+          })
         }
+      })
+    },
+    // 关闭所有弹框，并清空弹框
+    closeAllPop() { 
+      for (let i = 0; i < this.data.length; i++) {
+        for (let j = 0; j < this.data[i].length; j++) {
+          this.data[i][j].pop = false
+        }
+      }
+    },
+    openPop(row, col) {
+      this.closeAllPop()
+      this.data[row][col].pop = true
+      this.editData = {}
+      this.editData.terminalNo = this.selectKeyDay
+      this.editData = Object.assign({}, this.data[row][col])
+    },
+    closeEditPop(row, col) {
+      this.data[row][col].pop = false
+      this.$set(this.data[row], col, this.data[row][col])
+    },
+    saveEditPop(row, col) {
+      // 编辑保存
+      update('/base/lugTransportInterval', this.editData).then(res => {
+        if (res.data.code == 0) {
+          this.data[row][col].pop = false
+          this.$set(this.data[row], col, this.data[row][col])
+          if (this.hasOwnProperty('queryDataReq')) {
+            this.queryDataReq()
+          }
+        } else {
+          this.$msg.error({
+            info: '保存失败 !'
+          })
+        }
+      }).catch(err => {
+        this.$msg.error({
+          info: '请求异常 !'
+        })
       })
     }
   }

@@ -165,11 +165,6 @@ export default {
     }
   },
   watch: {
-    maxNumber: {
-      handler (data) {
-        debugger
-      }
-    }
   },
   computed: {
     currentValue: {
