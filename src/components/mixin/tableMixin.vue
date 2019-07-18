@@ -42,7 +42,6 @@ export default {
         visible: false,
         data: null
       },
-      axiosArr: [],
       loading: false,
       timer: null
     }
@@ -123,17 +122,8 @@ export default {
       this.pageData.num = 1
       this.queryDataReq(status)
     },
-    queryDataReqInterval(status){
-      this.timer = clearInterval(this.timer)
-      this.queryDataReq(status)
-      this.timer = setInterval(this.queryDataReq, 60000)
-    },
     queryDataRefresh () {
       this.queryDataReq(1)
-    },
-    queryDataReqClearInterval(){
-      clearInterval(this.timer)
-      this.timer = null;
     },
     // 发送查询请求
     queryDataReq (status) {
@@ -141,14 +131,8 @@ export default {
         this.tableData.loading = true
         if (status != 1) {
           this.getQueryData()
-          this.tableData.data = []
         }
         this.customQueryBefore()
-        this.axiosArr.push({
-          url: this.queryUrl,
-          method: 'post',
-          data: this.queryData
-        })
         this.loading = true
         if (this.queryType == 'nopage') {
           nopageQuery(this.queryUrl, this.queryData).then(response => {
@@ -363,12 +347,6 @@ export default {
       a.click()
       URL.revokeObjectURL(objectUrl)
     }
-  },
-  destroyed () {
-    this.axiosArr.forEach(ever => {
-      this.removePending(ever)
-    })
-    this.axiosArr = []
   }
 }
 </script>

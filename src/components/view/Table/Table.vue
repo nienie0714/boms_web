@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-      <div v-else-if="!spliceData.data||spliceData.data.length<=0" class="table-empty">
+      <div v-else-if="!tableData.data||tableData.data.length<=0" class="table-empty">
         <div>
           <div class="empty">
             <div class="empty-text">无可显示的结果</div>
@@ -60,8 +60,8 @@
       <!-- (colIndex==columnData.length-1)?(rightWidth+17+'px'):(colIndex==0?(leftWidth+'px'):`width: calc(100% - ${leftWidth}px - ${rightWidth + 17}px);`) -->
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- (colIndex!=columnData.length-1)&&(colIndex>0)?`width: ${centerWidth}px`:'' -->
           <tbody>
-            <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
-            @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
+            <tr v-for="row in (colIndex === columnData.length - 1 ? tableData.data : tableShowData)" :key="row[tableData.key]" :class="[(require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])%2==0)?'single-row':'', selectIndex==require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])?'select-index':'']"
+            @dblclick="handleDblClick(row)" @click="selectRowTr(row, require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]]))">
               <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
               :title="item.title?(item.titleText || showValue(row, item)):false"
               :class="[item.colClass, item.class]"
@@ -80,7 +80,7 @@
                   </template>
                   <template v-else>{{showValue(row, item)}}</template>
                 </template>
-                <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
+                <slot v-else name="slot-body" :index="require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])" :row="row" :item="item"></slot>
               </td>
             </tr>
           </tbody>
@@ -88,7 +88,7 @@
         <!-- table占位 -->
         <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
           <tbody>
-            <tr v-for="(row, index) in spliceData.data" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
+            <tr v-for="(row, index) in tableShowData" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
               <td :style="`width: calc(100% - ${centerWidth}px); max-width: calc(100% - ${centerWidth}px);`"></td>
             </tr>
           </tbody>
@@ -111,6 +111,10 @@ export default {
       type: Boolean,
       default: false
     },
+    trHeight: {
+      type: Number,
+      default: 52
+    },
     permissions: {
       type: Object,
       default: ()=>{}
@@ -124,22 +128,34 @@ export default {
       leftWidth: 0,
       centerWidth: 0,
       rightWidth: 0,
-      spliceData: {
-        length: 30,
+      tableCompData: {
         index: 0,
-        data: []
+        length: 0
       }
     }
   },
   mounted () {
-    this.spliceData.index = 0 + this.spliceData.length
     this.changeColumn(this.tableData.column)
     this.getTableWidth()
+    this.tableCompData.index = 0
     this.$nextTick(() => {
+      this.getShowTable()
       this.scrollTable()
+      window.onresize = () => {
+        return (() => {
+          this.getShowTable()
+          this.scrollTable()
+        })()
+      }
     })
   },
   methods: {
+    getShowTable () {
+      let titleDiv = document.getElementsByClassName('table-header')[0]
+      if (titleDiv) {
+        this.tableCompData.length = Math.ceil(parseInt((this.tableData.height - titleDiv.offsetHeight)) / this.trHeight) + 1
+      }
+    },
     changeColumn (column) {
       this.columnData = []
       this.columnHeaderData = []
@@ -175,33 +191,31 @@ export default {
       })
     },
     changeData () {
-      this.spliceData.data = this.tableData.data.slice(0, this.spliceData.index)
       if (this.tableData.data && this.tableData.data.length == 0) {
         let rightBody = this.$refs['rightTable'] ? this.$refs['rightTable'][0] : null
         if (rightBody) {
           rightBody.scrollTop = 0
         }
-        this.spliceData.index = 0 + this.spliceData.length
       }
     },
     scrollTable () {
       let leftBody = this.$refs['leftTable'] ? this.$refs['leftTable'][0] : null
       let centerBody = this.$refs['centerTable'] ? this.$refs['centerTable'][0] : null
       let rightBody = this.$refs['rightTable'] ? this.$refs['rightTable'][0] : null
-      let _this = this
+      let that = this
       if (rightBody) {
         rightBody.onscroll = function () {
-          if (((this.scrollTop + this.clientHeight) / this.scrollHeight >= 0.96) && (_this.spliceData.data.length < _this.tableData.data.length)) {
-            _this.spliceData.index += _this.spliceData.length
-            _this.spliceData.data = _this.tableData.data.slice(0, _this.spliceData.index)
-          }
-          let rightTop = this.scrollTop
-          if (leftBody) {
-            leftBody.scrollTop = rightTop
-          }
-          if (centerBody) {
-            centerBody.scrollTop = rightTop
-          }
+          let scrollTop =this.scrollTop
+          that.tableCompData.index = Math.floor(scrollTop / that.trHeight)
+          let top = scrollTop % that.trHeight
+          that.$nextTick(() => {
+            if (leftBody) {
+              leftBody.scrollTop = top
+            }
+            if (centerBody) {
+              centerBody.scrollTop = top
+            }
+          })
         }
       }
       if (centerBody) {
@@ -261,11 +275,11 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    'tableData.data': {
-      handler (data) {
-        this.changeData()
-      }
+    }
+  },
+  computed: {
+    tableShowData () {
+      return this.tableData.data.slice(this.tableCompData.index, this.tableCompData.index + this.tableCompData.length)
     }
   }
 }

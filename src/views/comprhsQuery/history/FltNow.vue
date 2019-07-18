@@ -142,7 +142,6 @@ export default {
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
-      axiosChildArr: [],
       queryType: 'nopage',
       // 请求路径
       queryUrl: '/integrated/dynamicFlight/queryAllStat', // /',pageQuery
@@ -331,14 +330,13 @@ export default {
     this.getDefaultRow()
   },
   mounted () {
-    this.timer = clearInterval(this.timer)
     this.getFlightStatus()
     this.queryDataRefresh()
     this.tabItemClick()
-    this.timer = setInterval(this.queryDataRefresh, 60000)
-    this.$once('hook:beforeDestroy', () => {
-      this.timer = clearInterval(this.timer)
-    })
+    this.onceTimer = setInterval(this.queryDataRefresh, 60000)
+  },
+  destroyed () {
+    clearInterval(this.onceTimer)
   },
   methods: {
     customQueryBefore () {
@@ -420,7 +418,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
+                {key: 'belt',  label: '行李转盘', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])
@@ -458,21 +456,12 @@ export default {
       }
     },
     changeComp (comp, row) {
-      this.axiosChildArr.forEach(ever => {
-        this.removePending(ever)
-      })
-      this.axiosChildArr = []
       this.showComp.is = comp
       let idObj = {
         dynamicFlightId: row[this.tableData.key]
       }
       this.showComp.row = {}
       let url = this.showComp[comp + 'Url']
-      this.axiosChildArr.push({
-        url: url,
-        method: 'put',
-        params: idObj
-      })
       queryAll(url, idObj).then(res => {
         if (res.data.code == 0) {
           let data
@@ -565,9 +554,7 @@ export default {
         if (!_.isUndefined(value)) {
           this.getFlightStatus()
           this.tabItemClick()
-          this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
-          this.timer = setInterval(this.queryDataRefresh, 60000)
           this.getDefaultRow()
         }
       }
@@ -576,16 +563,8 @@ export default {
       handler (value) {
         if (!_.isUndefined(value)) {
           this.getFlightStatus()
-          this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
-          this.timer = setInterval(this.queryDataRefresh, 60000)
         }
-      }
-    },
-    $route (to, from) {
-      // 离开信息平台路由，停止发送轮询
-      if (to.path != '/comprhsQuery') {
-        this.timer = clearInterval(this.timer)
       }
     }
   }

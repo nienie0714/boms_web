@@ -181,12 +181,6 @@ export default {
       if (!_.isEmpty(this.errors)) {
         return
       } else {
-        // 表单字段隐藏时不提交 roleId  password
-        // hiddenKeys.forEach((item, index) => {
-        //   if (this.data.hasOwnProperty(item)) {
-        //     this.$delete(this.data, item)
-        //   }
-        // })
         this.$emit('handleSubmit', {data: this.data, type: this.type})
       }
     },
@@ -276,6 +270,7 @@ export default {
             case 'insert': this.typeName = '新增'
             this.submit = true
             if (this.form.key) {
+              this.data = {}
               this.$set(this.data, this.form.key, null)
             }
             break

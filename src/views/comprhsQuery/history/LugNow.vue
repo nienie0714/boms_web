@@ -347,14 +347,23 @@ export default {
       this.queryParam[8].isHidden = true
       this.queryParam[9].isHidden = true
     }
-    this.timer = clearInterval(this.timer)
-    this.queryDataRefresh()
-    this.tabItemClick()
-    this.getFlightStatus()
-    this.timer = setInterval(this.queryDataRefresh, 60000)
-    this.$once('hook:beforeDestroy', () => {            
-      this.timer = clearInterval(this.timer)
+    this.queryParam.forEach(item => {
+      if (item.key == 'checkinTime' || item.key == 'checkinTime2') {
+        let today = new Date()
+        let today2 = new Date(new Date().getTime() - 1800 * 1000) // 半小时前
+        let dateStr = `${today.getFullYear()}-${this.addZero(today.getMonth() + 1)}-${this.addZero(today.getDate())} ${this.addZero(today.getHours())}:${this.addZero(today.getMinutes())}`
+        let dateStr2 = `${today2.getFullYear()}-${this.addZero(today2.getMonth() + 1)}-${this.addZero(today2.getDate())} ${this.addZero(today2.getHours())}:${this.addZero(today2.getMinutes())}`
+        item.value = [dateStr2, dateStr]
+        this.$set(this.queryData, item.key1, dateStr2)
+        this.$set(this.queryData, item.key2, dateStr)
+      }
     })
+    this.getFlightStatus()
+    this.tabItemClick()
+    this.onceTimer = setInterval(this.queryDataRefresh, 60000)
+  },
+  destroyed () {
+    clearInterval(this.onceTimer)
   },
   created() {
     this.getDefaultRow()
@@ -441,11 +450,8 @@ export default {
           {key: 'airDate',  label: '装机时间', width: 120, title: true, format: [0, 16]}
         ])
       }
-
-      this.timer = clearInterval(this.timer)
       this.queryDataRefresh()
       this.getFlightStatus()
-      this.timer = setInterval(this.queryDataRefresh, 60000)
     },
     customQueryBefore () {
       this.$set(this.queryData, 'inOutFlag', this.selectKey)
@@ -504,17 +510,9 @@ export default {
     selectKeyDay: {
       handler (value) {
         if (!_.isUndefined(value)) {
-          this.timer = clearInterval(this.timer)
           this.queryDataRefresh()
           this.getFlightStatus()
-          this.timer = setInterval(this.queryDataRefresh, 60000)
         }
-      }
-    },
-    $route (to, from) {
-      // 离开信息平台路由，停止发送轮询
-      if (to.path != '/comprhsQuery') {
-        this.timer = clearInterval(this.timer)
       }
     }
   }

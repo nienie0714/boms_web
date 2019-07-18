@@ -25,9 +25,7 @@
       </div>
     </div>
     <div class="main">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
+      <router-view></router-view>
     </div>
     <my-dialog :visible="onlineData.visible" :header="false" :footer="false" :position="'right'" :width="400" class="form-dialog under-head-dialog" @handleClose="handleClose">
       <div class="online-header">

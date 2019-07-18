@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/style/custom.scss'
 import '@/style/more.scss'
 import '@/style/iconfont/iconfont.css'
-import { axiosReq, removePending } from '@/axios.conf'
+import { axiosReq } from '@/axios.conf'
 import MyDialog from '@view/Dialog/Dialog.vue'
 import Message from '@view/Message/'
 import * as filters from '@view/Filters/'
@@ -19,7 +19,6 @@ Vue.use(iView)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.axios = axiosReq
-Vue.prototype.removePending = removePending
 Vue.component('my-dialog', MyDialog)
 Vue.use(Message)
 Object.keys(filters).forEach(key => {

@@ -219,7 +219,7 @@ export default {
       // 保存默认隐藏/显示列路径
       saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
-        // height: 600,
+        height: 600,
         multSelection: [],
         loading: false,
         key: 'dynamicFlightId',
@@ -291,7 +291,6 @@ export default {
         ],
         data: []
       },
-      axiosChildArr: [],
       showComp: {
         is: null,
         lugUrl: '/integrated/dynamicFlight/flightLugStat',
@@ -388,7 +387,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
-                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
+                {key: 'belt',  label: '行李转盘', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])
@@ -426,10 +425,6 @@ export default {
       }
     },
     changeComp (comp, row) {
-      this.axiosChildArr.forEach(ever => {
-        this.removePending(ever)
-      })
-      this.axiosChildArr = []
       this.showComp.is = comp
       let idObj = {
         dynamicFlightId: row[this.tableData.key],
@@ -437,11 +432,6 @@ export default {
       }
       this.showComp.row = {}
       let url = this.showComp[comp + 'Url']
-      this.axiosChildArr.push({
-        url: url,
-        method: 'put',
-        params: idObj
-      })
       queryAll(url, idObj).then(res => {
         if (res.data.code == 0) {
           let data

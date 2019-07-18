@@ -10,18 +10,11 @@ export default {
       oprPopoverDirect: '',
       oprPopoverIndex: null,
       showTaskDivId: null,
-      axiosArr: [],
       leftAutoNum: 0,
       rightAutoNum: 5,
     }
   },
   mounted () {
-  },
-  destroyed () {
-    this.axiosArr.forEach(ever => {
-      this.removePending(ever)
-    })
-    this.axiosArr = []
   },
   methods: {
     // 取消隐藏/显示列 close关闭面板事件

@@ -80,10 +80,10 @@ export default {
         if (response.data.code == 0) {
 
         } else {
-          this.$msg.error({
-            info: '获取机位信息失败 !',
-            tip: res.data.msg
-          })
+          // this.$msg.error({
+          //   info: '获取机位信息失败 !',
+          //   tip: res.data.msg
+          // })
         }
       })
     }
