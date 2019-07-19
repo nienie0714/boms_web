@@ -15,36 +15,40 @@
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.type == 'slot'">
-            <el-popover placement="bottom" width="232" trigger="manual" v-model="popList[index][item.key]"> <!-- popList[index][item.key]-->
-              <div class="td-popover">
-                <el-main>
-                  <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
-                    <div class="edit-form-half">
-                      <div class="pop-aircraft">柜台号</div>
-                      <div class="pop-aircraft-value">{{row.counterNo}}</div>
-                    </div>
-                    <div class="edit-form-half">
-                      <div class="pop-aircraft">滑槽号</div>
-                      <div class="pop-aircraft-value">{{item.key}}</div>
-                    </div>
-                    <input-tag v-model.number="editData[item.key]" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
-                  </el-form>
-                </el-main>
-                <el-footer>
-                  <div class="footer-all">
-                    <button type="info" @click="closeEditPop(index, item.key)">取消</button>
-                    <button type="primary" @click="saveEditPop(index, item.key)">确定</button>
-                  </div>
-                </el-footer>
-              </div>
-              <div class="img-label" slot="reference" @click="openPop(index, row, item.key)">
+            <div class="label-img" @click="activeTd(index, item.key)">
+              <div :class="['label-img-inside', popList[index][item.key] ? 'label-img-active' : '']">
                 <span>{{row[item.key]}}</span>
+                <img v-if="popList[index][item.key]" :src="require('@icon/toolbar/icon_row_edit.png')" @click="openPop(row, item.key, $event)">
               </div>
-            </el-popover>
+            </div>
           </template>
         </template>
       </tables>
     </div>
+    <my-dialog :visible="counterData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
+    :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
+      <div class="td-popover counter-popover">
+        <el-main>
+          <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
+            <div class="edit-form-half">
+              <div class="pop-aircraft">柜台号</div>
+              <div class="pop-aircraft-value">{{editData.counterNo}}</div>
+            </div>
+            <div class="edit-form-half">
+              <div class="pop-aircraft">滑槽号</div>
+              <div class="pop-aircraft-value">{{editData.chuteNo}}</div>
+            </div>
+            <input-tag v-model.number="editData[editData.chuteNo]" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
+          </el-form>
+        </el-main>
+        <el-footer>
+          <div class="footer-all">
+            <button type="info" @click="closeEditPop()">取消</button>
+            <button type="primary" @click="saveEditPop(editData.chuteNo)">确定</button>
+          </div>
+        </el-footer>
+      </div>
+    </my-dialog>
     <confirm-tip :visible="exportData.visible" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
   </div>
 </template>
@@ -119,7 +123,14 @@ export default {
       tableHeader: [],
       popList: [],
       editData: {},
-      pop: false
+      a: 0,
+      counterData: {
+        visible: false
+      },
+      pop: {
+        left: 0,
+        top: 0
+      }
     }
   },
   mounted () {
@@ -128,6 +139,11 @@ export default {
     // this.queryDataReq()
   },
   methods: {
+    activeTd(index, key) {
+      this.closeAllPop()
+      this.popList[index][key] = true
+      this.$set(this.popList[index], key, this.popList[index][key])
+    },
     customQueryBefore () {
       this.$set(this.queryData, 'terminalNo', this.selectKeyDay)
     },
@@ -170,37 +186,40 @@ export default {
     customAfterQuery () {
       this.closeAllPop()
     },
-    openPop(index, row, key) {
-      this.closeAllPop()
-      this.popList[index][key] = true
+    openPop(row, key, $event) {
+      if ($event.clientY > 650) {
+        // 向上展示
+        this.pop.top = $event.clientY - 187 - 30
+      } else {
+        // 向下展示
+        this.pop.top = $event.clientY + 30
+      }
+      if ($event.clientX > 1686) {
+        // 偏左展示
+        this.pop.left = $event.clientX - 232
+      } else {
+        // 居中展示
+        this.pop.left = $event.clientX - 232 / 2
+      }
+      this.counterData.visible = true
       this.editData = {}
-      // this.editData.counterNo = row.counterNo
-      // this.editData[key] = row[key]
       this.editData = Object.assign({}, row)
+      this.editData.chuteNo = key
     },
     closeEditPop(index, key) {
-      this.popList[index][key] = false
+      this.counterData.visible = false
+      this.editData = {}
     },
-    saveEditPop(index, key) {
-      // 解析列数据（滑槽：约束时间）
-      let tmpData = {}
+    saveEditPop(key) {
       let data = {}
-      for (let editItem of Object.keys(this.editData)) {
-        if (editItem == key) { //  || editItem == 'counterNo'
-          tmpData[editItem] = this.editData[editItem]
-        }
-      }
-      Object.keys(tmpData).forEach(function(key,i,v){
-        data['chuteNo'] = key
-        data['intervals'] = tmpData[key]
-      })
-      // 补充数据
-      data['counterNo'] = this.editData['counterNo']
+      data = Object.assign({}, this.editData)
       data['terminalNo'] = this.selectKeyDay
+      data['intervals'] = data[key]
+
       // 编辑保存
       update('/base/lugConveyorInterval', data).then(res => {
         if (res.data.code == 0) {
-          this.popList[index][key] = false
+          this.closeEditPop()
           if (this.hasOwnProperty('queryDataReq')) {
             this.queryDataReq()
           }
@@ -214,12 +233,15 @@ export default {
           info: '请求异常 !'
         })
       })
-    }
+    },
   }
 }
 </script>
 
 <style lang="scss">
+.counter-popover {
+  padding-top: 10px;
+}
 .aircraft-type {
   .query-box {
     display: flex;
@@ -234,5 +256,11 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style lang="scss">
+.counter-class {
+  margin: 0 !important;
 }
 </style>

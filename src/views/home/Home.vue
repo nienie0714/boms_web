@@ -151,22 +151,8 @@ export default {
   mounted () {
     this.heartTimer = clearInterval(this.heartTimer)
     this.empName = localStorage.getItem('empName')
-    // 获取顶级菜单
-    postData('sys/sysResource/queryHasSysResource', {url: null, resourceType: 0}).then(response => {
-      this.topResource = response.data.data
-      // this.$router.push({name: '信息共享平台'})
-      
-      let i = _.findIndex(this.topResource, ['router', localStorage.getItem('topMenuActive')])
-      if (i == -1) {
-        let j = _.findIndex(this.topResource, ['router', '/comprhsQuery'])
-        this.activeIndex = j
-        this.changeActive({index: j, item: this.topResource[j]})
-      } else {
-        this.activeIndex = i
-        let data = {index: i, item: this.topResource[i]}
-        this.changeActive(data)
-      }
-    })
+
+    this.getTopMenu()
 
     this.heartBeat()
     this.heartTimer = setInterval(this.heartBeat, 60000)
@@ -175,15 +161,38 @@ export default {
     })
   },
   methods: {
+    // 获取顶级菜单
+    getTopMenu() {
+      postData('sys/sysResource/queryHasSysResource', {url: null, resourceType: 0}).then(response => {
+        this.topResource = response.data.data
+        let arr = this.$route.path.split('/')
+        if (arr && arr.length == 2) {
+          if (arr[1] == 'home') {
+            let j = _.findIndex(this.topResource, ['router', '/comprhsQuery'])
+            this.activeIndex = j
+            this.changeActive({index: j, item: this.topResource[j]})
+          }
+        } else if (arr && arr.length == 3) {
+          // 二级菜单
+          let j = _.findIndex(this.topResource, ['router', '/' + arr[1]])
+          this.activeIndex = j
+        }
+        // let i = _.findIndex(this.topResource, ['router', localStorage.getItem('topMenuActive')])
+        // if (i == -1) {
+        //   let j = _.findIndex(this.topResource, ['router', '/comprhsQuery'])
+        //   this.activeIndex = j
+        //   this.changeActive({index: j, item: this.topResource[j]})
+        // } else {
+        //   this.activeIndex = i
+        //   let data = {index: i, item: this.topResource[i]}
+        //   this.changeActive(data)
+        // }
+      })
+    },
     // 一级菜单路由切换
     changeActive ({index, item}) {
       this.activeIndex = index
-      if (item && item.hasOwnProperty('router')) {
-        if (item.router == '/config') {
-          this.timer = clearInterval(this.timer)
-        }
-        this.$router.push(item.router)
-      }
+      this.$router.push(item.router)
     },
     loginOut() {
       this.$router.push('/')
@@ -226,6 +235,8 @@ export default {
         }
       })
     }
+  },
+  watch: {
   }
 }
 </script>

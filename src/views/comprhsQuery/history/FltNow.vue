@@ -418,7 +418,7 @@ export default {
                 {key: 'stand',  label: '机位', width: 60},
                 {key: 'progressStatusCn',  label: '航班状态', width: 70, title: true, type: 'slot'},// 进展
                 {key: 'abnormalStatusCn',  label: '航班异常状态', width: 100, title: true, type: 'slot'},
-                {key: 'belt',  label: '行李转盘', width: 70, title: true, class: 'col-child-right'}
+                {key: 'chute',  label: '行李滑槽', width: 70, title: true, class: 'col-child-right'}
               ]
             }
           ])

@@ -1,6 +1,7 @@
 <template>
   <div v-if="showDialog" class="dialog-shade">
-    <div class="container cross dialog" :position="position" :style="`width: ${width}px; height: ${height}px;`">
+    <div class="container cross dialog" :position="position" :class="dialogClass"
+    :style="`left: ${left}px; top: ${top}px; right: ${right}px; bottom: ${bottom}px; width: ${width}px; height: ${height}px;`">
       <div v-if="header" class="header">
         <slot name="header">
           <div class="title">{{title}}</div>
@@ -37,13 +38,33 @@ export default {
       type: Boolean,
       default: true
     },
+    dialogClass: {
+      type: String,
+      default: ''
+    },
     width: {
       type: Number,
       default: 640
     },
     height: {
       type: Number,
-      default: null
+      default: 0
+    },
+    left: {
+      type: Number,
+      default: 0
+    },
+    top: {
+      type: Number,
+      default: 0
+    },
+    right: {
+      type: Number,
+      default: 0
+    },
+    bottom: {
+      type: Number,
+      default: 0
     },
     position: {
       type: String,

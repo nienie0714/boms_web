@@ -15,8 +15,7 @@
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="['unloadAcftIntervals', 'loadAcftIntervals', 'unloadTruckIntervals', 'loadTruckIntervals'].includes(item.key)">
-          <!-- <template v-if="item.key == 'unloadAcftIntervals'"> -->
-            <el-popover placement="bottom" width="232" trigger="manual" v-model="popList[index][item.key]">
+            <!-- <el-popover placement="bottom" width="232" trigger="manual" v-model="popList[index][item.key]">
               <div class="td-popover">
                 <el-main>
                   <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
@@ -35,11 +34,35 @@
               <div class="img-label" slot="reference" @click="openPop(index, row, item.key)">
                 <span>{{row[item.key]}}</span>
               </div>
-            </el-popover>
+            </el-popover> -->
+            <div class="label-img" @click="activeTd(index, item.key)">
+              <div :class="['label-img-inside', popList[index][item.key] ? 'label-img-active' : '']">
+                <span>{{row[item.key]}}</span>
+                <img v-if="popList[index][item.key]" :src="require('@icon/toolbar/icon_row_edit.png')" @click="openPop(row, item.key, $event)">
+              </div>
+            </div>
           </template>
         </template>
       </tables>
     </div>
+    <my-dialog :visible="popData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
+    :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
+      <div class="td-popover counter-popover">
+        <el-main>
+          <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
+            <div class="pop-aircraft">机型</div>
+            <div class="pop-aircraft-value">{{editData.aircraftIcao}}</div>
+            <input-tag v-model.number="editData[editData.key]" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
+          </el-form>
+        </el-main>
+        <el-footer>
+          <div class="footer-all">
+            <button type="info" @click="closeEditPop">取消</button>
+            <button type="primary" @click="saveEditPop(editData.key)">确定</button>
+          </div>
+        </el-footer>
+      </div>
+    </my-dialog>
     <confirm-tip :visible="exportData.visible" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
   </div>
 </template>
@@ -100,7 +123,14 @@ export default {
         data: []
       },
       popList: [],
-      editData: {}
+      editData: {},
+      popData: {
+        visible: false
+      },
+      pop: {
+        left: 0,
+        top: 0
+      }
     }
   },
   mounted () {
@@ -124,18 +154,36 @@ export default {
       this.filterValue = value
       this.queryDataReq()
     },
-    openPop(index, row, key) {
+    activeTd(index, key) {
       this.closeAllPop()
       this.popList[index][key] = true
+      this.$set(this.popList[index], key, this.popList[index][key])
+    },
+    openPop(row, key, $event) {
+      if ($event.clientY > 650) {
+        // 向上展示
+        this.pop.top = $event.clientY - 187 - 30
+      } else {
+        // 向下展示
+        this.pop.top = $event.clientY + 30
+      }
+      if ($event.clientX > 1686) {
+        // 偏左展示
+        this.pop.left = $event.clientX - 232
+      } else {
+        // 居中展示
+        this.pop.left = $event.clientX - 232 / 2
+      }
+      this.popData.visible = true
       this.editData = {}
-      // this.editData.aircraftIcao = row.aircraftIcao
-      // this.editData[key] = row[key]
       this.editData = Object.assign({}, row)
+      this.editData.key = key
     },
-    closeEditPop(index, key) {
-      this.popList[index][key] = false
+    closeEditPop() {
+      this.popData.visible = false
+      this.editData = {}
     },
-    saveEditPop(index, key) {
+    saveEditPop(key) {
       let data = {}
       for (let editItem of Object.keys(this.editData)) {
         if (editItem == key || editItem == 'aircraftIcao') {
@@ -144,7 +192,7 @@ export default {
       }
       update('/base/aircraftTypeInterval', data).then(res => {
         if (res.data.code == 0) {
-          this.popList[index][key] = false
+          this.popData.visible = false
           if (this.hasOwnProperty('queryDataReq')) {
             this.queryDataReq()
           }
@@ -176,6 +224,29 @@ export default {
       &::-webkit-input-placeholder {
         text-align: left;
       }
+    }
+  }
+}
+
+.label-img {
+  height: 48px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .label-img-inside {
+    margin: 0 4px;
+    padding: 0 15px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 3px;
+    &.label-img-active {
+      background-color: #EAF4FF;
+      color: #3392FF;
+    }
+    img {
+      cursor: pointer;
+      margin-left: 12px;
     }
   }
 }

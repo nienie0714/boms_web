@@ -39,18 +39,18 @@ var router = new Router({
           path: '/comprhsQuery',
           name: '信息共享平台',
           component: r => require.ensure([], () => r(require('@/views/home/module/ComprhsQuery'), 'ComprhsQuery')),
-          // children: [
-          //   {
-          //     path: '/flight',
-          //     name: '航班信息查询',
-          //     component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Flights'), 'Flights'))
-          //   },
-          //   {
-          //     path: '/luggage',
-          //     name: '行李信息查询',
-          //     component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Luggages'), 'Luggages')),
-          //   }
-          // ]
+          children: [
+            {
+              path: 'flights',
+              name: '航班信息查询',
+              component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Flights'), 'Flights'))
+            },
+            {
+              path: 'luggages',
+              name: '行李信息查询',
+              component: r => require.ensure([], () => r(require('@/views/comprhsQuery/Luggages'), 'Luggages')),
+            }
+          ]
         },
         {
           path: '/config',
@@ -58,18 +58,29 @@ var router = new Router({
           component: r => require.ensure([], () => r(require('@/views/home/module/Config'), 'Config')),
           children: [
             {
-              path: '/config',
-              name: '配置管理'
-              // redirect: to => {
-              //   return {path: 'logAudit'}
-              // },
-              // children: [
-              //   {
-              //     path: 'logAudit',
-              //     name: '日志审计管理',
-              //     component: r => require.ensure([], () => r(require('@/views/resource/config/LogAudit'), 'LogAudit')),
-              //   }
-              // ]
+              path: 'department',
+              name: '部门管理',
+              component: r => require.ensure([], () => r(require('@/views/config/Department'), 'Department')),
+            },
+            {
+              path: 'employee',
+              name: '员工管理',
+              component: r => require.ensure([], () => r(require('@/views/config/Employee'), 'Employee')),
+            },
+            {
+              path: 'role',
+              name: '角色管理',
+              component: r => require.ensure([], () => r(require('@/views/config/Role'), 'Role')),
+            },
+            {
+              path: 'user',
+              name: '用户管理',
+              component: r => require.ensure([], () => r(require('@/views/config/User'), 'User')),
+            },
+            {
+              path: 'logAudit',
+              name: '日志审计管理',
+              component: r => require.ensure([], () => r(require('@/views/config/LogAudit'), 'LogAudit')),
             }
           ]
         },

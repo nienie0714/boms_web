@@ -53,6 +53,11 @@ export default {
   watch: {
     $route (to, from) {
       this.title = to.name
+    },
+    data() {
+      // 左侧边菜单记住当前路由
+      let j = _.findIndex(this.data, ['router', this.$route.path])
+      this.selectIndex = j != -1 ? j : 0
     }
   }
 }

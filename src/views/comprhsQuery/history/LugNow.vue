@@ -11,7 +11,7 @@
       <div class="table-title">
         <div class="left">
           <span class="label">查询结果</span>
-          <span class="info">共{{tableData.data.length}}条</span>
+          <span class="info">共{{pageData.total}}条</span>
         </div>
         <div class="right">
           <div class="toolbar">
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading">
+      <tables :tableData="tableData" :loading="tableData.loading" @scrollLoad="scrollLoad">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.label=='操作'">
             <!-- <button type="info" @click="changeComp('lug', row)">行李详情</button> -->
@@ -144,15 +144,19 @@ export default {
   props: ['selectKeyDay', 'selectKey'],
   data () {
     return {
-      queryType: 'nopage',
       // 请求路径
-      queryUrl: '/integrated/luggage/queryAll',
+      queryUrl: '/integrated/luggage/queryAllPage',
       exportUrl: '/integrated/luggage/exportExcel',
       // 菜单对应按钮权限
       permissions: {
         insert: false,
         export: true,
         setlist: true
+      },
+      pageData: {
+        num: 1,
+        size: 50,
+        total: 0
       },
       exportInfo: '是否确认导出0条数据？',
       showComp: {
@@ -285,6 +289,7 @@ export default {
       saveDefaultRowUrl: '/sys/sysUserCustom/updateSysUserCustom',
       tableData: {
         height: 600,
+        pageLoad: true,
         multSelection: [],
         loading: false,
         key: 'lugId',
@@ -369,6 +374,16 @@ export default {
     this.getDefaultRow()
   },
   methods: {
+    scrollLoad (index) {
+      this.$set(this.pageData, 'num', index)
+    },
+    addZero (value) {
+      if (value < 10) {
+        return `0${value}`
+      } else {
+        return value
+      }
+    },
     getFlightStatus() {
        // 更新航班状态下拉框
       _.forEach(this.queryParam, (item) => {
@@ -514,6 +529,12 @@ export default {
           this.getFlightStatus()
         }
       }
+    },
+    'pageData.num': {
+      handler (num) {
+        this.queryDataReq()
+      },
+      deep: true
     }
   }
 }

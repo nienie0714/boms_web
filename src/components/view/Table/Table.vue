@@ -59,9 +59,10 @@
       <!-- colIndex==1?`width: calc(100% - ${leftWidth}px - ${rightWidth + 17}px);`:`width: ${colIndex==0?(leftWidth):rightWidth+17}px` -->
       <!-- (colIndex==columnData.length-1)?(rightWidth+17+'px'):(colIndex==0?(leftWidth+'px'):`width: calc(100% - ${leftWidth}px - ${rightWidth + 17}px);`) -->
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- (colIndex!=columnData.length-1)&&(colIndex>0)?`width: ${centerWidth}px`:'' -->
-          <tbody>
-            <tr v-for="row in (colIndex === columnData.length - 1 ? tableData.data : tableShowData)" :key="row[tableData.key]" :class="[(require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])%2==0)?'single-row':'', selectIndex==require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])?'select-index':'']"
-            @dblclick="handleDblClick(row)" @click="selectRowTr(row, require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]]))">
+          <tbody><!-- (colIndex === columnData.length - 1 ? tableData.data : tableShowData) -->
+          <!-- (require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]]) -->
+            <tr v-for="(row, index) in tableData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
+            @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
               <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
               :title="item.title?(item.titleText || showValue(row, item)):false"
               :class="[item.colClass, item.class]"
@@ -76,19 +77,19 @@
                 </template>
                 <template v-else-if="item.type!='slot'">
                   <template v-if="item.type=='mult'">
-                    <div :class="~require('lodash').findIndex(tableData.multSelection, [tableData.key, row[tableData.key]])?'radio is-checked':'radio'" @click="selectRow(row)"></div>
+                    <div :class="~index?'radio is-checked':'radio'" @click="selectRow(row)"></div>
                   </template>
                   <template v-else>{{showValue(row, item)}}</template>
                 </template>
-                <slot v-else name="slot-body" :index="require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]])" :row="row" :item="item"></slot>
+                <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
               </td>
             </tr>
           </tbody>
         </table>
         <!-- table占位 -->
         <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
-          <tbody>
-            <tr v-for="(row, index) in tableShowData" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
+          <tbody><!-- tableShowData -->
+            <tr v-for="(row, index) in tableData.data" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
               <td :style="`width: calc(100% - ${centerWidth}px); max-width: calc(100% - ${centerWidth}px);`"></td>
             </tr>
           </tbody>
@@ -131,6 +132,9 @@ export default {
       tableCompData: {
         index: 0,
         length: 0
+      },
+      scrollData: {
+        index: 1
       }
     }
   },
@@ -150,6 +154,16 @@ export default {
     })
   },
   methods: {
+    nextTable () {
+      this.scrollData.index += 1
+      this.$emit('scrollLoad', this.scrollData.index)
+    },
+    prevTable () {
+      if (this.scrollData.index > 1) {
+        this.scrollData.index -= 1
+        this.$emit('scrollLoad', this.scrollData.index)
+      }
+    },
     getShowTable () {
       let titleDiv = document.getElementsByClassName('table-header')[0]
       if (titleDiv) {
@@ -206,16 +220,14 @@ export default {
       if (rightBody) {
         rightBody.onscroll = function () {
           let scrollTop =this.scrollTop
-          that.tableCompData.index = Math.floor(scrollTop / that.trHeight)
-          let top = scrollTop % that.trHeight
-          that.$nextTick(() => {
-            if (leftBody) {
-              leftBody.scrollTop = top
-            }
-            if (centerBody) {
-              centerBody.scrollTop = top
-            }
-          })
+          // that.tableCompData.index = Math.floor(scrollTop / that.trHeight)
+          // let top = scrollTop % that.trHeight
+          if (leftBody) {
+            leftBody.scrollTop = scrollTop
+          }
+          if (centerBody) {
+            centerBody.scrollTop = scrollTop
+          }
         }
       }
       if (centerBody) {
@@ -229,10 +241,29 @@ export default {
       }
     },
     scrollEvent (event) {
-      let scrollTop = event.wheelDeltaY
-      let rightBody = this.$refs['rightTable'] ? this.$refs['rightTable'][0] : null
-      if (rightBody) {
-        rightBody.scrollTop -= scrollTop
+      if (!this.loading) {
+        let scrollTop = event.wheelDeltaY
+        let rightBody = this.$refs['rightTable'] ? this.$refs['rightTable'][0] : null
+        if (rightBody) {
+          if (this.tableData.pageLoad) {
+            if (scrollTop < 0) {
+              if ((rightBody.firstElementChild.offsetHeight - rightBody.offsetHeight) === rightBody.scrollTop) {
+                this.nextTable()
+                rightBody.scrollTop = 0
+              } else {
+                rightBody.scrollTop -= scrollTop
+              }
+            } else if (scrollTop > 0) {
+              if (rightBody.scrollTop === 0) {
+                this.prevTable()
+              } else {
+                rightBody.scrollTop -= scrollTop
+              }
+            }
+          } else {
+            rightBody.scrollTop -= scrollTop
+          }
+        }
       }
     },
     selectAuto () {

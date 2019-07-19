@@ -1,6 +1,0 @@
-export { default as LogAudit } from './LogAudit'
-export { default as User } from './User'
-export { default as Role } from './Role'
-export { default as Employee } from './Employee'
-export { default as Department } from './Department'
-export { default as Online } from './Online'

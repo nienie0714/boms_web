@@ -13,21 +13,20 @@
         <div class="icon"></div>
         <div>{{title}}</div>
       </div>
-      <component :is="name"></component>
+      <router-view />
+      <!-- <component :is="name"></component> -->
     </div>
   </div>
 </template>
 
 <script>
-import InputTag from '@view/InputTag/InputTag'
 import SecondMenu from '../SecondMenu'
 import * as component from '@/views/comprhsQuery'
 import { postData } from '@/util/base'
 
 export default {
   components: {
-    SecondMenu,
-    InputTag
+    SecondMenu
   },
   data () {
     return {
@@ -58,22 +57,28 @@ export default {
   },
   methods: {
     getSecondMenu () {
-      let data = {
-        resourceType: 0,
-        url: this.$route.path
+      let arr = this.$route.path.split('/')
+      if (arr && arr.length > 1) {
+        let data = {
+          resourceType: 0,
+          url: '/' + arr[1]
+        }
+        // 获取二级菜单
+        postData('sys/sysResource/queryHasSysResource', data).then(response => {
+          this.menuData = response.data.data
+          if (arr.length === 2) {
+            this.skipPath(this.menuData[0])
+          }
+        })
       }
-      // 获取二级菜单
-      postData('sys/sysResource/queryHasSysResource', data).then(response => {
-        this.menuData = response.data.data
-        this.skipPath(this.menuData[0])
-      })
     },
     skipPath (obj) {
       this.name = obj.router
       localStorage.setItem('curPath', obj.router)
       if (this.name) {
         this.title = obj.label
-        this.$options.components[this.name] = component[this.name]
+        this.$router.push(this.name)
+        // this.$options.components[this.name] = component[this.name]
       }
     }
   },
@@ -81,9 +86,6 @@ export default {
     $route (to, from) {
       this.title = to.name
       localStorage.setItem('topMenuActive', to.path)
-      if (to.path ==  "/comprhsQuery" && this.menuData == null) {
-        this.getSecondMenu()
-      }
     },
     menuData: {
       handler (value) {

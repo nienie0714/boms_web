@@ -12,7 +12,6 @@
           <span class="label">提示：点击列表项的时间可进行更改</span>
         </div>
       </div>
-      <!-- <Report :tableData="tableData" :loading="tableData.loading"></Report> -->
       <div class="table container cross" :style="`height: 690px;background :rgba(255,255,255,1);overflow-y: auto;`">
         <div v-for="(item, index) in data" :key="index">
           <el-row class="table-other-header">
@@ -22,8 +21,13 @@
           <el-row class="table-other-table">
             <el-col :span="2"><div class="color-gray">标准时间约束</div></el-col>
             <el-col :span="1" v-for="(val2, i2) in data[index]" :key="i2">
-              <!-- <div>{{data[index][i2].intervals}}</div> -->
-                <el-popover placement="bottom" width="232" trigger="manual" v-model="data[index][i2].pop"> <!-- popList[index][item.key]-->
+              <div class="label-img" @click="activeTd(index, i2)">
+                <div :class="['label-img-inside', data[index][i2].pop ? 'label-img-active' : '']">
+                  <span>{{data[index][i2].intervals}}</span>
+                  <img v-if="data[index][i2].pop" :src="require('@icon/toolbar/icon_row_edit.png')" @click="openPop(index, i2, $event)">
+                </div>
+              </div>
+                <!-- <el-popover placement="bottom" width="232" trigger="manual" v-model="data[index][i2].pop">
                 <div class="td-popover">
                   <el-main>
                     <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
@@ -46,11 +50,35 @@
                   </el-footer>
                 </div>
                 <div slot="reference" @click="openPop(index, i2)">{{data[index][i2].intervals}}</div>
-              </el-popover>
+              </el-popover> -->
             </el-col>
           </el-row>
         </div>
       </div>
+      <my-dialog :visible="counterData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
+      :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
+        <div class="td-popover counter-popover">
+          <el-main>
+            <el-form :model="editData" :label-position="'top'" ref="ruleForm" size="mini" class="edit-form">
+              <div class="edit-form-half">
+                <div class="pop-aircraft">分拣大厅</div>
+                <div class="pop-aircraft-value">{{editData.terminalNo}}分拣大厅</div>
+              </div>
+              <div class="edit-form-half">
+                <div class="pop-aircraft">机位</div>
+                <div class="pop-aircraft-value">{{editData.standNo}}</div>
+              </div>
+              <input-tag v-model.number="editData.intervals" :width="200" type="number" prepend="标准约束时间" :placeholder="'请输入'" :minNumber="0" :maxNumber="100000"></input-tag>
+            </el-form>
+          </el-main>
+          <el-footer>
+            <div class="footer-all">
+              <button type="info" @click="closeEditPop">取消</button>
+              <button type="primary" @click="saveEditPop">确定</button>
+            </div>
+          </el-footer>
+        </div>
+      </my-dialog>
     </div>
   </div>
 </template>
@@ -88,6 +116,13 @@ export default {
       ],
       data: [],
       editData: {},
+      counterData: {
+        visible: false
+      },
+      pop: {
+        left: 0,
+        top: 0
+      }
     }
   },
   mounted () {
@@ -98,6 +133,11 @@ export default {
     tabItemClickDay (key) {
       this.selectKeyDay = key
       this.queryDataReq()
+    },
+    activeTd(index, key) {
+      this.closeAllPop()
+      this.data[index][key].pop = true
+      this.$set(this.data[index], key, this.data[index][key])
     },
     queryDataReq () {
       this.$set(this.queryData, 'terminalNo', this.selectKeyDay)
@@ -121,23 +161,39 @@ export default {
         }
       }
     },
-    openPop(row, col) {
-      this.closeAllPop()
-      this.data[row][col].pop = true
+    openPop(row, col, $event) {      
+      if ($event.clientY > 650) {
+        // 向上展示
+        this.pop.top = $event.clientY - 187 - 30
+      } else {
+        // 向下展示
+        this.pop.top = $event.clientY + 30
+      }
+      if ($event.clientX > 1686) {
+        // 偏左展示
+        this.pop.left = $event.clientX - 232
+      } else {
+        // 居中展示
+        this.pop.left = $event.clientX - 232 / 2
+      }
+      this.counterData.visible = true
+
       this.editData = {}
       this.editData.terminalNo = this.selectKeyDay
       this.editData = Object.assign({}, this.data[row][col])
     },
     closeEditPop(row, col) {
-      this.data[row][col].pop = false
-      this.$set(this.data[row], col, this.data[row][col])
+      // this.data[row][col].pop = false
+      // this.$set(this.data[row], col, this.data[row][col])
+      this.counterData.visible = false
     },
-    saveEditPop(row, col) {
+    saveEditPop() {
       // 编辑保存
       update('/base/lugTransportInterval', this.editData).then(res => {
         if (res.data.code == 0) {
-          this.data[row][col].pop = false
-          this.$set(this.data[row], col, this.data[row][col])
+          this.counterData.visible = false
+          // this.data[row][col].pop = false
+          // this.$set(this.data[row], col, this.data[row][col])
           if (this.hasOwnProperty('queryDataReq')) {
             this.queryDataReq()
           }
