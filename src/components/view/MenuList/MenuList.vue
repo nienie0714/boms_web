@@ -1,10 +1,13 @@
 <template>
   <div ref="listMenu" class="list-menu">
     <ul>
-      <li v-for="(child, index) in data" :key="index"  :class="[(index%2==0)?'single-index':'', selectIndex==index?'select-index':'']"
+      <li v-for="(child, index) in data" :key="index"  :class="[(index%2==0)?'single-index':'', selectIndex==index? 'select-index':'']"
       @click.stop="handleClick(child, index)"><!-- :class="child.disabled ? 'disabled' : ''" @mouseenter.stop="handleHover(idx)" @mouseleave.stop="handleRemoveHover" -->
-        <span>{{ child.label }}<i v-if="child.hasOwnProperty('children') && child.children" class="el-icon-caret-right"></i></span>
-        <child v-if="child.hasOwnProperty('children') && (selectIndex == index)" class="list-menu-child" :data="child.children" :index="index"
+        <!-- <span>{{ child.label }}<i v-if="child.hasOwnProperty('children') && child.children" class="el-icon-caret-right"></i></span> -->
+        <span @click="showChild(child)">{{ child.label }}
+          <span :class="[child.hasOwnProperty('children') && child.children ? 'icon iconfont icon-next icon-button' : '', child.hasOwnProperty('open') && child.open ? 'open' : '']"></span>
+        </span>
+        <child v-if="child.hasOwnProperty('children') && (selectIndex == index) && child.hasOwnProperty('open') && child.open" class="list-menu-child" :data="child.children" :index="index"
         @skipPath="skipPath" @handleClose="handleClose"></child>
       </li>
     </ul>
@@ -31,6 +34,23 @@ export default {
   destroyed () {
   },
   methods: {
+    showChild(node) {
+      if(node.hasOwnProperty('children') && node.children) {
+        if (node.hasOwnProperty('open') && !node.open) {
+          this.$set(node, 'open', true)
+          // if (localStorage.getItem('curPath')) {
+          //   let childData = _.find(this.menuData[0].children, {router: localStorage.getItem('curPath')})
+          //   let childDataIndex = _.findIndex(this.menuData[0].children, {router: localStorage.getItem('curPath')})
+          //   this.selectIndex = childDataIndex
+          //   this.skipPath(childData)
+          // } else {
+          //   this.skipPath(this.menuData[0].children[0])
+          // }
+        } else {
+          this.$set(node, 'open', !node.open)
+        }
+      }
+    },
     handleRemoveHover () {
       this.selectIndex = null
     },
@@ -111,6 +131,10 @@ export default {
         width: 100%;
         padding: 8px 16px;
         border-radius: 4px;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
       }
 
       &.single-index {
@@ -121,14 +145,14 @@ export default {
 
       &:hover {
         >span {
-          background-color: rgba($color: $blue-shadow, $alpha: .2);
+          background-color: rgba($color: $gray-shadow, $alpha: .2);
           color: $gray-rs;
         }
       }
 
       &.select-index {
         >span {
-          background-color: rgba($color: $blue-shadow, $alpha: .4);
+          background-color: rgba($color: $gray-shadow, $alpha: .4);
           color: #fff;
         }
       }
@@ -148,6 +172,25 @@ export default {
 
       &:last-of-type {
         border-radius: 0 0 4px 4px;
+      }
+      
+      .icon-next {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        text-align: center;
+        font-size: 6px;
+        font-weight: bold;
+        color: #fff;
+        border-radius: 50%;
+        background-color: #64717f;
+        position: absolute;
+        right: 30px;
+        margin-top: 3px;
+        &.open {
+          transform: rotate(90deg);
+        }
       }
     }
   }

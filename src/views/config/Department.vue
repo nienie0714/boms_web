@@ -4,10 +4,10 @@
       <tree :data="data" :nodeLabel="'text'" :activeId="activeId" @clickNode="clickNode" :expendAll="true"></tree>
     </div>
     <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+      <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReq(2)">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -24,6 +24,7 @@
       <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove">
         <template v-slot:slot-body="{index, row, item}">
           <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          <div v-if="item.key == 'deptNo'" @click="openDetail({type: 'detail', row})">{{ row[item.key] }}</div>
         </template>
       </tables>
     </div>
@@ -76,7 +77,7 @@ export default {
         }
       ],
       tableData: {
-        height: 600,
+        // height: 600,
         multSelection: [],
         loading: false,
         key: 'deptId',
@@ -84,7 +85,7 @@ export default {
           // left
           [
             {key: 'index',  label: '序号', width: 80, type: 'slot'},
-            {key: 'deptNo',  label: '部门编号', width: 300},
+            {key: 'deptNo',  label: '部门编号', width: 300, colClass: 'bold-underline', type: 'slot'},
             {key: 'deptName', label: '部门名称', width: 355},
             {key: 'pDeptName',  label: '上级部门', width: 355},
             {key: 'phone',  label: '联系电话', width: 355}
@@ -177,7 +178,7 @@ export default {
     },
     clickNode (node) {
       this.parentTreeId = node.id
-      this.queryDataReq()
+      this.queryDataReq(2)
     },
     customQueryBefore () {
       if (this.queryData.hasOwnProperty('deptId')) {

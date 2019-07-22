@@ -94,7 +94,7 @@
             <div v-if="row[item.key] == null || row[item.key] == ''">-</div>
             <div v-else class="red-color">{{row[item.key]}}</div>
           </template>
-          <template v-else-if="['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'lugMarkingTotal'].includes(item.key)">
+          <template v-else-if="['lugCommonTotal', 'lugAdditionTotal', 'allNodeCancelSum', 'lugMarkingTotal', 'lugVipTotal'].includes(item.key)">
             <div v-if="row[item.key] == null || row[item.key] == 0">-</div>
             <div v-else>{{row[item.key]}}</div>
           </template>
@@ -310,8 +310,8 @@ export default {
                 {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
                 {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
                 {key: 'allNodeCancelSum',  label: '拉减', width: 60, type: 'slot'},
-                // todo 挑找
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                // todo 挑找 vipFlag
+                {key: 'lugVipTotal',  label: 'VIP', width: 60, type: 'slot'},
                 {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
@@ -396,7 +396,7 @@ export default {
                 {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
                 {key: 'allNodeCancelSum',  label: '拉减', width: 60, type: 'slot'},
                 // todo 挑找
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                {key: 'lugVipTotal',  label: 'VIP', width: 60, type: 'slot'},
                 {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }
@@ -448,7 +448,7 @@ export default {
               child: [
                 {key: 'lugCommonTotal',  label: '普通', width: 60, type: 'slot'},
                 {key: 'lugAdditionTotal',  label: '追加', width: 60, type: 'slot'},
-                {key: 'vipFlag',  label: 'VIP', width: 60, enumKey: 'isYOrN'},
+                {key: 'lugVipTotal',  label: 'VIP', width: 60, type: 'slot'},
                 {key: 'lugMarkingTotal',  label: '标记', width: 60, type: 'slot'},
               ]
             }

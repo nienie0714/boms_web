@@ -102,6 +102,7 @@ export default {
           } else if (res.data.code == -2) {
             // 验证码超时，自动刷新
             this.changeCodeImg()
+            this.image = ''
             this.$msg.error({
               info: '登录失败',
               tip: res.data.msg

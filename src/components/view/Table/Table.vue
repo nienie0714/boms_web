@@ -79,6 +79,7 @@
                   <template v-if="item.type=='mult'">
                     <div :class="~index?'radio is-checked':'radio'" @click="selectRow(row)"></div>
                   </template>
+                  <template v-else-if="item.type=='scroll'"></template>
                   <template v-else>{{showValue(row, item)}}</template>
                 </template>
                 <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>

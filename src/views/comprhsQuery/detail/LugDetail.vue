@@ -131,7 +131,7 @@ export default {
           {key: 'luggage.flightNo', label: '航班号', class: 'bold'},
           {key: 'luggage.execDate', label: '航班日期', format: [0, 10]},
           {key: 'luggage.counterNo', label: '值机柜台'},
-          {key: 'luggage.chute', label: '行李滑槽'},
+          {key: 'luggage.chuteNo', label: '行李滑槽'},
           {key: 'luggage.stand', label: '机位'}
         ],
         [
@@ -220,7 +220,7 @@ export default {
           {key: 'luggage.flightNo', label: '航班号', class: 'bold'},
           {key: 'luggage.execDate', label: '航班日期', format: [0, 10]},
           {key: 'luggage.counter', label: '值机柜台'},
-          {key: 'luggage.chute', label: '行李滑槽'},
+          {key: 'luggage.chuteNo', label: '行李滑槽'},
           {key: 'luggage.stand', label: '机位'}
         ])
       } else if (this.row.luggage.inOutFlag == 'A') {

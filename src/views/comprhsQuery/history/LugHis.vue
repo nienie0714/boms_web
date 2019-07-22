@@ -1,10 +1,10 @@
 <template>
   <div class="lug-his">
     <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+      <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReq(2)">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">

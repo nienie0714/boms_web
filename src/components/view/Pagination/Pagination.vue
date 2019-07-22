@@ -13,7 +13,7 @@
       <div :class="['next', num == list.length ? 'disabled' : '']" @click.self="(num < list.length) && clickButton('next')">下一页</div>
     </div>
     <div class="page-lists">
-      <inputTag v-model.number="currentNum" :prepend="'跳转至'" :type="'input'" :width="135" @enter="$emit('click', $event)"></inputTag>
+      <inputTag v-model.number="currentNum" :prepend="'跳转至'" :type="'input'" :width="135" @enter="enterCurrentNum"></inputTag>
     </div> 
   </div>
 </template>
@@ -55,6 +55,24 @@ export default {
     }
   },
   methods: {
+    enterCurrentNum (event) {
+      let val
+      if (event !== null && event !== '') {
+        val = parseInt(event)
+        if (isNaN(val)) {
+          return
+        } else {
+          if (val > this.list.length) {
+            val = this.list.length
+          } else if (val < 1) {
+            val = 1
+          }
+        }
+      } else {
+        val = 1
+      }
+      this.$emit('click', val)
+    },
     clickOmit (type) {
       let num = this.num
       switch (type) {

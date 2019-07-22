@@ -115,7 +115,7 @@ export default {
           ],
           // right
           [
-            {label: '', key: 'scroll', width: 8}
+            {label: '', type: 'scroll', width: 8}
           ]
         ],
         data: []

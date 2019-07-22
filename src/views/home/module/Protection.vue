@@ -3,7 +3,7 @@
     <div :class="['header', hidden ? 'hidden' : '']">
       <div class="module-img">
         <div class="title">保障业务协同管理</div>
-        <div class="sub-title">Config settings</div>
+        <div class="sub-title">Collaboration</div>
       </div>
       <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
@@ -13,7 +13,8 @@
         <div class="icon"></div>
         <div>{{title}}</div>
       </div>
-      <component :is="name"></component>
+      <router-view />
+      <!-- <component :is="name"></component> -->
     </div>
   </div>
 </template>
@@ -41,61 +42,44 @@ export default {
   },
   methods: {
     getSecondMenu () {
-      let data = {
-        resourceType: 0,
-        url: this.$route.path
+      let arr = this.$route.path.split('/')
+      if (arr && arr.length > 1) {
+        let data = {
+          resourceType: 0,
+          url: '/' + arr[1]
+        }
+        // 获取二级菜单
+        postData('sys/sysResource/queryHasSysResource', data).then(response => {
+          let onlyBasicArr = []
+          let data = _.find(response.data.data, {router: 'BasicData'})
+          onlyBasicArr.push(data)
+          // 只保留基础数据模块，流程模块隐藏
+          this.menuData = onlyBasicArr
+          // 默认打开可看到三级菜单
+          this.menuData[0].open
+          this.$set(this.menuData[0], 'open', true)
+          if (arr.length === 2) {
+            // 无三级菜单
+            if (this.menuData[0].hasOwnProperty('children') && this.menuData[0].children) {
+              this.skipPath(this.menuData[0].children[0])
+            } else {
+              this.skipPath(this.menuData[0])
+            }
+          } else if (arr.length === 3) {
+            // 三级
+            this.name = this.$route.path
+            // }
+          }
+        })
       }
-
-      // 获取二级菜单
-      postData('sys/sysResource/queryHasSysResource', data).then(response => {
-        // this.menuData = response.data.data
-        this.menuData = [
-          {
-            label: '机位',
-            router: 'Stand',
-            disabled: false
-          },
-          {
-            label: '值机柜台',
-            router: 'Counter',
-            disabled: false
-          },
-          {
-            label: '机型',
-            router: 'AircraftType',
-            disabled: false
-          },
-          {
-            label: '基础数据维护',
-            disabled: false,
-            open: true,
-            children: [
-              {
-                label: '机位',
-                router: 'Stand',
-                disabled: false
-              },
-              {
-                label: '机型',
-                router: 'AircraftType',
-                disabled: false
-              },
-              {
-                label: '值机柜台',
-                router: 'Counter',
-                disabled: false
-              }
-            ]
-          }]
-          this.skipPath(this.menuData[0])
-      })
     },
     skipPath (obj) {
       this.name = obj.router
       localStorage.setItem('curPath', obj.router)
       if (this.name) {
         this.title = obj.label
-        this.$options.components[this.name] = component[this.name]
+        this.$router.push(this.name)
+        // this.$options.components[this.name] = component[this.name]
       }
     }
   },
@@ -103,9 +87,6 @@ export default {
     $route (to, from) {
       this.title = to.name
       localStorage.setItem('topMenuActive', to.path)
-      if (to.path ==  "/protection" && this.menuData == null) {
-        this.getSecondMenu()
-      }
     },
     menuData: {
       handler (value) {

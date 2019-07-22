@@ -87,7 +87,65 @@ var router = new Router({
         {
           path: '/protection',
           name: '保障业务协同管理',
-          component: r => require.ensure([], () => r(require('@/views/home/module/Protection'), 'Protection'))
+          component: r => require.ensure([], () => r(require('@/views/home/module/Protection'), 'Protection')),
+          children: [
+            {
+              path: 'node',
+              name: '作业节点管理',
+              component: r => require.ensure([], () => r(require('@/views/protection/Stand'), 'Stand')),
+            },
+            {
+              path: 'filterCondtion',
+              name: '过滤条件定义',
+              component: r => require.ensure([], () => r(require('@/views/protection/Stand'), 'Stand')),
+            },
+            {
+              path: 'processes',
+              name: '流程关系管理',
+              component: r => require.ensure([], () => r(require('@/views/protection/Stand'), 'Stand')),
+            },
+            {
+              path: 'stand',
+              name: '机位',
+              component: r => require.ensure([], () => r(require('@/views/protection/Stand'), 'Stand')),
+            },
+            {
+              path: 'aircraftType',
+              name: '机型',
+              component: r => require.ensure([], () => r(require('@/views/protection/AircraftType'), 'AircraftType')),
+            },
+            {
+              path: 'counter',
+              name: '值机柜台',
+              component: r => require.ensure([], () => r(require('@/views/protection/Counter'), 'Counter')),
+            },
+            // {
+            //   path: 'basicdata',
+            //   name: '基础数据维护',
+            //   children: [
+            //     {
+            //       path: 'stand',
+            //       name: '机位',
+            //       component: r => require.ensure([], () => r(require('@/views/protection/Stand'), 'Stand')),
+            //     },
+            //     {
+            //       path: 'aircraftType',
+            //       name: '机型',
+            //       component: r => require.ensure([], () => r(require('@/views/protection/AircraftType'), 'AircraftType')),
+            //     },
+            //     {
+            //       path: 'counter',
+            //       name: '值机柜台',
+            //       component: r => require.ensure([], () => r(require('@/views/protection/Counter'), 'Counter')),
+            //     }
+            //   ]
+            // },
+            {
+              path: 'logAudit',
+              name: '日志审计管理',
+              component: r => require.ensure([], () => r(require('@/views/config/LogAudit'), 'LogAudit')),
+            }
+          ]
         }
       ]
     }

@@ -12,7 +12,7 @@
           <span class="label">提示：点击列表项的时间可进行更改</span>
         </div>
       </div>
-      <div class="table container cross" :style="`height: 690px;background :rgba(255,255,255,1);overflow-y: auto;`">
+      <div class="table container cross" :style="`height: 680px;background :rgba(255,255,255,1);overflow-y: auto;`">
         <div v-for="(item, index) in data" :key="index">
           <el-row class="table-other-header">
             <el-col :span="2"><div class="bold color-gray">机位</div></el-col>

@@ -1,10 +1,10 @@
 <template>
   <div class="log-audit">
     <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+      <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReq(2)">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -83,8 +83,7 @@ export default {
           key: 'empName',
           label: '姓名',
           type: 'input',
-          width: 214,
-          toUpper: true
+          width: 214
         },
         {
           key: 'beginDate',
@@ -107,18 +106,18 @@ export default {
           // left
           [
             {key: 'index',  label: '序号', width: 80, type: 'slot'},
-            {key: 'logUser',  label: '用户名', width: 200},
-            {key: 'empName', label: '姓名', width: 200},
+            {key: 'logUser',  label: '用户名', width: 220},
+            {key: 'empName', label: '姓名', width: 220},
             {key: 'logSummary',  label: '操作类型', width: 300, type: 'slot'},
-            {key: 'logDetail',  label: '操作内容', width: 500},
-            {key: 'logTime',  label: '操作时间', width: 250},
+            {key: 'logDetail',  label: '操作内容', width: 550},
+            {key: 'logTime',  label: '操作时间', width: 500},
           ],
           // center
           [
           ],
           // right
           [
-            {label: '操作', type: 'opr', width: 220}
+            {label: '操作', type: 'opr', width: 100}
           ]
         ],
         data: []

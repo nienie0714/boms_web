@@ -159,7 +159,6 @@ export default {
       this.$emit('changeData', {data: this.data, type: this.type})
     },
     handleClose () {
-      this.updateData()// 新增页面关闭后打开字段不清空。bug:编辑页面修改后取消 重新打开会保留上次错误信息
       this.$emit('handleClose')
     },
     handleSubmit () {

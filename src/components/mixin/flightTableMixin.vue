@@ -129,9 +129,12 @@ export default {
               // _this.tableData.column[1][1].child = [{key: 'noData',  label: '', width: 60}]
               // 有运行情况  没有行李列
               _this.tableData.column[1][1].colspan = 0
+              _this.tableData.column[1][0].hidden = false
               _this.tableData.column[1][1].hidden = true
             } else {
               // 有运行情况  有行李列
+              _this.tableData.column[1][0].hidden = false
+              _this.tableData.column[1][1].hidden = false
               _this.tableData.column[1][1].child = showotherFields2.concat(hiddenotherFields2)
               _this.tableData.column[1][1].colspan = lugList.length
             }
@@ -167,6 +170,8 @@ export default {
               // bug  table出现断档
             } else {
               // 没有运行情况  有行李列
+              _this.tableData.column[1][0].hidden = true
+              _this.tableData.column[1][1].hidden = false
               _this.tableData.column[1][1].child = showotherFields1_2.concat(hiddenotherFields1_2)
               _this.tableData.column[1][1].colspan = lugList.length
             }

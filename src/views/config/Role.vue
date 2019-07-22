@@ -1,10 +1,10 @@
 <template>
   <div class="log-audit">
     <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+      <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReqReset">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReq(2)">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -21,6 +21,7 @@
       <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
         <template v-slot:slot-body="{index, row, item}">
           <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          <div v-if="item.key == 'name'" @click="openDetail({type: 'detail', row})">{{ row[item.key] }}</div>
         </template>
       </tables>
     </div>
@@ -71,9 +72,9 @@ export default {
           // left
           [
             {key: 'roleId',  label: 'id', width: 2, hidden: true},
-            {key: 'index',  label: '序号', width: 80, type: 'slot'},
-            {key: 'name',  label: '角色名称', width: 700},
-            {key: 'description', label: '角色描述', width: 700}
+            {key: 'index',  label: '序号', width: 110, type: 'slot'},
+            {key: 'name',  label: '角色名称', width: 700, colClass: 'bold-underline', type: 'slot'},
+            {key: 'description', label: '角色描述', width: 780}
           ],
           // center
           [

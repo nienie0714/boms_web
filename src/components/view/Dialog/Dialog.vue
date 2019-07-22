@@ -1,7 +1,7 @@
 <template>
   <div v-if="showDialog" class="dialog-shade">
     <div class="container cross dialog" :position="position" :class="dialogClass"
-    :style="`left: ${left}px; top: ${top}px; right: ${right}px; bottom: ${bottom}px; width: ${width}px; height: ${height}px;`">
+    :style="`left: ${left}px; top: ${top}px; right: ${right}px; bottom: ${bottom}px; width: ${width}px; ${height ? ('height: ' + height + 'px;') : 'auto'}`">
       <div v-if="header" class="header">
         <slot name="header">
           <div class="title">{{title}}</div>

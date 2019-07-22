@@ -161,6 +161,9 @@ export default {
             this.loading = false
           })
         } else {
+          if (status === 2) {
+            this.pageData.num = 1
+          }
           if (this.pageData.num > 0) {
             pageQuery(this.queryUrl, this.queryData, this.pageData).then(response => {
               this.tableData.multSelection = []

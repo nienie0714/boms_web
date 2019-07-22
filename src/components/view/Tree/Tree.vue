@@ -153,9 +153,6 @@ export default {
               this.halfSelectNodeId.splice(i, 1)
             }
           })
-          if (~indexHalf) {
-            this.halfSelectNodeId.splice(indexHalf, 1)
-          }
         }
       }
       let all = [...this.selectNodeId, ...this.halfSelectNodeId]

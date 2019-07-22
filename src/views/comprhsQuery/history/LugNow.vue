@@ -1,10 +1,10 @@
 <template>
   <div class="luggages">
     <div class="query-top">
-      <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+      <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
-        <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        <button type="primary" :name="loading?'loading':''" @click="queryDataReq(2)">查询</button>
       </div>
     </div>
     <div class="table-cont container cross">
@@ -496,7 +496,7 @@ export default {
       }
     },
     customBeforExport() {
-      this.exportInfo = `是否确认导出 ${this.tableData.data.length} 条数据？`
+      this.exportInfo = `是否确认导出 ${this.pageData.total} 条数据？`
       return true
     },
     handleExport () {
@@ -511,7 +511,7 @@ export default {
     // 保存显示/隐藏列 save保存事件
     saveDefaultRow () {
       this.saveDefaultRowReq()
-    },
+    }
   },
   watch: {
     selectKey: {
