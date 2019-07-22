@@ -39,7 +39,7 @@
       </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
-    <confirm-tip :visible="exportData.visible" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
+    <confirm-tip :visible="exportData.visible" :info="exportInfo" :data="exportData.data" @handleSubmit="handleExport" @handleClose="handleExportClose"></confirm-tip>
   </div>
 </template>
 
@@ -121,12 +121,17 @@ export default {
           ]
         ],
         data: []
-      }
+      },
+      exportInfo: '是否确认导出0条数据？'
     }
   },
   mounted () {
   },
   methods: {
+    customBeforExport() {
+      this.exportInfo = `是否确认导出 ${this.pageData.total} 条数据？`
+      return true
+    },
     // customQueryBefore () {
     //   this.$set(this.queryData, 'inOutFlag', this.selectKey)
     // },

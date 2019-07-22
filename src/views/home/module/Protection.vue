@@ -6,6 +6,20 @@
         <div class="sub-title">Collaboration</div>
       </div>
       <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
+      <!-- <el-menu class="aside-el-menu" router :default-active="$route.path" unique-opened @select="handleSelect" :collapse="asideHidden" :collapse-transition="false" background-color="#1a2d3e" text-color="#9DA7B3" active-text-color="#fff">
+        <div v-for="aside in menuData" :key="aside.router">
+          <el-submenu v-if="aside.children != null && aside.children != [] && (!aside.hidden)" :index="aside.router">
+            <template slot="title">
+              <span slot="title">{{ aside.label }}</span>
+              <div :class="aside.iconCls?(aside.iconCls+' menu-icon'):'menu-icon'"></div>
+            </template>
+            <div v-for="child in aside.children" :key="child.router">
+              <el-menu-item v-if="!child.hidden" :index="child.router">{{ child.label }}</el-menu-item>
+            </div>
+          </el-submenu>
+          <el-menu-item v-else-if="aside.children == null && (!aside.hidden)" :index="aside.router">{{ aside.label }}</el-menu-item>
+        </div>
+      </el-menu> -->
       <div class="hidden-button" @click="hidden = !hidden"></div>
     </div>
     <div class="body container cross">
@@ -33,7 +47,8 @@ export default {
       name: '',
       title: '业务流程管理',
       hidden: false,
-      menuData: null
+      menuData: null,
+      asideHidden: false,
     }
   },
   mounted () {
@@ -41,6 +56,20 @@ export default {
     this.getSecondMenu()
   },
   methods: {
+    handleSelect (key) {
+      // var arr = this.asideData
+      // _.forEach(this.asideData, (item) => {
+      //   if (item.children) {
+      //     arr = _.concat(arr, item.children)
+      //   }
+      // })
+      // var obj = _.filter(arr, ['attributes', key])
+      // _.forEach(this.homeRouterData, (item) => {
+      //   if (this.$route.matched[0].path == item.path) {
+      //     localStorage.setItem(item.name, obj[0].text)
+      //   }
+      // })
+    },
     getSecondMenu () {
       let arr = this.$route.path.split('/')
       if (arr && arr.length > 1) {
@@ -115,4 +144,6 @@ export default {
     }
   }
 }
+</style>
+<style>
 </style>

@@ -86,10 +86,11 @@ export default {
     handleDetail() {
       this.dataHis = _.cloneDeep(this.form.detailColumn)
     },
-    updateData () {
+    updateData (getOptionsFlag) {
       this.errors = {}
       this.dataHis = []
       this.dataHis = _.cloneDeep(this.form.column)
+      getOptionsFlag = getOptionsFlag ? true : (_.isUndefined(getOptionsFlag) ? true : false)
       
       this.dataHis.forEach(item => {
         if (this.type == 'insert') {
@@ -108,7 +109,7 @@ export default {
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
         }
-        if (item.hasOwnProperty('url')) {
+        if (item.hasOwnProperty('url') && getOptionsFlag) {
           let https = queryAll
           if (item.hasOwnProperty('urlType')) {
             switch (item.urlType) {

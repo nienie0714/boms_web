@@ -42,8 +42,8 @@ export default {
           {key: 'deptNo',  label: '部门编号', type: 'input', maxlength: 20},
           {key: 'phone',  label: '联系电话', type: 'input', maxlength: 15},
           {key: 'deptName',  label: '部门名称', type: 'input', maxlength: 20},
-          // {key: 'deptParentId', label: '上级部门', type: 'select', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
-          {key: 'deptParentId', label: '上级部门', type: 'select', itemValue: 'deptId', itemLabel: 'deptName'},
+          {key: 'deptParentId', label: '上级部门', type: 'select', itemValue: 'deptId', itemLabel: 'deptName', url: '/organization/department/queryAll'},
+          // {key: 'deptParentId', label: '上级部门', type: 'select', itemValue: 'deptId', itemLabel: 'deptName'},
           {key: 'remark', label: '备注', type: 'textarea', rows: 2, maxlength: 100},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
@@ -88,7 +88,7 @@ export default {
         this.$set(this.form.column[3], 'options', [])
         this.$set(this.form.column[3], 'options', res.data.data)
       }).then(res => {
-        this.$refs.detail.updateData()
+        this.$refs.detail.updateData(false)
       })
     },
     changeData () {

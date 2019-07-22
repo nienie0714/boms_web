@@ -2,8 +2,7 @@
   <div ref="listMenu" class="list-menu">
     <ul>
       <li v-for="(child, index) in data" :key="index"  :class="[(index%2==0)?'single-index':'', selectIndex==index? 'select-index':'']"
-      @click.stop="handleClick(child, index)"><!-- :class="child.disabled ? 'disabled' : ''" @mouseenter.stop="handleHover(idx)" @mouseleave.stop="handleRemoveHover" -->
-        <!-- <span>{{ child.label }}<i v-if="child.hasOwnProperty('children') && child.children" class="el-icon-caret-right"></i></span> -->
+      @click.stop="handleClick(child, index)">
         <span @click="showChild(child)">{{ child.label }}
           <span :class="[child.hasOwnProperty('children') && child.children ? 'icon iconfont icon-next icon-button' : '', child.hasOwnProperty('open') && child.open ? 'open' : '']"></span>
         </span>
