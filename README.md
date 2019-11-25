@@ -1,14 +1,14 @@
 # boms_web
-行李平台-vue+原生js
 
+行李平台-vue+原生 js
 
-
+```
 目录结构
 ┣ dist				部署包
 ┣ src
 ┃ ┣ api			axios请求封装方法（js）
 ┃ ┣ assets			资源文件（font/img）
-┃ ┣ components	
+┃ ┣ components
 ┃ ┃ ┣ view 公共封装组件
 ┃ ┃ ┃ ┣ CsProgress    	进度条
 ┃ ┃ ┃ ┣ DateRangePicker	时间区间
@@ -67,11 +67,11 @@
 ┃ ┃ ┃ ┗ SecondMenu         二级菜单
 ┃ ┃ ┃
 ┃ ┃ ┗ mixin		        公共封装混入文件
-┃ ┃   
+┃ ┃
 ┃ ┣ axios.conf.js	        配置转发路径 axios配置文件（request/response基础配置及拦截器）
 ┃ ┃
 ┃ ┣ router			配置路由
-┃ ┣ store			
+┃ ┣ store
 ┃ ┃ ┣ modules
 ┃ ┃ ┃┣ baseStore.js	首次登录记录及最后登录时间
 ┃ ┃ ┃┣ config.js	长链接及dfs等相关配置
@@ -85,3 +85,4 @@
 ┣ test			测试
 ┣ package.json		依赖配置
 ┗ …
+```
