@@ -2,8 +2,9 @@ import axios from 'axios'
 import router from './router.js'
 import Vue from 'vue'
 
-const forwardURL = '/api'
-// const forwardURL = ''
+// const forwardURL = '/boms-web'
+// const forwardURL = '/api'
+const forwardURL = ''
 
 axios.defaults.timeout = 100000
 axios.defaults.baseURL = forwardURL
@@ -71,4 +72,18 @@ axiosReq.spread = axios.spread
 axiosReq.interceptors.request.use(request, requestError)
 axiosReq.interceptors.response.use(response, responseErr)
 
-export {axiosReq}
+const axiosReqj = axios.create({
+  baseURL: forwardURL + '/boms-job',
+  headers: {
+    'Content-Type': 'application/json;charset-UTF-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Headers': 'x-requested-with,content-type'
+  }
+})
+axiosReqj.all = axios.all
+axiosReqj.spread = axios.spread
+axiosReqj.interceptors.request.use(request, requestError)
+axiosReqj.interceptors.response.use(response, responseErr)
+
+export {axiosReq,axiosReqj}

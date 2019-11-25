@@ -155,7 +155,7 @@ export default {
           })
         }
       }
-      let all = [...this.selectNodeId, ...this.halfSelectNodeId]
+      let all = [...this.selectNodeId,...this.halfSelectNodeId]
       this.allSelectNodeId.splice(0, this.allSelectNodeId.length, ...new Set(all))
       this.$emit('changeIds', this.allSelectNodeId)
       this.$emit('selectCheckBox', node)
@@ -219,6 +219,9 @@ export default {
           }
         }
       }
+      let all = [...this.selectNodeId,...this.halfSelectNodeId]
+      this.allSelectNodeId.splice(0, this.allSelectNodeId.length, ...new Set(all))
+      this.$emit('changeIds', this.allSelectNodeId)
       this.$emit('selectCheckBox', pObj)
     },
     clickNode (node) {
@@ -244,6 +247,7 @@ export default {
     data: {
       handler (data) {
         this.tree = JSON.parse(JSON.stringify(data))
+        this.deepData = []
         flattenDeep(this.tree, this.deepData)
         let ids = this.autoSelectNodeId
         if (ids && ids.length > 0) {
@@ -276,6 +280,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  overflow: auto;
   
   &:not(.tree-child) {
     padding: 10px 0;
@@ -303,21 +308,23 @@ export default {
 
   .tree-node {
     line-height: 32px;
-    width: 100%;
+    // width: 100%;
     color: $gray-st;
     position: relative;
     text-align: left;
     cursor: pointer;
-
     &.active {
       >.tree-label {
-        background-color: rgba($color: $blue-shadow, $alpha: .3);
+        background-color: rgba(97, 112, 128, 0.5);
       }
     }
-
     >.tree-label {
       padding: 0 12px 0 30px;
       height: 32px;
+      white-space: nowrap;
+      &:hover {
+        background-color: rgba(97, 112, 128, 0.3);
+      }
       >.checkbox {
         margin-right: 5px;
       }

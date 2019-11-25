@@ -10,7 +10,7 @@ export default {
   methods: {
     changeWindowSize () {},
     showValue (row, item) {
-      let value = '-'
+      let value = ''
       if (_.get(row, item.key)) {
         if (item.format) {
           if (item.format.constructor == Array) {

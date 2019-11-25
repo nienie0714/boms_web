@@ -14,12 +14,12 @@
     </div>
     <div class="page-lists">
       <inputTag v-model.number="currentNum" :prepend="'跳转至'" :type="'input'" :width="135" @enter="enterCurrentNum"></inputTag>
-    </div> 
+    </div>
   </div>
 </template>
 
 <script>
-import InputTag from '@view/InputTag/InputTag'
+import InputTag from '@view/InputTag/InputTagForPagination'
 import _ from 'lodash'
 
 export default {
@@ -149,6 +149,9 @@ export default {
     num: {
       handler (num) {
         if (num > 0) {
+          if(this.$parent.$refs.tables) {
+            this.$parent.$refs.tables.selectIndex = null;
+          }
           this.$emit('changeData')
           this.computeList()
         }
@@ -200,7 +203,7 @@ $h: 34px;
       line-height: 31px;
     }
 
-    input, select {    
+    input, select {
       height: 32px;
     }
 

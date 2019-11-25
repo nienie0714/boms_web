@@ -10,34 +10,71 @@
               <template v-if="obj.type == 'tree'">
                 <el-tree :data="obj.value" :props="{children: 'children',label: 'text'}"></el-tree>
               </template>
+              <template v-else-if="obj.type == 'table'">
+                <tables :tableData="obj.value">
+                  <template v-slot:slot-body="{index, row, item}">
+                    <template v-if="item.key == 'index'">
+                      <div>
+                        {{index + 1}}
+                      </div>
+                    </template>
+                  </template>
+                </tables>
+              </template>
               <template v-else>
-                {{obj.value}}
+                <template v-if="typeof obj.value === 'object'">
+                  <span v-for="(val, index) in obj.value" :key="index" style="margin-right: 5px">{{val}}</span>
+                </template>
+                <template v-else>
+                  {{obj.value}}
+                </template>
               </template>
             </div>
           </i-col>
         </Row>
       </div>
       <div class="form" v-else>
-       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' ? 'whole-width' : '', item.isHidden ? '': 'form-item']">
-          <div class="label" v-if="item.type == 'textarea' || item.type == 'tree'">{{ item.label }}</div>
+       <div v-for="(item, index) in dataHis" :key="index" v-show="!item.isHidden" :class="['value', item.key in errors ? 'error' : '', item.type == 'textarea' || item.type == 'tree' || item.type == 'elTransfer' || item.type == 'elDateTimeRange'? 'whole-width' : '', item.isHidden ? '': 'form-item',item.class]">
+          <div class="label" v-if="item.type == 'textarea' || item.type == 'tree' || item.type == 'elTransfer'">{{ item.label }}</div>
           <textarea v-if="item.type == 'textarea'" v-model.trim="data[item.key]" :maxlength="item.maxlength" :minlength="item.minlength" :placeholder="item.placeholder" :disabled="item.disabled" :rows="item.rows" cols="80" @change="handleChange(item, $event)"></textarea>
-          <div v-else-if="item.type == 'tree'" class="tree-wrapper">
+          <div v-else-if="item.type == 'tree'" class="tree-wrapper" 
+          :style="`overflow-y: ${item.overflowy};${item.height ? ('height: ' + item.height + 'px;') : 'auto'}`">
             <my-tree :data="item.options" :selected="true" :disabled="item.disabled" :autoSelectNodeId="data[item.key]" :allSelectNodeId="data[item.saveKey]"
             :nodeKey="item.itemId" :nodeLabel="item.itemLabel" :nodeChild="item.itemChild"
             :expendAll="item.expendAll" :expendLevel="item.expendLevel"></my-tree>
           </div>
+          <my-transfer
+            v-else-if="item.type == 'elTransfer'" 
+            class="transfer-wrapper"
+            filterable
+            filter-placeholder="输入员工姓名搜索"
+            v-model="data[item.key]"
+            :pdata="item.pOptions"
+            :data="item.options"
+            :titles="item.titles"
+            :props="item.props"
+            @change="handleChange(item, $event)">>
+          </my-transfer>
           <input-tag v-else v-model.trim="data[item.key]" :type="item.type" :prepend="item.label" :append="item.endLabel" :placeholder="item.disabled ? '' :'请输入'" :maxlength="item.maxlength" :minlength="item.minlength"
-          :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"
-          :multiple="item.multiple"
+          :options="item.options" :id="item.itemValue" :label="item.itemLabel" :require="item.require" :defaultVal="item.defaultVal" :disabled="item.disabled"  :multipleLimit="item.multipleLimit" :datetype="item.dateType"
+          :multiple="item.multiple" :clearable="item.clearable"
+          :style="`${item.width ? ('width: ' + item.width + 'px;') : 'auto'};${item.paddingright ? ('padding-right: ' + item.paddingright + 'px;') : 'auto'}`"
           @change="handleChange(item, $event)"></input-tag>
           <div v-if="item.key in errors" class="error">{{ errors[item.key] }}</div>
         </div>
       </div>
     </template>
+    <template v-slot:footer="{submit, closeDialog, submitDialog}">
+      <slot name="footer" :submit="submit" :closeDialog="closeDialog" :submitDialog="handleSubmit">
+        <button @click="closeDialog">取 消</button>
+        <button v-if="submit" type="primary" @click="submitDialog">确 认</button>
+      </slot>
+    </template>
   </my-dialog>
 </template>
 
 <script>
+import Tables from '@view/Table/Table'
 import Inputs from '@view/Inputs/Inputs'
 import TabButton from '@view/TabButton/TabButton'
 import InputList from '@view/InputList/InputList'
@@ -45,6 +82,7 @@ import InputListMore from '@view/InputListMore/InputListMore'
 import Selects from '@view/Selects/Selects'
 import MyTree from '@view/Tree/Tree'
 import InputTag from '@view/InputTag/InputTag'
+import MyTransfer from '@view/MyTransfer/Transfer'
 import utilMixin from '@mixin/utilMixin'
 import { queryAll, queryAllGet } from '@/util/base'
 import { getNewObjArr } from '@/util/util'
@@ -54,8 +92,10 @@ import { setTimeout } from 'timers';
 
 export default {
   components: {
+    Tables,
     MyTree,
-    InputTag
+    InputTag,
+    MyTransfer
   },
   mixins: [utilMixin],
   props: ['form', 'visible', 'type', 'title', 'close', 'position', 'header', 'maxlength', 'minlength'],
@@ -86,17 +126,22 @@ export default {
     handleDetail() {
       this.dataHis = _.cloneDeep(this.form.detailColumn)
     },
-    updateData (getOptionsFlag) {
+    updateData () {
       this.errors = {}
       this.dataHis = []
-      this.dataHis = _.cloneDeep(this.form.column)
-      getOptionsFlag = getOptionsFlag ? true : (_.isUndefined(getOptionsFlag) ? true : false)
-      
+      // console.log('this.form.column',this.form.column)
+      // console.log('this.data--',this.data);
+      // this.dataHis = _.cloneDeep(this.form.column)
+
+      // let obj = _.cloneDeep(this.form.column);
+      this.dataHis = Object.assign([],this.form.column);
+      // this.dataHis = JSON.parse(JSON.stringify(this.form.column));
+
       this.dataHis.forEach(item => {
         if (this.type == 'insert') {
           this.$set(this.data, item.key, item.hasOwnProperty('defaultVal') ? item.defaultVal : null)
           if (item.hasOwnProperty('saveKey')) {
-            if (item.type == 'tree') {
+            if (item.type == 'tree' || item.type == 'elTransfer') {
               this.$set(this.data, item.saveKey, [])
             } else {
               this.$set(this.data, item.saveKey, null)
@@ -109,7 +154,7 @@ export default {
         if (this.type == 'detail') {
           this.$set(item, 'disabled', true)
         }
-        if (item.hasOwnProperty('url') && getOptionsFlag) {
+        if (item.hasOwnProperty('url')) {
           let https = queryAll
           if (item.hasOwnProperty('urlType')) {
             switch (item.urlType) {
@@ -119,19 +164,37 @@ export default {
               break
             }
           }
-          https(item.url, item.param || {}).then(res => {
-            if (res.data.code == 0) {
-              this.$set(item, 'options', [])
-              item.options = res.data.data
-            } else {
-              this.$msg.error({
-                info: '获取' + item.label + '失败 !'
-              })
-            }
-          })
+
+          if(item.key == 'lstEmpId') {
+            https(item.url, {teamId: this.data.teamId}).then(res => {
+              if (res.data.code == 0) {
+                this.$set(item, 'options', res.data.data.employees)
+                this.$set(this.data, item.key, res.data.data.selectedEmpIds)
+              } else {
+                this.$msg.error({
+                  info: '获取' + item.label + '失败 !'
+                })
+              }
+            })
+          } else {
+            https(item.url, item.param || {}).then(res => {
+              if (res.data.code == 0) {
+                this.$set(item, 'options', [])
+                item.options = res.data.data
+              } else {
+                this.$msg.error({
+                  info: '获取' + item.label + '失败 !'
+                })
+              }
+            })
+          }
+             
+         
         } else if (item.hasOwnProperty('enumKey')) {
           this.$set(item, 'options', this.$store.getters.getOptions(item.enumKey))
         }
+
+
       })
     },
     handleChange (item, val) {
@@ -160,10 +223,11 @@ export default {
       this.$emit('changeData', {data: this.data, type: this.type})
     },
     handleClose () {
+      // this.updateData()// 新增页面关闭后打开字段不清空。bug:编辑页面修改后取消 重新打开会保留上次错误信息
       this.$emit('handleClose')
     },
-    handleSubmit () {
-      // this.errors = {}
+    handleSubmit (other) {
+      this.errors = {}
       let hiddenKeys = []
       // 表单字段隐藏时不校验
       this.dataHis.forEach((item, index) => {
@@ -175,13 +239,18 @@ export default {
         if(!hiddenKeys.includes(key)) {
           if (!this.errors.hasOwnProperty(key)) {
             this.handleError(key, this.data[key])
+            if(!_.isEmpty(this.errors)) {
+              return
+            }
           }
         }
       })
+
       if (!_.isEmpty(this.errors)) {
         return
       } else {
-        this.$emit('handleSubmit', {data: this.data, type: this.type})
+       
+        this.$emit('handleSubmit', {data: this.data, type: this.type,other: other})
       }
     },
     handleError (key, value) {
@@ -194,16 +263,27 @@ export default {
         for (let i = 0; i < arr.length; i++) {
           let item = arr[i]
           if (item.type == 'require') {
-            if (!value && value !== 0) {
-              this.$set(this.errors, key, '必填')
-              break
+            if(Array.isArray(value)) {
+              if(!value.length) {
+                this.$set(this.errors, key, '必填')
+                break
+              }
+            } else {
+              if (!value && value !== 0) {
+                this.$set(this.errors, key, '必填')
+                break
+              }
             }
+            
           } else if (item.type == 'unique') {
             let k = item.hasOwnProperty('key') ? item['key'] : key
             if (value || value === 0) {
               let url = item.url + '/checkExist'
               let data = {}
               let k = item.hasOwnProperty('key') ? item['key'] : key
+              if(item.hasOwnProperty('resourceType')==true){
+                this.$set(data,'resourceType',item.resourceType)
+              }
               this.$set(data, k, value)
               if (this.form.data == null) {
                 queryAll(url, data).then(res => {
@@ -246,6 +326,9 @@ export default {
           } else if (item.type == 'method') {
             let method = item.method
             method(value, param => {
+              if(param) {
+                this.$set(this.errors, key, param)
+              }
             })
           }
         }
@@ -270,18 +353,27 @@ export default {
             case 'insert': this.typeName = '新增'
             this.submit = true
             if (this.form.key) {
-              this.data = {}
-              this.$set(this.data, this.form.key, null)
+              if(this.form.key == "deptId") {
+                this.$set(this.data, this.form.key, null)
+              } else if(this.form.key == "empId") {
+
+              }else {
+                this.data = {}
+                if(this.form.key == "teamId") {
+                  this.$set(this.data, 'lstEmpId', [])
+                }
+                this.$set(this.data, this.form.key, null)
+              }
             }
             break
             case 'update': this.typeName = '编辑'
-            this.submit = true
+            this.submit = true;
             this.$set(this, 'data', JSON.parse(JSON.stringify(this.form.data)))
             break
           }
           this.updateData()
         }
-      }
+      } 
     },
     data: {
       handler (data) {
@@ -333,12 +425,13 @@ export default {
 .form-item {
   flex-wrap: nowrap;
   flex-direction: column;
+  width: 48.5%!important;
   &:nth-child(odd) {
     margin-right: 16px; 
   }
 
   &.whole-width {
-    width: 100%;
+    width: 100%!important;
     margin-right: 0px;
   }
   &.error {
@@ -384,6 +477,70 @@ export default {
     border-radius: 6px;
     width: 100%;
   }
+  .transfer-wrapper {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    /deep/.el-transfer-panel {
+      input {
+        &::placeholder{
+          text-align: left;
+        }
+      }
+      .el-checkbox__inner {
+        width: 16px;
+        height: 16px;
+        border: 1px solid rgba($color: #c6d1da, $alpha: .7);
+        &::after {
+          border: none;
+          height: 8px;
+          left: 5px;
+        }
+      }
+      .el-transfer-panel__item.el-checkbox {
+        display: block;
+      }
+      .el-checkbox__input.is-checked .el-checkbox__inner{
+        background-color: $blue !important;
+        border-color: $blue !important;
+        &:before,
+        &:after {
+          content: '';
+          display: block;
+          background: #fff;
+          position: absolute;
+          border-radius: 10px;
+        }
+
+        &:before {
+          width: 2px;
+          height: 6px;
+          transform: rotate(-45deg);
+          top: 6px;
+          left: 4px;
+        }
+
+        &:after {
+          height: 10px;
+          width: 2px;
+          transform: rotate(45deg);
+          left: 8px;
+          top: 3px;
+        }
+
+      }
+      .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background-color: $blue !important;
+        border-color: $blue !important;
+        &::before {
+          width: 8px;
+          top: 6px;
+          left: 3px;
+          transform: none;
+        }
+      }
+    }
+  }
 }
 // >.label {
 //   font-size: $size;
@@ -410,6 +567,7 @@ export default {
   }
   &:first-child{
     padding-top: 0px;
+    flex: 1;
   }
 }
 .his-info-title {
@@ -419,7 +577,8 @@ export default {
   margin-bottom: 8px;
 }
 .his-info-cont {
-    max-width: 600px;
+    // max-width: 600px;
+    padding-right: 6px;
     overflow-y: auto;
     font-size: 16px;
     min-height: 16px;
@@ -428,9 +587,39 @@ export default {
     text-align: left;
     word-wrap: break-word;
     word-break: break-all;
+    .table {
+      th:first-child {
+        padding-left: 20px;
+      }
+      td:first-child {
+        padding-left: 20px;
+      }
+    }
 }
 
 .ivu-tree ul {
   font-size: 16px;
+}
+
+.team-mana-detail {
+    .dialog {
+        .form {
+            // padding: 0!important;
+            // .his-info-normal {
+            //   &:nth-child(1) {
+            //     margin: 0 20px;
+            //   }
+            //   &:nth-child(2) {
+            //     margin: 0 20px;
+            //   }
+            //   &:nth-child(3) {
+            //     .his-info-title {
+            //       margin-left: 20px;
+            //     }
+            //   }
+            // }
+        }   
+    }   
+    
 }
 </style>

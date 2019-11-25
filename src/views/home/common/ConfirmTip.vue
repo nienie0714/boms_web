@@ -1,6 +1,6 @@
 <template>
   <my-dialog v-bind="$attrs" v-on="$listeners" :title="title" :height="height" @submitDialog="handleSubmit" @handleClose="handleClose"
-  :position="position" class="confirm-dialog">
+  :position="position" class="confirm-dialog" >
     <template>
       <div>{{info}}</div>
     </template>
@@ -9,6 +9,7 @@
 
 <script>
 export default {
+
   props: {
     title: {
       type: String,
@@ -28,7 +29,7 @@ export default {
     },
     data: {
       type: [String, Number, Object],
-      default: null
+      default: null,
     }
   },
   data () {
@@ -61,6 +62,8 @@ export default {
   .body {
     >div {
       font-size: 16px;
+      margin-left: 25px;
+      line-height: 60px;
     }
   }
 }

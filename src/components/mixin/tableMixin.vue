@@ -1,5 +1,6 @@
 <script>
 import { postData, queryAll, pageQuery, nopageQuery, remove, download } from '@/util/base'
+import { dateFormat } from '@/util/util'
 import _ from 'lodash'
 
 export default {
@@ -31,7 +32,7 @@ export default {
       },
       detail: {
         visible: false,
-        type: 'insert',
+        type: '',
         data: null
       },
       remove: {
@@ -75,7 +76,7 @@ export default {
   },
   methods: {
     changeTableHeight(table) {
-      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 20
+      this.tableData.height = window.innerHeight - table.getBoundingClientRect().top - 20;
     },
     // 获取查询参数
     getQueryData (arr) {
@@ -108,7 +109,13 @@ export default {
                 this.$set(data, item.key1, null)
                 this.$set(data, item.key2, null)
               }
-            } else {
+            } else if(item.hasOwnProperty('queryKey')) {
+              if (item.value) {
+                this.$set(data, item.queryKey, item.value)
+              } else {
+                this.$set(data, item.queryKey, null)
+              }
+            } else{
               this.$set(data, item.key, item.value)
             }
           }
@@ -156,6 +163,24 @@ export default {
             }
             this.tableData.loading = false
             this.loading = false
+
+            if(this.transferPage) {
+              // if(this.currFlghtIdD) {
+              //   let index = this.tableData.data.findIndex(val => val.dynamicFlightIdD == this.currFlghtIdD)
+              // if(index != -1) {
+              //     this.changeComp(this.tableData.data[index])
+              //     this.$refs.tables.selectRowTr(this.tableData.data[index],index);  
+              // } else {
+              //     this.changeComp(this.tableData.data[0])
+              //     this.$refs.tables.selectRowTr(this.tableData.data[0],0);
+              //   }
+              // } else {
+              //   this.changeComp(this.tableData.data[0])
+              //   this.$refs.tables.selectRowTr(this.tableData.data[0],0);
+              // }
+            }
+
+            
           }).catch(() => {
             this.tableData.loading = false
             this.loading = false
@@ -176,9 +201,6 @@ export default {
                   this.tableData.data = response.data.data
                 }
                 this.customAfterQuery()
-                /* this.$msg.success({
-                  info: '获取列表数据失败 !'
-                }) */
               } else {
                 this.$msg.error({
                   info: '获取列表数据失败 !',
@@ -187,12 +209,31 @@ export default {
               }
               this.tableData.loading = false
               this.loading = false
+
+
+              // ---------------------------
+              if(this.transferPage) {
+                // if(this.currFlghtIdD) {
+                //   let index = this.tableData.data.findIndex(val => val.dynamicFlightIdD == this.currFlghtIdD)
+                //   if(index != -1) {
+                //     this.changeComp(this.tableData.data[index])
+                //     this.$refs.tables.selectRowTr(this.tableData.data[index],index);  
+                //   } else {
+                //     this.changeComp(this.tableData.data[0])
+                //     this.$refs.tables.selectRowTr(this.tableData.data[0],0);
+                //   }
+                // } else {
+                //   this.changeComp(this.tableData.data[0])
+                //   this.$refs.tables.selectRowTr(this.tableData.data[0],0);
+                // }
+            }
+             
             }).catch(() => {
               this.tableData.loading = false
               this.loading = false
             })
           }
-          }
+        }
       // }
     },
     // 清空查询参数并发送查询请求
@@ -216,7 +257,7 @@ export default {
         }
       })
       this.queryParam = data
-      this.queryDataReq()
+      this.queryDataReqReset()
     },
     // 获取按钮权限
     queryResourcePerm (path) {
@@ -299,7 +340,7 @@ export default {
         if (total) {
           download(this.exportUrl, this.queryData, total).then(response => {
             // this.downFile(response, this.fileName)
-            this.downFile(response, '导出')
+            this.downFile(response, (this.exportName || '导出') + this.dateFormat(new Date()))
             this.$msg.success({
               info: '导出成功 !'
             })
@@ -311,10 +352,10 @@ export default {
           })
         }
       } else {
-        let sum = this.pageData ? this.pageData.total : 1
+        let sum = this.pageData ? this.pageData.total : 1;
         if (sum) {
           download(this.exportUrl, this.queryData, sum).then(response => {
-            this.downFile(response, '导出')
+            this.downFile(response, (this.exportName || '导出') + this.dateFormat(new Date()))
             this.$msg.success({
               info: '导出成功 !'
             })
@@ -339,7 +380,8 @@ export default {
       if (fileType) {
         type = fileType
       } else {
-        type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        type = 'application/vnd.ms-excel'
+        // type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       }
       var blob = new Blob([data], { type: type })
       var objectUrl = URL.createObjectURL(blob)
@@ -349,7 +391,15 @@ export default {
       a.setAttribute('download', fileName)
       a.click()
       URL.revokeObjectURL(objectUrl)
-    }
+    },
+    dateFormat(time){
+      if(time) {
+          return dateFormat(time, 'yyyyMMddhhmmss');
+      }
+     },
+  },
+  watch: {
+    
   }
 }
 </script>

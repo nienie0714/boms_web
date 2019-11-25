@@ -1,11 +1,11 @@
 <template>
-  <detail class="log-audit-detail" v-bind="$attrs" :visible="visible" v-on="$listeners" :title="title" :type="type" :form="form"></detail>
+  <detail class="log-audit-detail" v-bind="$attrs" :visible="visible" v-on="$listeners" :title="title" :type="type" :form="form" ref="userDetail"></detail>
 </template>
 
 <script>
 import Detail from '@/views/home/common/Detail'
 import utilMixin from '@mixin/utilMixin'
-import { queryAll } from '@/util/base'
+import { queryAll,postData } from '@/util/base'
 import _ from 'lodash'
 
 export default {
@@ -14,6 +14,12 @@ export default {
   },
   mixins: [utilMixin],
   props: ['data', 'type', 'visible'],
+  computed: {
+     getDefaultPw () {
+        const pw = this.$store.getters.getConfigValue('defaultPw');
+        return pw;
+    }
+  },
   data () {
     return {
       title: '用户管理',
@@ -38,12 +44,13 @@ export default {
           ]
         ],
         column: [
-          {key: 'userName',  label: '用户名', type: 'input', maxlength: 20},
-          {key: 'roleIds', label: '角色', type: 'select', multiple: true, itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll'},
-          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', method: this.queryDept},
-          // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
+          {key: 'userName',  label: '用户名', type: 'input', maxlength: 20,},
+          {key: 'empId', label: '姓名', saveKey: 'empId', type: 'select', itemValue: 'empId', itemLabel: 'empName', url: 'organization/employee/noBindUser', method: this.queryDept, clearable: false},
           {key: 'deptName',  label: '部门', type: 'input', disabled: true},
-          {key: 'password',  label: '密码', type: 'input', defaultVal: 1, inputType: 'password', maxlength: 255},
+          {key: 'password',  label: '密码', type: 'input', defaultVal: this.getDefaultPw, inputType: 'password', maxlength: 255},
+          {key: 'roleIds', label: '角色', type: 'select', multiple: true, itemValue: 'roleId', itemLabel: 'name', url: '/sys/sysRole/queryAll',class:'role-class'},
+          
+          // {key: 'empId', label: '姓名', saveKey: 'empId', type: 'inputlist', itemValue: 'empId', itemLabel: 'empName', url: '/organization/employee/queryAll', method: this.queryDept},
           {key: 'createtime', label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
           {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
@@ -54,12 +61,13 @@ export default {
             {type: 'require', trigger: 'blur'}
           ],
           userName: [
-            {type: 'require', trigger: 'blur'},
+            {type: 'require', trigger: 'change'},
             {type: 'regex', reg: /^[a-zA-Z0-9-]{1,20}$/, info: '必须为数字、字母、-'},
-            {type: 'unique', url: '/sys/sysUser', trigger: 'blur'}
+            {type: 'unique', url: '/sys/sysUser', trigger: 'blur'},
+            {type: 'method', method: this.checkPass},
           ],
           deptName: [
-            {type: 'require', trigger: 'blur'}
+            {type: 'require', trigger: 'blur'},
           ],
           // password: [ // disabled
           //   {type: 'require', trigger: 'blur'},// 数字字母组合，区分大小写，不支持汉字
@@ -73,14 +81,20 @@ export default {
       }
     }
   },
-  mounted () {
-    const pw = this.$store.getters.getConfigValue('defaultPw')
-    _.forEach(this.form.column, (item) => {
-      if (item.key == 'password') {
-        item.defaultVal = pw
-        this.$set(item, 'defaultVal', pw)
-      }
+  created() {
+    postData('/base/sysParam/queryAll', {}).then(res => {
+      this.$store.commit('setConfigs', res.data.data)
+      const pw = this.$store.getters.getConfigValue('defaultPw')
+      _.forEach(this.form.column, (item) => {
+        if (item.key == 'password') {
+          item.defaultVal = pw
+          this.$set(item, 'defaultVal', pw)
+        }
+      })
     })
+  },
+  mounted () {
+    
   },
   methods: {
     queryDept(value, callback) {
@@ -92,7 +106,8 @@ export default {
           }
           if (res.data.code == 0) {
             if (!_.isNull(res.data.data)) {
-              this.$set(deptInfo, 'value', res.data.data['deptName'])
+              this.$set(deptInfo, 'value', res.data.data['deptName']);
+              this.$refs.userDetail.handleChange({key: 'deptName',  label: '部门', type: 'input', disabled: true}, res.data.data['deptName'])
               callback(deptInfo)
               return null
             } else {
@@ -114,6 +129,13 @@ export default {
         })
       }
     },
+    checkPass(val, callback) {
+      if(val == this.getDefaultPw) {
+        callback('用户名和密码不能相同')
+      } else {
+        callback()
+      }
+    },
     changeData () {
       this.form.data = this.data
     }
@@ -124,7 +146,7 @@ export default {
         this.changeData()
       },
       immediate: true
-    },    
+    },
     visible: {
       handler (visible) {
         if (visible && this.type == 'update') {
@@ -139,6 +161,9 @@ export default {
     type: {
       handler (type) {
         this.form.column.forEach((item, index) => {
+          if(item.key != 'deptName') {
+             this.$set(item, 'disabled', false) 
+          }
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
@@ -182,4 +207,27 @@ $bodyHead: 32px;
   width: 30px;
   height: 50px;
 }
+// .form {
+//   .form-item.role-class {
+//     width: 100%;
+//   }
+// }
+
 </style>
+<style lang="scss">
+.form {
+  .form-item.role-class {
+    width: 100%!important;
+    margin-right: 0;
+    align-items: start;
+    .input-tag {
+      width: 100%!important;
+      .el-select {
+        width: 100%;
+      }
+
+    }
+  }
+}
+</style>
+

@@ -3,15 +3,23 @@
     <div class="tab-group">
       <tabs :tabsData="tabsDataDay" defaultKey="T1" @tabItemClick="tabItemClickDay"></tabs>
     </div>
+    <div class="query-top" >
+        <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+        <div class="toolbar">
+            <button type="info" @click="cleanQueryData">重置</button>
+            <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        </div>
+    </div> 
     <div class="table-cont container cross">
-      <div class="table-title">
+      <!-- <div class="table-title">
         <div class="left">
-          <span class="label">值机柜台表</span>
+            <span class="label">查询结果</span>
+            <span class="info">共{{tableData.data.length}}条</span>
         </div>
         <div class="right">
           <span class="label">提示：点击列表项的时间可进行更改</span>
         </div>
-      </div>
+      </div> -->
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="item.type == 'slot'">
@@ -24,6 +32,15 @@
           </template>
         </template>
       </tables>
+      <div class="table-title">
+        <div class="left">
+            <span class="label">查询结果</span>
+            <span class="info">共{{tableData.data.length}}条</span>
+        </div>
+        <div class="right">
+          <span class="label">提示：点击列表项的时间可进行更改</span>
+        </div>
+      </div>
     </div>
     <my-dialog :visible="counterData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
     :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
@@ -59,6 +76,7 @@ import Tables from '@view/Table/Table'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import formMixin from '@mixin/formMixin'
+import QueryRow from '@view/QueryRow/QueryRow'
 import { queryAll, update } from '@/util/base'
 import InputTag from '@view/InputTag/InputTag'
 import _ from 'lodash'
@@ -68,7 +86,8 @@ export default {
     Tabs,
     Tables,
     ConfirmTip,
-    InputTag
+    InputTag,
+    QueryRow
   },
   mixins: [tableMixin, formMixin],
   data () {
@@ -79,7 +98,7 @@ export default {
       queryUrl: '/base/lugConveyorInterval/queryLugConveyorByTerminalNo',
       queryParam: [
         {
-          key: 'counter',
+          key: 'counterNo',
           label: '柜台',
           type: 'input',
           width: 214
@@ -115,7 +134,7 @@ export default {
           ],
           // right
           [
-            {label: '', type: 'scroll', width: 8}
+            {label: '', key: 'scroll', width: 8}
           ]
         ],
         data: []
@@ -256,6 +275,11 @@ export default {
       }
     }
   }
+}
+.log-audit {
+  height: calc(100%);
+  display: flex;
+  flex-direction: column
 }
 </style>
 

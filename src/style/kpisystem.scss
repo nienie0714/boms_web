@@ -1,0 +1,74 @@
+@import './global.scss';
+
+.query-top {
+  .toolbar {
+    height: 38px;
+    align-self: flex-start;
+    min-width: 160px;
+
+    .tool-button {
+      display: inline-flex;
+      padding: 4px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 10px;
+      height: 38px;
+      width: 60px;
+      line-height: 32px;
+      vertical-align: top;
+    }
+
+    .tool-button.clear {
+      width: 70px;
+    }
+
+    .tool-button[name='loading'] {
+      width: 120px;
+    }
+  }
+}
+
+.tab-group {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+
+  .tabs-parent {
+    margin-right: 20px;
+
+    .tab-item > div {
+      height: 20px;
+      line-height: 24px;
+    }
+  }
+
+  .tab-item {
+    color: $gray-nd;
+    cursor: pointer;
+
+    &.current-item {
+      box-sizing: border-box;
+      margin: 2px;
+      background: linear-gradient(to right, rgb(70, 166, 249), rgb(87, 140, 254));
+      color: #fff !important;
+      // border-radius: 60px/50px;
+      border-radius: 18px;
+
+      > div {
+        line-height: 20px !important;
+      }
+    }
+
+    &:hover {
+      color: $blue;
+    }
+
+    &:not(:last-child) > div {
+      border-right: none !important;
+    }
+  }
+}

@@ -40,7 +40,7 @@ export default {
           })
           this.handleClose()
           if (this.hasOwnProperty('queryDataReq')) {
-            this.queryDataReq()
+            this.queryDataReq(2)
           }
         } else {
           this.$msg.error({
@@ -52,7 +52,6 @@ export default {
         this.$msg.error({
           info: '请求异常 !'
         })
-        console.log(err)
       })
     },
     update (data) {
@@ -63,7 +62,7 @@ export default {
           })
           this.handleClose()
           if (this.hasOwnProperty('queryDataReq')) {
-            this.queryDataReq()
+            this.queryDataReq(2)
           }
         } else {
           this.$msg.error({
@@ -74,7 +73,6 @@ export default {
         this.$msg.error({
           info: '请求异常 !'
         })
-        console.log(err)
       })
     },
     submitBefore (data, type) { return data },

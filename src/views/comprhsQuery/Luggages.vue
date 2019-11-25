@@ -1,11 +1,13 @@
 <template>
   <div class="luggages">
     <div class="tab-group">
-      <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
+      <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay" :style="selectKey == 'E' ? 'visibility:hidden':''"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
-    <LugHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugHis>
+    <LugHis v-if="selectKeyDay == -1 && selectKey != 'E'" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugHis>
+    <TransitLug v-else-if="selectKey == 'E'" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></TransitLug>
     <LugNow v-else :selectKeyDay="selectKeyDay" :selectKey="selectKey"></LugNow>
+    
   </div>
 </template>
 
@@ -15,12 +17,14 @@ import Tabs from '@view/Tabs/Tabs'
 import { queryAll } from '@/util/base'
 import LugNow from './history/LugNow'
 import LugHis from './history/LugHis'
+import TransitLug from '../transfer/TransitLug'
 
 export default {
   components: {
     Tabs,
     LugNow,
-    LugHis
+    LugHis,
+    TransitLug
   },
   data () {
     return {
@@ -32,16 +36,12 @@ export default {
       tabsDataDay: [
         {
           key: -1,
-          label: '昨日'
+          label: '更早'
         },
         {
           key: 0,
           label: '今日'
         },
-        {
-          key: -2,
-          label: '历史记录'
-        }
       ],
       tabsData: [
         {
@@ -52,10 +52,10 @@ export default {
           key: 'A',
           label: '进港行李'
         },
-        // {
-        //   key: 'E',
-        //   label: '中转行李'
-        // }
+        {
+          key: 'E',
+          label: '中转行李'
+        }
       ]
     }
   },
@@ -76,6 +76,7 @@ export default {
 
 <style lang="scss">
 .luggages {
+  position: relative;
   .query-top {
     .query-item {
       &.mt14 {
@@ -93,12 +94,11 @@ export default {
       }
     }
     td {
-      height: 52px !important;
       .type {
         font-size: 12px;
         height: 12px;
         line-height: 12px;
-        text-align: left;
+        text-align: center;
         color: $gray-nd;
       }
       .value {
@@ -106,7 +106,7 @@ export default {
         font-size: 14px;
         height: 14px;
         line-height: 14px;
-        text-align: left;
+        text-align: center;
         color: $gray-st;
       }
     }

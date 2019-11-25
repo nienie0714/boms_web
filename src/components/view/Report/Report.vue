@@ -62,7 +62,7 @@
           <tbody>
             <tr v-for="(row, index) in spliceData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
             @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
-            
+
               <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
               :title="item.title?(item.titleText || showValue(row, item)):false"
               :class="[item.colClass, item.class]"
@@ -85,7 +85,7 @@
                   <template v-else>{{showValue(row, item)}}</template>
                 </template>
                 <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
-                
+
             <!-- </el-popover> -->
               </td>
             </tr>
@@ -528,7 +528,7 @@ $rowHeight: 40px;
 .right-table {
   position: relative;
   // z-index: ;
-  box-shadow: -4px 0 30px rgba($color: $white-shadow, $alpha: .1);
+  // box-shadow: -4px 0 30px rgba($color: $white-shadow, $alpha: .1);
 
   td {
     display: inline-flex;

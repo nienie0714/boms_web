@@ -1,10 +1,10 @@
 <template>
-  <div class="flight">
+  <div class="luggages">
     <div class="tab-group">
       <tabs :tabsData="tabsDataDay" defaultKey="0" @tabItemClick="tabItemClickDay"></tabs>
       <tabs :tabsData="tabsData" @tabItemClick="tabItemClick"></tabs>
     </div>
-    <FltHis v-if="selectKeyDay == -2" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltHis>
+    <FltHis v-if="selectKeyDay == -1" :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltHis>
     <FltNow v-else :selectKeyDay="selectKeyDay" :selectKey="selectKey"></FltNow>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
       tabsDataDay: [
         {
           key: -1,
-          label: '昨日'
+          label: '更早'
         },
         {
           key: 0,
@@ -44,10 +44,6 @@ export default {
           key: 1,
           label: '明日'
         },
-        {
-          key: -2,
-          label: '历史记录'
-        }
       ],
       tabsData: [
         {
@@ -77,12 +73,13 @@ export default {
 </script>
 
 <style lang="scss">
-.flight {
+.luggages {
+  position: relative;
   .query-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 16px 20px;
     background: #fff;
     box-shadow: 0px 4px 8px 0px rgba(104, 129, 153, 0.1);
     border-radius: 8px;

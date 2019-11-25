@@ -46,9 +46,9 @@ export default {
   left: 10%;
   top: calc(50% - 8px);
   width: 80%;
-  height: 12px;
+  height: 8px;
   background-color: rgba(167,185,200,0.3);
-  border-radius: 8%/50%;
+  border-radius: 4px;
   overflow: hidden;
 
   >div {

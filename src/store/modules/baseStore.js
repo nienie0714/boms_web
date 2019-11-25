@@ -6,7 +6,8 @@ export default {
       {
         name: ''
       }
-    ]
+    ],
+    ifFullscreen: false,
   },
   getters: {
     getFirstTime: state => {

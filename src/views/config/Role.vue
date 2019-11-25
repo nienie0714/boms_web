@@ -1,5 +1,5 @@
 <template>
-  <div class="log-audit">
+  <div class="config-audit">
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
@@ -8,6 +8,21 @@
       </div>
     </div>
     <div class="table-cont container cross">
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove" ref="tables">
+        <template v-slot:slot-body="{index, row, item}">
+          <template v-if="item.key == 'name'">
+            <div @click="openDetail({type:'detail',row})">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key == 'index'">
+            <div>{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          </template>
+          <template>
+              <div v-if="permissions.update && row.isFactoryParam === '0'" class="table-opr update" @click="openDetail({type: 'update', row})"></div>
+              <div v-if="permissions.remove && row.isFactoryParam === '0'" class="table-opr remove" @click="openRemove(row)"></div>
+              <div  class="table-opr detail" @click="openDetail({type:'detail', row})"></div>   
+          </template>
+        </template>
+      </tables>
       <div class="table-title">
         <div class="left">
           <span class="label">查询结果</span>
@@ -15,15 +30,9 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
+          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail" style="font-weight:bolder"></toolbar>
         </div>
       </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
-        <template v-slot:slot-body="{index, row, item}">
-          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
-          <div v-if="item.key == 'name'" @click="openDetail({type: 'detail', row})">{{ row[item.key] }}</div>
-        </template>
-      </tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
@@ -73,15 +82,16 @@ export default {
           [
             {key: 'roleId',  label: 'id', width: 2, hidden: true},
             {key: 'index',  label: '序号', width: 110, type: 'slot'},
-            {key: 'name',  label: '角色名称', width: 700, colClass: 'bold-underline', type: 'slot'},
-            {key: 'description', label: '角色描述', width: 780}
+            {key: 'name',  label: '角色名称', width: 500,colClass: 'bold-underline',type: 'slot'},
+            {key: 'description', label: '角色描述', width: 600},
+            {key: 'isFactoryParam',  label: '出厂参数', width: 200, enumKey: 'isFactoryParam',itemValue: 'code',itemLabel: 'name',},
           ],
           // center
           [
           ],
           // right
           [
-            {label: '操作', type: 'opr', width: 220}
+            {label: '操作', type: 'slot', width: 220}
           ]
         ],
         data: []
@@ -95,5 +105,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.config-audit {
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  /deep/.right-table td {
+    width: 104px!important;
+    justify-content: flex-end!important;
+  }
+
+}
 </style>

@@ -1,18 +1,27 @@
 <template>
+  <!-- 保障协同管理-机位 -->
   <div class="log-audit">
     <div class="tab-group">
       <tabs :tabsData="tabsDataDay" defaultKey="T1" @tabItemClick="tabItemClickDay"></tabs>
     </div>
+    <div class="query-top" >
+        <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+        <div class="toolbar">
+            <button type="info" @click="cleanQueryData">重置</button>
+            <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        </div>
+    </div> 
     <div class="table-cont container cross">
-      <div class="table-title">
-        <div class="left">
-          <span class="label">机位表</span>
-        </div>
-        <div class="right">
-          <span class="label">提示：点击列表项的时间可进行更改</span>
-        </div>
-      </div>
-      <div class="table container cross" :style="`height: 680px;background :rgba(255,255,255,1);overflow-y: auto;`">
+      <!-- <div class="table-title">
+          <div class="left">
+              <span class="label">查询结果</span>
+              <span class="info">共{{data.length}}条</span>
+          </div>
+          <div class="right">
+            <span class="label">提示：点击列表项的时间可进行更改</span>
+          </div> 
+      </div> -->
+      <div class="table cross" :style="`background :rgba(255,255,255,1);overflow-y: auto;`">
         <div v-for="(item, index) in data" :key="index">
           <el-row class="table-other-header">
             <el-col :span="2"><div class="bold color-gray">机位</div></el-col>
@@ -55,6 +64,15 @@
           </el-row>
         </div>
       </div>
+      <div class="table-title">
+          <div class="left">
+              <span class="label">查询结果</span>
+              <span class="info">共{{data.length}}条</span>
+          </div>
+          <div class="right">
+            <span class="label">提示：点击列表项的时间可进行更改</span>
+          </div> 
+      </div>
       <my-dialog :visible="counterData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
       :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
         <div class="td-popover counter-popover">
@@ -88,13 +106,15 @@ import Tabs from '@view/Tabs/Tabs'
 import Report from '@view/Report/Report'
 import { queryAll, update } from '@/util/base'
 import Inputs from '@view/Inputs/Inputs'
+import QueryRow from '@view/QueryRow/QueryRow'
 import InputTag from '@view/InputTag/InputTag'
 import _ from 'lodash'
 
 export default {
   components: {
     Tabs,
-    InputTag
+    InputTag,
+    QueryRow
   },
   data () {
     return {
@@ -114,6 +134,15 @@ export default {
           label: 'T3分拣大厅'
         }
       ],
+      queryParam:[
+          {
+            key: 'standNo',
+            label: '机位',
+            type: 'input',
+            width: 214
+          },
+      ],
+      loading:false,
       data: [],
       editData: {},
       counterData: {
@@ -139,8 +168,37 @@ export default {
       this.data[index][key].pop = true
       this.$set(this.data[index], key, this.data[index][key])
     },
+    //获取查询参数
+    getQueryData (arr) {
+      var data = {}
+      this.queryParam.forEach(item => {
+        if (!(item.hasOwnProperty('isHidden') && item.isHidden)) {
+          if (item.value === '') {
+            if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+              this.$set(data, item.key1, null)
+              this.$set(data, item.key2, null)
+            } else {
+              this.$set(data, item.key, null)
+            }
+          } else if (item.hasOwnProperty('key1') && item.hasOwnProperty('key2')) {
+            if (item.value) {
+              this.$set(data, item.key1, item.value[0])
+              this.$set(data, item.key2, item.value[1])
+            } else {
+              this.$set(data, item.key1, null)
+              this.$set(data, item.key2, null)
+            }
+          } else {
+            this.$set(data, item.key, item.value)
+          }
+        }
+      })
+      this.queryData = data
+    },
     queryDataReq () {
+      this.getQueryData()
       this.$set(this.queryData, 'terminalNo', this.selectKeyDay)
+      this.loading = true
       queryAll(this.queryUrl, this.queryData).then(response => {
         if (response.data.code == 0) {
           this.data = _.chunk(response.data.data, 20)
@@ -151,7 +209,33 @@ export default {
             tip: response.data.msg
           })
         }
+      this.$nextTick(()=>{
+        this.loading = false
       })
+      })
+    },
+    //重置查询条件
+    cleanQueryData () {
+      var data = this.queryParam
+      this.queryParam.forEach((item, index) => {
+        if (item.hasOwnProperty('defaultValue')) {
+          data[index].value = item.defaultValue
+        } else {
+          if (typeof (item.value) == 'number') {
+            data[index].value = null
+          } else if (typeof (item.value) == 'string') {
+            data[index].value = null
+          } else if (typeof (item.value) == 'boolean') {
+            data[index].value = false
+          } else if (typeof (item.value) == 'undefined') {
+            data[index].value = item.value
+          } else {
+            data[index].value = null
+          }
+        }
+      })
+      this.queryParam = data
+      this.queryDataReq()
     },
     // 关闭所有弹框，并清空弹框
     closeAllPop() { 
@@ -213,7 +297,17 @@ export default {
 </script>
 
 <style lang="scss">
+.log-audit {
+  height: 100%;
+  .container.cross {
+    height: 100%;
+  }
+}
 .table {
+  &.container.cross {
+    height: calc(100% - 72px);
+    overflow: auto;
+  }
   .el-col-1 {
     width: 4.55%;
   }
@@ -238,7 +332,7 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #3d424d;
-    font-size: 14px;
+    font-size: 15px;
   }
   .bold {
     font-size:14px;
@@ -247,7 +341,17 @@ export default {
     color:rgba(61,66,77,1);
   }
   .color-gray {
-    color:rgba(137,157,178,1);
+    // color:rgba(137,157,178,1);
+    font-weight: bold;
+    color: #718499;
   }
 }
+  .log-audit {
+    height: calc(100%);
+    display: flex;
+    flex-direction: column;
+    .counter-class {
+      margin: 0 !important;
+    }
+  }
 </style>

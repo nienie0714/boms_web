@@ -1,5 +1,5 @@
 <template>
-  <div class="table container cross" :style="`height: ${tableData.height}px;`">
+  <div class="table container cross" :style="`height: ${tableHeight}px;`">
     <div class="table-header">
       <div v-for="(column, colIndex) in columnHeaderData" :key="colIndex" :class="(colIndex==columnData.length-1)?'right-table':(colIndex==0?'left-table':'center-table')"
       :ref="(colIndex==columnData.length-1)?'rightTableH':(colIndex==0?'leftTableH':'centerTableH')"
@@ -8,6 +8,7 @@
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- colIndex==0?'left-table':(colIndex==1?'center-table':'right-table') -->
           <thead>
             <tr v-for="(col, cIndex) in column" :key="cIndex">
+              
               <th v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
               :rowspan="item.rowspan" :colspan="item.colspan"
               :class="['row_height_'+(item.rowspan || 1), item.titleClass, item.class]"
@@ -15,8 +16,28 @@
                 <template v-if="tableData.type=='mult' && itemIndex == 0">
                   <div :class="(tableData.multSelection.length == tableData.data.length && tableData.data.length > 0)?'radio is-checked':'radio'" @click="selectAuto"></div>
                 </template>
-                <template>{{item.label}}</template>
+                
+                <template>
+                  <div v-if="item.headerTitle">
+                    <el-popover
+                      placement="bottom-start"
+                      width="200"
+                      trigger="hover"
+                      :content="item.headerTitle">
+                      <div slot="reference">
+                        {{item.label}}
+                      </div>
+                    </el-popover>
+                  </div>
+                  <div v-else>
+                    <div>
+                        {{item.label}}
+                      </div>
+                  </div>
+                </template>
+                
               </th>
+              
             </tr>
           </thead>
         </table>
@@ -39,7 +60,7 @@
       </div>
     </div>
     <div class="table-body">
-      <div v-if="loading" class="table-load">
+      <div v-if="tableLoading" class="table-load">
         <div>
           <div class="icon-load">
             <div class="load-center"></div>
@@ -61,36 +82,38 @@
         <table border="0" cellpadding="0" cellspacing="0" :style="((colIndex!=columnData.length-1)&&(colIndex>0))?`width: ${centerWidth}px`:''"><!-- (colIndex!=columnData.length-1)&&(colIndex>0)?`width: ${centerWidth}px`:'' -->
           <tbody><!-- (colIndex === columnData.length - 1 ? tableData.data : tableShowData) -->
           <!-- (require('lodash').findIndex(tableData.data, [tableData.key, row[tableData.key]]) -->
-            <tr v-for="(row, index) in tableData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']"
+            <tr v-for="(row, index) in tableData.data" :key="row[tableData.key]" :class="[(index%2==0)?'single-row':'', isRowSelect(row,index)]"
             @dblclick="handleDblClick(row)" @click="selectRowTr(row, index)">
-              <td v-for="(item, itemIndex) in col" :key="itemIndex" v-show="!item.hidden"
-              :title="item.title?(item.titleText || showValue(row, item)):false"
-              :class="[item.colClass, item.class]"
-              :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
-              + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
-              +`color: ${item.color};`">
-                <template v-if="item.type=='opr'">
-                  <div v-if="permissions.update" class="table-opr update" @click="openDetail('update', row)"></div>
-                  <div v-if="permissions.remove" class="table-opr remove" @click="openRemove(row)"></div>
-                  <div v-if="permissions.reset" class="table-opr reset" @click="openDetail('reset', row)"></div>
-                  <div v-if="permissions.detail" class="table-opr detail" @click="openDetail('detail', row)"></div>
-                </template>
-                <template v-else-if="item.type!='slot'">
-                  <template v-if="item.type=='mult'">
-                    <div :class="~index?'radio is-checked':'radio'" @click="selectRow(row)"></div>
+              <template v-for="(item, itemIndex) in col">
+                <td v-if="!item.hasOwnProperty('rowspanMethod') || rowspanMethod(item.rowspanMethod, index, item)" :key="itemIndex" v-show="!item.hidden" :rowspan="item.hasOwnProperty('rowspanMethod') ? rowspanMethod(item.rowspanMethod, index, item) : 1"
+                :title="item.title?(item.titleText || showValue(row, item)):false"
+                :class="[item.colClass, item.class]"
+                :style="'width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
+                + 'max-width:'+(item.width?(item.width- ((colIndex==columnData.length-1)&&(itemIndex==col.length-1)?17:0) +'px;'):'auto;')
+                +`color: ${item.color};`"
+                @click="item.hasOwnProperty('clickMethod') && item.clickMethod(row)">
+                  <template v-if="item.type=='opr'">
+                    <div v-if="permissions.update" class="table-opr update" @click="openDetail('update', row)"></div>
+                    <div v-if="permissions.remove" class="table-opr remove" @click="openRemove(row)"></div>
+                    <div v-if="permissions.reset" class="table-opr reset" @click="openDetail('reset', row)"></div>
+                    <div class="table-opr detail" @click="openDetail('detail', row)"></div>
                   </template>
-                  <template v-else-if="item.type=='scroll'"></template>
-                  <template v-else>{{showValue(row, item)}}</template>
-                </template>
-                <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
-              </td>
+                  <template v-else-if="item.type!='slot'">
+                    <template v-if="item.type=='mult'">
+                      <div :class="~index?'radio is-checked':'radio'" @click="selectRow(row)"></div>
+                    </template>
+                    <template v-else>{{showValue(row, item)}}</template>
+                  </template>
+                  <slot v-else name="slot-body" :index="index" :row="row" :item="item"></slot>
+                </td>
+              </template>
             </tr>
           </tbody>
         </table>
         <!-- table占位 -->
         <table v-if="colIndex===1" border="0" cellpadding="0" cellspacing="0" :style="`width: calc(100% - ${centerWidth}px); left: ${centerWidth}px;`">
           <tbody><!-- tableShowData -->
-            <tr v-for="(row, index) in tableData.data" :key="index" :class="[(index%2==0)?'single-row':'', selectIndex==index?'select-index':'']">
+            <tr v-for="(row, index) in tableData.data" :key="index" :class="[(index%2==0)?'single-row':'', isRowSelect(row,index)]">
               <td :style="`width: calc(100% - ${centerWidth}px); max-width: calc(100% - ${centerWidth}px);`"></td>
             </tr>
           </tbody>
@@ -109,6 +132,10 @@ export default {
   mixins: [utilMixin],
   props: {
     tableData: {},
+    pageData: {
+      type: Object,
+      default: ()=>{}
+    },
     loading: {
       type: Boolean,
       default: false
@@ -134,35 +161,47 @@ export default {
         index: 0,
         length: 0
       },
+      tableHeight: 600,
       scrollData: {
         index: 1
-      }
+      },
+      tableLoading: false,
     }
   },
   mounted () {
     this.changeColumn(this.tableData.column)
     this.getTableWidth()
-    this.tableCompData.index = 0
+    this.tableCompData.index = 0;
+    let table = document.getElementsByClassName('table')[0]
     this.$nextTick(() => {
       this.getShowTable()
-      this.scrollTable()
+      this.scrollTable();
+      this.changeTableHeight(table)
       window.onresize = () => {
         return (() => {
           this.getShowTable()
-          this.scrollTable()
+          this.scrollTable();
+          this.changeTableHeight(table)
         })()
       }
     })
   },
   methods: {
-    nextTable () {
-      this.scrollData.index += 1
-      this.$emit('scrollLoad', this.scrollData.index)
+    rowspanMethod (method, index, item) {
+      return method(index)
     },
-    prevTable () {
+    nextTable (rightBody) {
+      if (this.scrollData.index < this.scrollLength) {
+        this.scrollData.index += 1
+        this.$emit('scrollLoad', this.scrollData.index)
+        rightBody.scrollTop = 0
+      }
+    },
+    prevTable (rightBody) {
       if (this.scrollData.index > 1) {
         this.scrollData.index -= 1
         this.$emit('scrollLoad', this.scrollData.index)
+        rightBody.scrollTop = rightBody.scrollHeight
       }
     },
     getShowTable () {
@@ -242,21 +281,20 @@ export default {
       }
     },
     scrollEvent (event) {
-      if (!this.loading) {
+      if (!this.tableLoading) {
         let scrollTop = event.wheelDeltaY
         let rightBody = this.$refs['rightTable'] ? this.$refs['rightTable'][0] : null
         if (rightBody) {
           if (this.tableData.pageLoad) {
             if (scrollTop < 0) {
               if ((rightBody.firstElementChild.offsetHeight - rightBody.offsetHeight) === rightBody.scrollTop) {
-                this.nextTable()
-                rightBody.scrollTop = 0
+                this.nextTable(rightBody)
               } else {
                 rightBody.scrollTop -= scrollTop
               }
             } else if (scrollTop > 0) {
               if (rightBody.scrollTop === 0) {
-                this.prevTable()
+                this.prevTable(rightBody)
               } else {
                 rightBody.scrollTop -= scrollTop
               }
@@ -287,6 +325,23 @@ export default {
       if (this.tableData.type == 'single') {
         this.tableData.multSelection = []
         this.tableData.multSelection.push(row)
+      } else if (this.tableData.type === 'multiple') {
+          // 多选
+          if (!this.tableData.multSelection) {
+              this.tableData.multSelection = []
+          }
+          // 判断当前这行在不在
+          const index = this.tableData.multSelection.indexOf(row);
+          if (index === -1) {
+              // 不在的话选中放入
+              this.tableData.multSelection.push(row)
+          } else {
+              // 在的话取消选中
+              this.tableData.multSelection = [
+                  ...this.tableData.multSelection.slice(0, index),
+                  ...this.tableData.multSelection.slice(index + 1),
+              ]
+          }
       }
     },
     handleDblClick (row) {
@@ -297,7 +352,31 @@ export default {
     },
     openRemove (row) {
       this.$emit('openRemove', row)
-    }
+    },
+      // 判断当前row是否是选中状态
+    isRowSelect (row, index) {
+        if (this.tableData.type === 'multiple') {
+            // 多选
+            if (!this.tableData.multSelection) {
+                this.tableData.multSelection = []
+            }
+            let isSelect = false;
+            this.tableData.multSelection.forEach(item => {
+                if (item === row) {
+                    isSelect = true;
+                }
+            })
+            return isSelect ? 'select-index' : ''
+        } else {
+            return this.selectIndex === index ? 'select-index' : ''
+        }
+    },
+    changeTableHeight(table) {
+      if(!table) return;
+        let h = window.innerHeight - table.getBoundingClientRect().top - 20;
+        this.tableData.height = h;
+        this.tableHeight = h;
+    },
   },
   watch: {
     'tableData.column': {
@@ -307,11 +386,21 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    loading(value) {
+      this.tableLoading =value;
+    },
+    '$store.state.base.ifFullscreen'() {
+      let table = document.getElementsByClassName('table')[0];
+      this.changeTableHeight(table);
     }
   },
   computed: {
     tableShowData () {
       return this.tableData.data.slice(this.tableCompData.index, this.tableCompData.index + this.tableCompData.length)
+    },
+    scrollLength () {
+      return Math.ceil(this.pageData.total / this.pageData.size)
     }
   }
 }
@@ -329,7 +418,7 @@ export default {
   padding: 7px 0;
   border: {
     left: 1px solid #E7EDF2;
-    right: 1px solid #E7EDF2;
+    // right: 1px solid #E7EDF2;
   }
 }
 th.col-child-title {
@@ -347,15 +436,15 @@ th.col-child-title {
 .col-child-right {
   border: {
     right: 1px solid #E7EDF2;
-    margin-left: -1px;
-    margin-right: -1px;
+    // margin-left: -1px;
+    // margin-right: -1px;
   }
 }
 .col-child-left {
   border: {
     left: 1px solid #E7EDF2;
-    margin-left: -1px;
-    margin-right: -1px;
+    // margin-left: -1px;
+    // margin-right: -1px;
   }
 }
 .mark {
@@ -394,6 +483,9 @@ $rowHeight: 40px;
   .table-header {
     tr {
       background-color: #fafbfc;
+    }
+    th {
+      font-weight: bold;
     }
   }
   .table-body {
@@ -487,14 +579,19 @@ $rowHeight: 40px;
       }
     }
     tr {
-      background-color: #f5f7f9;
+      // background-color: #f5f7f9;
+      height: 50px;
+      background-color: #fff;
+      border-bottom: 1px solid $gray-border;
     }
   }
   tr.single-row {
     background-color: #fff;
+    // border-bottom: 1px solid #eee;
   }
   tr.select-index {
     background-color: rgba($color: $blue-shadow, $alpha: .2);
+    // border-bottom: 1px solid #eee;
   }
   th, td {
     word-break: keep-all;
@@ -505,16 +602,17 @@ $rowHeight: 40px;
     border-bottom: 1px solid $gray-border;
     font-weight: normal;
     font-size: 14px;
-    color: #90A3B6;
+    color: #718499;
   }
   td {
-    height: 48px;
-    line-height: 48px;
+    // height: 48px;
+    // line-height: 48px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #3d424d;
-    font-size: 14px;
+    font-size: 15px;
+    // border-bottom: 1px solid $gray-border;
     /* display: inline-block; */
   }
 }
@@ -530,7 +628,7 @@ $rowHeight: 40px;
 }
 .table-header {
   @include heightMix ($rowHeight);
-  border-top: 1px solid $gray-border;
+ // border-top: 1px solid $gray-border;
   .row_height_1 {
     max-height: 32px;
     height: 32px;
@@ -544,10 +642,15 @@ $rowHeight: 40px;
   //   height: 2 * $rowHeight - 21;
   //   line-height: 2 * $rowHeight - 21;
   // }
-}
-.center-table {
+}.center-table {
   flex: 1;
   position: relative;
+  thead>tr:first-child>th {
+    border-left: none;
+  }
+}
+.table-header .center-table>table:first-child>thead>tr:first-child>th:last-child {
+  border-left: 1px solid $gray-border;
 }
 .center-table>table {
   position: absolute;
@@ -560,17 +663,25 @@ $rowHeight: 40px;
 }
 .table-body .right-table {
   overflow-x: hidden;
+  >table {
+    width: 100%;
+  }
 }
 .left-table {
   position: relative;
+  // border-right: 1px solid $gray-border;
   // z-index: 99;
   // box-shadow: 4px 0 30px rgba($color: $white-shadow, $alpha: .1);
+  thead>tr:first-child>th {
+    border-left: none;
+  }
 }
 .right-table {
   position: relative;
+  // margin-left: -1px;
+  // border-left: 1px solid $gray-border;
   // z-index: ;
-  box-shadow: -4px 0 30px rgba($color: $white-shadow, $alpha: .1);
-
+  // box-shadow: -4px 0 30px rgba($color: $white-shadow, $alpha: .1);
   td {
     display: inline-flex;
     justify-content: center;
@@ -579,6 +690,7 @@ $rowHeight: 40px;
     >.table-opr {
       width: 24px;
       height: 24px;
+      margin-top: 13px;
       cursor: pointer;
 
       &:not(:last-child) {
@@ -619,4 +731,6 @@ $rowHeight: 40px;
     }
   }
 }
+
+
 </style>

@@ -20,7 +20,7 @@ export default {
     closeDefaultRow () {
       this.defaultRow = false
     },
-    saveDefaultRowReq (key) {
+    saveDefaultRowReq (rowType) {
       var fields = []
       this.tableData.column[1].forEach(item => {
         if (!item.hidden) {
@@ -28,12 +28,14 @@ export default {
         }
       })
       var data = {
-        type: 'Luggage'
+        type: rowType
       }
       if (this.selectKey == 'A') {
         this.$set(data, 'luggageA', fields)
-      } else {
+      } else if(this.selectKey == 'D') {
         this.$set(data, 'luggageD', fields)
+      } else {
+        this.$set(data, 'transfer', fields)
       }
       queryAll(this.saveDefaultRowUrl, data).then(response => {
         if (response.data.code == 0) {
@@ -50,52 +52,72 @@ export default {
       })
     },
     // 获取默认隐藏/显示列  初始化、刷新页面/恢复默认值 按钮方法
-    getDefaultRow () {
+    getDefaultRow (rowType) {
       var _this = this
-      queryAll(this.queryDefaultRowUrl, {type: 'Luggage'}).then(response => {
+      queryAll(this.queryDefaultRowUrl, {type: rowType}).then(response => {
         if (response.data.code == 0) {
           var result = 0
           let showotherFields = []
           let hiddenotherFields = _this.tableData.column[1]
           // let responseUl = ['seatNo', 'execDate', 'routeCn', 'checkDate', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'counterNo', 'chuteNo', 'secure', 'truckDate', 'airDate']
-          // let responseUlA = ['seatNo', 'execDate', 'routeCn', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'belt', 'checkDate', 'upLoadDate']
-          let responseUlA = response.data.data.luggageA ||  []
-          let responseUlD = response.data.data.luggageD ||  []
-          if (this.selectKey == 'A') {
-            responseUlA.forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].key == item) {
-                  result = i
+          // let responseUlA = ['seatNo', 'execDate', 'routeCn', 'flightStatusCn', 'abnormalStatusCn', 'stand', 'luggeTypeCn', 'markingNum', 'belt', 'checkDate', 'upLoadDate'
+          if(rowType == 'Luggage') {
+            let responseUlA = response.data.data.luggageA || [];
+            let responseUlD = response.data.data.luggageD || [];
+            if (this.selectKey == 'A') {
+              responseUlA.forEach(item => {
+                result = -1
+                for (let i = 0; i < hiddenotherFields.length; i++) {
+                  if (hiddenotherFields[i].key == item) {
+                    result = i
+                  }
                 }
-              }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
-              }
-            })
-            hiddenotherFields.forEach(item => {
-              item.hidden = true
-            })
-          } else {
-            responseUlD.forEach(item => {
-              result = -1
-              for (let i = 0; i < hiddenotherFields.length; i++) {
-                if (hiddenotherFields[i].key == item) {
-                  result = i
+                if (result > -1) {
+                  hiddenotherFields[result].hidden = false
+                  showotherFields.push(hiddenotherFields[result])
+                  hiddenotherFields.splice(result, 1)
                 }
-              }
-              if (result > -1) {
-                hiddenotherFields[result].hidden = false
-                showotherFields.push(hiddenotherFields[result])
-                hiddenotherFields.splice(result, 1)
-              }
-            })
-            hiddenotherFields.forEach(item => {
-              item.hidden = true
-            })
-          }
+              })
+              hiddenotherFields.forEach(item => {
+                item.hidden = true
+              })
+            } else {
+              responseUlD.forEach(item => {
+                result = -1
+                for (let i = 0; i < hiddenotherFields.length; i++) {
+                  if (hiddenotherFields[i].key == item) {
+                    result = i
+                  }
+                }
+                if (result > -1) {
+                  hiddenotherFields[result].hidden = false
+                  showotherFields.push(hiddenotherFields[result])
+                  hiddenotherFields.splice(result, 1)
+                }
+              })
+              hiddenotherFields.forEach(item => {
+                item.hidden = true
+              })
+            }
+          } else if(rowType == 'transfer' || rowType == 'transferByf') {
+            let responseUlE = response.data.data.transfer || [];
+            responseUlE.forEach(item => {
+                result = -1
+                for (let i = 0; i < hiddenotherFields.length; i++) {
+                  if (hiddenotherFields[i].key == item) {
+                    result = i
+                  }
+                }
+                if (result > -1) {
+                  hiddenotherFields[result].hidden = false
+                  showotherFields.push(hiddenotherFields[result])
+                  hiddenotherFields.splice(result, 1)
+                }
+              })
+              hiddenotherFields.forEach(item => {
+                item.hidden = true
+              })
+          } 
           _this.tableData.column[1] = showotherFields.concat(hiddenotherFields)
           this.$set(this.tableData.column, 1, this.tableData.column[1])
         }

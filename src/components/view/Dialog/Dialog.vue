@@ -13,7 +13,7 @@
           <slot></slot>
         </div>
         <div v-if="footer" class="footer">
-          <slot name="footer">
+          <slot name="footer" :submit="submit" :closeDialog="closeDialog" :submitDialog="submitDialog">
             <button @click="closeDialog">取 消</button>
             <button v-if="submit" type="primary" @click="submitDialog">确 认</button>
           </slot>
@@ -118,6 +118,7 @@ export default {
   top: 0;
   left: 0;
   box-sizing: border-box;
+  z-index: 2;
 }
 .dialog {
   position: absolute;

@@ -52,11 +52,13 @@ export default {
   .tabs {
     display: flex;
     background-color: #fff;
-    border-radius: 60px/50px;
+    // border-radius: 60px/50px;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 0 40px rgba($color: $black-shadow, $alpha: .3);
     .tab-item {
-      color: $gray-rd;
+      font-size: 16px;
+      color: $gray-nd;
       cursor: pointer;
       &.current-item {
         color: $blue;

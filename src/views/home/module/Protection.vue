@@ -2,28 +2,35 @@
   <div class="config module container">
     <div :class="['header', hidden ? 'hidden' : '']">
       <div class="module-img">
-        <div class="title">保障业务协同管理</div>
-        <div class="sub-title">Collaboration</div>
+        <div class="title">保障协同管理</div>
+        <!-- <div class="sub-title">Collaboration</div> -->
       </div>
-      <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
-      <!-- <el-menu class="aside-el-menu" router :default-active="$route.path" unique-opened @select="handleSelect" :collapse="asideHidden" :collapse-transition="false" background-color="#1a2d3e" text-color="#9DA7B3" active-text-color="#fff">
-        <div v-for="aside in menuData" :key="aside.router">
-          <el-submenu v-if="aside.children != null && aside.children != [] && (!aside.hidden)" :index="aside.router">
-            <template slot="title">
-              <span slot="title">{{ aside.label }}</span>
-              <div :class="aside.iconCls?(aside.iconCls+' menu-icon'):'menu-icon'"></div>
-            </template>
-            <div v-for="child in aside.children" :key="child.router">
-              <el-menu-item v-if="!child.hidden" :index="child.router">{{ child.label }}</el-menu-item>
-            </div>
-          </el-submenu>
-          <el-menu-item v-else-if="aside.children == null && (!aside.hidden)" :index="aside.router">{{ aside.label }}</el-menu-item>
-        </div>
-      </el-menu> -->
-      <div class="hidden-button" @click="hidden = !hidden"></div>
+      <!-- <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu> -->
+      <el-menu
+          :default-active="$route.path"
+          class="el-menu-vertical-demo"
+          text-color="#a3b6cc"
+          @select="menuSelect"
+          route>   
+          <template v-for="(item,index) in menuData">
+              <el-submenu :index="item.router" v-if="item.children&&item.children.length" :key="index">
+                  <template slot="title">
+                      <span>{{item.label}}</span>
+                  </template>
+                  <el-menu-item v-for="(child,childIndex) in item.children" :index="child.router" :key="childIndex">
+                      <span>{{child.label}}</span>
+                  </el-menu-item>
+              </el-submenu>
+              <el-menu-item v-if="!item.children" :index="item.router" :key="index">
+                  <span slot="title">{{item.label}}</span>
+              </el-menu-item>
+          </template> 
+      </el-menu>
+
+      <div class="hidden-button" @click="hidden = !hidden" style="z-index:99"></div>
     </div>
-    <div class="body container cross">
-      <div class="title">
+    <div class="body container cross" style="{isProcess ? {margin-left:0}:'',}">
+      <div class="title" v-if="isProcess">
         <div class="icon"></div>
         <div>{{title}}</div>
       </div>
@@ -34,44 +41,38 @@
 </template>
 
 <script>
-import SecondMenu from '../SecondMenu'
+// import SecondMenu from '../SecondMenu'
 import * as component from '@/views/protection'
 import { postData } from '@/util/base'
 
 export default {
   components: {
-    SecondMenu
+    // SecondMenu
   },
-  data () {
+  data() {
     return {
       name: '',
       title: '业务流程管理',
       hidden: false,
       menuData: null,
-      asideHidden: false,
+      isShowTitle: true,
+      isProcess: true,
+      activeMenu: "",
     }
   },
-  mounted () {
+  mounted() {
     this.title = this.$route.name
     this.getSecondMenu()
   },
   methods: {
-    handleSelect (key) {
-      // var arr = this.asideData
-      // _.forEach(this.asideData, (item) => {
-      //   if (item.children) {
-      //     arr = _.concat(arr, item.children)
-      //   }
-      // })
-      // var obj = _.filter(arr, ['attributes', key])
-      // _.forEach(this.homeRouterData, (item) => {
-      //   if (this.$route.matched[0].path == item.path) {
-      //     localStorage.setItem(item.name, obj[0].text)
-      //   }
-      // })
+    menuSelect(index, indexPath) {
+      localStorage.setItem('curPath', index)
+      this.$router.push(index)
+      this.isProcess = index == "/protection/processManage/processes" ? false : true
     },
-    getSecondMenu () {
+    getSecondMenu() {
       let arr = this.$route.path.split('/')
+      this.isProcess = arr && arr.length == 4 && arr[3] == "processes" ? false : true
       if (arr && arr.length > 1) {
         let data = {
           resourceType: 0,
@@ -79,30 +80,15 @@ export default {
         }
         // 获取二级菜单
         postData('sys/sysResource/queryHasSysResource', data).then(response => {
-          let onlyBasicArr = []
-          let data = _.find(response.data.data, {router: 'BasicData'})
-          onlyBasicArr.push(data)
-          // 只保留基础数据模块，流程模块隐藏
-          this.menuData = onlyBasicArr
-          // 默认打开可看到三级菜单
-          this.menuData[0].open
-          this.$set(this.menuData[0], 'open', true)
+          // this.menuData = response.data.data.filter(item => {return item.label != '消息管理'});
+          this.menuData = response.data.data;
           if (arr.length === 2) {
-            // 无三级菜单
-            if (this.menuData[0].hasOwnProperty('children') && this.menuData[0].children) {
-              this.skipPath(this.menuData[0].children[0])
-            } else {
-              this.skipPath(this.menuData[0])
-            }
-          } else if (arr.length === 3) {
-            // 三级
-            this.name = this.$route.path
-            // }
+            this.skipPath(this.menuData[0])
           }
         })
       }
     },
-    skipPath (obj) {
+    skipPath(obj) {
       this.name = obj.router
       localStorage.setItem('curPath', obj.router)
       if (this.name) {
@@ -113,17 +99,41 @@ export default {
     }
   },
   watch: {
-    $route (to, from) {
+    $route(to, from) {
       this.title = to.name
+      this.isProcess = this.title == "流程关系管理" ? false : true
       localStorage.setItem('topMenuActive', to.path)
+      this.getSecondMenu()
+      // this.title = this.$route.name
     },
     menuData: {
-      handler (value) {
+      handler(value) {
         if (value == null) {
           this.getSecondMenu()
         }
       },
       immediate: true
+    },
+    hidden:{
+      handler(value){
+        if(document.getElementById("add-menu")){
+          if(value) {
+           document.getElementById("add-menu").style.width = '100%'
+          }else {
+            document.getElementById("add-menu").style.width = 'calc(100% - 218px)'
+          }
+        }
+        if(document.getElementById("flight-menu")){
+          if(value) {
+           document.getElementById("flight-menu").style.width = '100%'
+          }else {
+            document.getElementById("flight-menu").style.width = 'calc(100% - 218px)'
+          }
+        }
+      }
+    },
+    '$store.state.base.ifFullscreen'(val) {
+      this.hidden = val;
     }
   }
 }
@@ -131,8 +141,8 @@ export default {
 
 <style lang="scss" scoped>
 .config {
-  >.header {
-    >.module-img {
+  > .header {
+    > .module-img {
       // background-color: $blue-shadow;
       background-image: url(~@img/img/img_config.png);
       background-repeat: no-repeat;
@@ -143,7 +153,68 @@ export default {
       }
     }
   }
+  /deep/.el-menu {
+    background: transparent;
+  }
+  /deep/.el-menu-vertical-demo {
+        flex: 1;
+        border-right: none;
+        background: transparent;
+        overflow: auto;
+        .el-submenu__icon-arrow {
+            right: auto;
+            color: #a3b6cc;
+            font-size: 14px;
+            transform: rotateZ(0deg);
+            &::before {
+                content: "\E791";
+            }
+        }
+        .el-menu-item, .el-submenu__title {
+            height: 37px;
+            line-height: 37px;
+            text-align: left;
+            padding: 0 16px!important;
+            min-width: 160px;
+            border-radius: 4px;
+        }
+        
+        .el-menu-item:focus {
+            color: #fff;
+            background: rgba(97, 112, 128, 0.5);
+            span {
+                color: #fff;
+            }
+        }
+        .el-menu-item.is-active {
+            color: #fff;
+            background: rgba(97, 112, 128, 0.5);
+        }
+        .el-menu-item:hover {
+            color: #fff;
+            background: rgba(97, 112, 128, 0.3)  
+            span {
+                color: #fff;
+            }
+        }
+        .el-submenu__title:hover {
+            color: #fff;
+            background: rgba(97, 112, 128, 0.5);
+            span {
+                color: #fff;
+            }
+        }
+        .el-submenu .el-menu-item {
+            padding-left: 30px!important;
+            &.is-active {
+                color: #fff;
+                background: rgba(97, 112, 128, 0.5);
+            }
+        }
+        .el-submenu>.el-menu>.el-submenu {
+            padding-left: 14px!important;
+        }
+        
+  }
 }
-</style>
-<style>
 </style>

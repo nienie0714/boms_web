@@ -42,10 +42,9 @@ export default {
 <style lang="scss" scoped>
 .message {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
   margin: auto;
   padding: 0 30px;
   border-radius: 12px;

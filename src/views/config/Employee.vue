@@ -1,9 +1,9 @@
 <template>
-  <div class="log-audit">
+  <div class="config-employee">
     <div class="left-tree">
       <tree :data="data" :nodeLabel="'text'" :activeId="activeId" @clickNode="clickNode" :expendAll="true"></tree>
     </div>
-    <div class="query-top">
+    <div class="query-top" style="margin-top: 60px;">
       <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
         <button type="info" @click="cleanQueryData">重置</button>
@@ -11,6 +11,27 @@
       </div>
     </div>
     <div class="table-cont container cross">
+      <!-- <div class="table-title">
+        <div class="left">
+          <span class="label">查询结果</span>
+          <span class="info">共{{pageData.total}}条</span>
+        </div>
+        <div class="right">
+          <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
+          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail({type:'insert',row: {deptId:parentTreeId}})"></toolbar>
+        </div>
+      </div> -->
+      <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove" ref="tables">
+        <template v-slot:slot-body="{index, row, item}">
+          <template v-if="item.key == 'empName'">
+            <div @click="openDetail({type:'detail',row})">{{row[item.key]}}</div>
+          </template>
+
+          <template v-else-if="item.key == 'index'">
+            <div>{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          </template>
+        </template>
+      </tables>
       <div class="table-title">
         <div class="left">
           <span class="label">查询结果</span>
@@ -18,17 +39,11 @@
         </div>
         <div class="right">
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
-          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
+          <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail({type:'insert',row: {deptId:parentTreeId}})" style="font-weight:bolder"></toolbar>
         </div>
       </div>
-      <tables :tableData="tableData" :loading="tableData.loading" :permissions="permissions" @openDetail="openDetail" @openRemove="openRemove">
-        <template v-slot:slot-body="{index, row, item}">
-          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
-          <div v-if="item.key == 'empName'" @click="openDetail({type: 'detail', row})">{{ row[item.key] }}</div>
-        </template>
-      </tables>
     </div>
-    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
+    <detail :visible="detail.visible" :data="detail.data" :type="detail.type" :parentTreeId="parentTreeId" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
   </div>
 </template>
@@ -87,10 +102,10 @@ export default {
           // left
           [
             {key: 'index',  label: '序号', width: 80, type: 'slot'},
-            {key: 'deptName',  label: '单位/部门', width: 325},
-            {key: 'empName', label: '姓名', width: 325, colClass: 'bold-underline', type: 'slot'},
-            {key: 'post',  label: '职务名称', width: 325},
-            {key: 'phone',  label: '联系方式', width: 355}
+            {key: 'deptName',  label: '单位/部门', width: 300},
+            {key: 'empName', label: '姓名', width: 300,colClass: 'bold-underline',type: 'slot'},
+            {key: 'post',  label: '职务名称', width: 300},
+            {key: 'phone',  label: '联系方式', width: 300}
           ],
           // center
           [
@@ -155,18 +170,23 @@ export default {
         }
       ],
       data: [],
-      activeId: []
+      activeId: [],
+      parentTreeId: null,
+      parentName: '',
     }
   },
   mounted () {
-    this.getDeptTree()
+    this.getDeptTree(1)
   },
   methods: {
-    getDeptTree () {
+    getDeptTree (init) {
       queryAll(this.deptTreeUrl).then(res => {
         if (res.data.data.length) {
           this.data = res.data.data
-          if (this.data.length > 0) {
+          if (init && this.data.length > 0) {
+            this.queryDataReq(2)
+            this.parentName = res.data.data[0].text;
+            this.parentTreeId =  res.data.data[0].id
             this.activeId.push(this.data[0].id)
             this.clickNode(this.data[0])
           }
@@ -174,6 +194,8 @@ export default {
       })
     },
     clickNode (node) {
+      this.parentTreeId = node.id;
+      this.parentName = node.text;
       this.queryDataReq(2)
     },
     customQueryBefore () {
@@ -187,5 +209,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.config-employee {
+  display: flex;
+  flex-direction: column;
+  >.table-cont {
+    flex: 1;
+    >.table  {
+      flex: 1;
+    }
+  }
+}
 </style>

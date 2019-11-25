@@ -1,5 +1,5 @@
 <template>
-  <div class="log-audit">
+  <div class="config-audit">
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
       <div class="toolbar ">
@@ -17,7 +17,7 @@
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
       </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove"></tables>
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove" ref="tables"></tables>
     </div>
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
   </div>

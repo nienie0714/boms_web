@@ -9,7 +9,7 @@
           <div class="info">
             <div class="first-row container">
               <div class="label">始发站：</div>
-              <div class="text">{{(row['startStation'] || '-') + '-' + (row['startStationCn'] || '-')}}</div>
+              <div class="text">{{(row['startStation']) + '-' + (row['startStationCn'] )}}</div>
             </div>
             <div class="second-row">{{formatHHMM(row['atd']||row['etd']||row['std'])}}</div>
             <div v-if="!row['atd']&&(row['etd']||row['std'])" class="time-block">
@@ -35,7 +35,7 @@
           <div class="info">
             <div class="first-row container">
               <div class="label">目的站：</div>
-              <div class="text">{{(row['terminalStation'] || '-') + '-' + (row['terminalStationCn'] || '-')}}</div>
+              <div class="text">{{(row['terminalStation']) + '-' + (row['terminalStationCn'])}}</div>
             </div>
             <div class="second-row">{{formatHHMM(row['ata']||row['eta']||row['sta'])}}</div>
             <div v-if="!row['ata']&&(row['eta']||row['sta'])" class="time-block">
@@ -93,7 +93,7 @@
             </div>
           </div>
           <div class="body-second">
-            <tables :tableData="tableData" @handleDblClick="showLugDetail" :loading="tableData.loading">
+            <tables :tableData="tableData" :loading="tableData.loading"><!--  @handleDblClick="showLugDetail" -->
               <template v-slot:slot-body="{index, row, item}">
                 <div v-if="item.key == 'markingNum'" :class="['mark', (row[item.key] > 0)?'marking':'']"><span v-if="row[item.key] <= 0">否</span></div>
                 <template v-else-if="item.key=='luggeTypeCn'">
@@ -109,7 +109,7 @@
                     <div class="dot-color-add"></div>
                     <span>{{row[item.key]}}</span>
                   </div>
-                  <div class="dot-font" v-else-if="row[item.key] == 'VIP'">
+                  <div class="dot-font" v-else-if="row[item.key] == ''">
                     <div class="dot-color-vip"></div>
                     <span>{{row[item.key]}}</span>
                   </div>
@@ -244,7 +244,7 @@ export default {
         column: [
           // left
           [
-            {key: 'lugNo',  label: '行李号', width: 200, class: 'bold', title: true},
+            {key: 'lugNo',  label: '行李号', width: 200, colClass: 'bold-underline', class: 'bold', title: true, clickMethod: this.showLugDetail},
             {key: 'progressStatusCn',  label: '保障状态', width: 170, color: '#3392ff'},
             {key: 'markingNum',  label: '是否标记', type: 'slot', width: 100},
             {key: 'luggeTypeCn', label: '行李类型', type: 'slot', width: 170}
@@ -328,9 +328,11 @@ export default {
         _.forEach(this.tableData.queryParam, (value, key) => {
           this.$set(this.tableData.queryParam, key, this.row[key])
         })
-        if (this.isHistory) {
-          this.tableData.queryParam.execRange = -2
-        }
+        // if (this.isHistory) {
+        //   this.tableData.queryParam.execRange = -2
+        // }
+        
+        this.tableData.queryParam.execDate = this.row.execDate.substr(0, 10);
         queryAll(this.tableData.url, this.tableData.queryParam).then(res => {
           if (res.data.code == 0) {
             this.tableData.data = res.data.data
@@ -350,9 +352,19 @@ export default {
       this.$options.parent.row = {}
     },
     showLugDetail (row) {
-      let idObj = {
-        lugId: row['lugId']
+
+      let idObj;
+      // if(this.isHistory) {
+      idObj = {
+        lugId: row['lugId'],
+        execDate: row['execDate'].substr(0, 10)
       }
+      // } else {
+        // idObj = {
+          // lugId: row['lugId'],
+        // }
+      // }
+      
       queryAll(this.showComp.lugUrl, idObj).then(res => {
         if (res.data.code == 0) {
           this.showComp.row = res.data.data
@@ -383,20 +395,20 @@ export default {
       callback(value)
     },
     tabItemClick (key) {
-      this.$parent.changeComp(key, this.row)
+      this.$parent.changeComp(key, this.row, true)
     },
     formatHHMM (value) {
       if (value) {
         return value.substr(11, 5)
       } else {
-        return '--:--'
+        return ''
       }
     },
     formatDate (value) {
       if (value) {
         return value.substr(0, 10)
       } else {
-        return '----/--/--'
+        return ''
       }
     },
     formatTotal (row, col) {
@@ -432,7 +444,7 @@ export default {
     },
     row: {
       handler (data) {
-        if (data && data.hasOwnProperty('dynamicFlightId')) {
+        if (data && data.hasOwnProperty('dynamicFlightId') && !(this.isComp == 'ablug' || this.isComp == 'load' || this.isComp == 'add' || this.isComp == 'truck' || this.isComp == 'loadAircraft')) {
           this.changeData()
         }
       },
@@ -591,6 +603,9 @@ $bodyHead: 32px;
       }
     }
     &.flt-lug-block {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
       .body-first {
         padding: 0 20px 30px 20px;
         display: flex;
@@ -616,7 +631,7 @@ $bodyHead: 32px;
         }
         >div:last-child:not(:first-child) {
           margin-top: 30px;
-          
+
           >.node {
             >div:first-child {
               width: 80px;
@@ -641,6 +656,7 @@ $bodyHead: 32px;
       }
       .body-second {
         overflow: hidden;
+        border-radius: 0 0 12px 12px;
         >div {
           >.table-body {
             overflow-x: hidden;
@@ -655,6 +671,9 @@ $bodyHead: 32px;
           &.marking {
             background-image: url(~@lug/mark_marking.png);
           }
+        }
+        /deep/.right-table td {
+          height: 49px;
         }
       }
     }

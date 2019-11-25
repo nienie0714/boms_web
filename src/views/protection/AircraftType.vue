@@ -1,17 +1,13 @@
 <template>
   <div class="aircraft-type">
+    <div class="query-top" >
+        <query-row :data="queryParam" @handleEnter="queryDataReq"></query-row>
+        <div class="toolbar">
+            <button type="info" @click="cleanQueryData">重置</button>
+            <button type="primary" :name="loading?'loading':''" @click="queryDataReq">查询</button>
+        </div>
+    </div>  
     <div class="table-cont container cross">
-      <div class="table-title">
-        <div class="left">
-          <span class="label">机型表</span>
-        </div>
-        <div class="right">
-          <span class="label">提示：点击列表项的时间可进行更改</span>
-          <div class="query-box">
-            <inputs type="text" v-model="filterValue" placeholder="输入机型快速筛选" @enter="changeFilter($event)"></inputs>
-          </div>
-        </div>
-      </div>
       <tables :tableData="tableData" :loading="tableData.loading">
         <template v-slot:slot-body="{index, row, item}">
           <template v-if="['unloadAcftIntervals', 'loadAcftIntervals', 'unloadTruckIntervals', 'loadTruckIntervals'].includes(item.key)">
@@ -42,8 +38,20 @@
               </div>
             </div>
           </template>
+          <template v-if="item.key == 'scroll'">
+            <div >{{row[item.key]}}</div>  
+          </template>
         </template>
       </tables>
+      <div class="table-title">
+          <div class="left">
+              <span class="label">查询结果</span>
+              <span class="info">共{{tableData.data.length}}条</span>
+          </div>
+          <div class="right">
+            <span class="label">提示：点击列表项的时间可进行更改</span>
+          </div> 
+      </div>
     </div>
     <my-dialog :visible="popData.visible" :header="false" :footer="false" :position="'center'" :height="187" :width="232" class="td-popover" @handleClose="closeEditPop"
     :dialogClass="'counter-class'" :top="pop.top" :left="pop.left">
@@ -72,6 +80,7 @@ import Tables from '@view/Table/Table'
 import ConfirmTip from '@/views/home/common/ConfirmTip'
 import tableMixin from '@mixin/tableMixin'
 import { queryAll, update } from '@/util/base'
+import QueryRow from '@view/QueryRow/QueryRow'
 import Inputs from '@view/Inputs/Inputs'
 import InputTag from '@view/InputTag/InputTag'
 import _ from 'lodash'
@@ -80,8 +89,8 @@ export default {
   components: {
     Tables,
     ConfirmTip,
-    Inputs,
-    InputTag
+    InputTag,
+    QueryRow
   },
   mixins: [tableMixin],
   data () {
@@ -89,13 +98,13 @@ export default {
       // 请求路径
       queryType: 'nopage',
       queryUrl: '/base/aircraftTypeInterval/queryAircraftTypeInterval',
-      queryParam: [
-        {
-          key: 'stand',
-          label: '机型',
-          type: 'input',
-          width: 214
-        }
+      queryParam:[
+          {
+            key: 'aircraftIcao',
+            label: '机型',
+            type: 'input',
+            width: 214
+          },
       ],
       filterValue: null,
       tableData: {
@@ -117,7 +126,7 @@ export default {
           ],
           // right
           [
-            {label: '', type: 'scroll', width: 8}
+            {label: '', key: 'scroll', width: 8, type: 'slot'}
           ]
         ],
         data: []
@@ -137,9 +146,9 @@ export default {
     this.queryDataReq()
   },
   methods: {
-    customQueryBefore () {
-      this.$set(this.queryData, 'aircraftIcao', this.filterValue)
-    },
+    // customQueryBefore () {
+    //   this.$set(this.queryData, 'aircraftIcao', this.filterValue)
+    // },
     // 关闭所有弹框，并清空弹框
     closeAllPop() {
       this.$set(this, 'popList', [])
@@ -229,8 +238,8 @@ export default {
 }
 
 .label-img {
-  height: 48px;
-  line-height: 48px;
+  height: 47px;
+  line-height: 47px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,4 +259,35 @@ export default {
     }
   }
 }
+ div.query-top > div.toolbar {
+    height: 38px;
+    align-self: flex-start;
+    min-width: 62px;
+ };
+ div.query-top > div.toolbar > button {
+    height: 100%;
+    line-height: 100%;
+ };
+div.query-top >.toolbar > button:not(:last-child) {
+    margin-right: 10px;
+};
+  .toolbar {
+    height: 38px;
+    align-self: flex-start;
+    min-width: 0;
+    .tool-button {
+      display: inline-flex;
+      padding: 0 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+  .aircraft-type {
+    height: calc(100%);
+    display: flex;
+    flex-direction: column;
+    .counter-class {
+      margin: 0 !important;
+    }
+  }
 </style>

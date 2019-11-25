@@ -60,7 +60,7 @@ export default {
       this.timeoutObj = setInterval(function(){
         if(that.ws.readyState==1){
             that.ws.send(Data)
-            console.log('---------------发送数据成功-------------------')
+            // console.log('---------------发送数据成功-------------------')
         }
       }, this.timeout)
     }

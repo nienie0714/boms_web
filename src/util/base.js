@@ -156,3 +156,25 @@ export function nopageQuery (url, data) {
     data: data
   })
 }
+
+
+
+// 针对定时任务模块的接口
+export function nopageQueryj (url, data) {
+  return vue.axiosj({
+    url: url,
+    method: 'post',
+    data: data
+  })
+}
+
+export function queryAllj (url, data) {
+  if (!data) {
+    data = {}
+  }
+  return vue.axiosj({
+    url: url,
+    method: 'post',
+    data: data
+  })
+}

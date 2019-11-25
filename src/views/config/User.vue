@@ -1,5 +1,5 @@
 <template>
-  <div class="log-audit">
+  <div class="config-audit">
     <div class="query-top">
       <query-row :data="queryParam" @handleEnter="queryDataReq(2)"></query-row>
       <div class="toolbar">
@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="table-cont container cross">
-      <div class="table-title">
+      <!-- <div class="table-title">
         <div class="left">
           <span class="label">查询结果</span>
           <span class="info">共{{pageData.total}}条</span>
@@ -17,17 +17,33 @@
           <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
           <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail"></toolbar>
         </div>
-      </div>
-      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove">
+      </div> -->
+      <tables :permissions="permissions" :tableData="tableData" :loading="tableData.loading" @openDetail="openDetail" @openRemove="openRemove" ref="tables">
         <template v-slot:slot-body="{index, row, item}">
-          <div v-if="item.key == 'index'">{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
-          <div v-if="item.key == 'userName'" @click="openDetail({type: 'detail', row})">{{ row[item.key] }}</div>
+          <template v-if="item.key == 'userName'">
+            <div @click="openDetail({type:'detail',row})">{{row[item.key]}}</div>
+          </template>
+          <template v-else-if="item.key == 'index'">
+            <div>{{ index + (pageData.num - 1) * pageData.size + 1}}</div>
+          </template>
         </template>
       </tables>
+      <div class="table-title">
+          <div class="left">
+              <span class="label">查询结果</span>
+              <span class="info">共{{pageData.total}}条</span>
+          </div>
+          <div class="right">
+              <pagination v-model="pageData.num" :size="pageData.size" :options="pageData.options" :total="pageData.total" @changeData="queryDataReq"></pagination>
+              <toolbar :permissions="permissions" @openExport="openExport" @openDetail="openDetail" style="font-weight:bolder"></toolbar>
+          </div>
+      </div>
     </div>
+
     <detail :visible="detail.visible" :data="detail.data" :type="detail.type" @handleSubmit="handleSubmit" @handleClose="handleClose"></detail>
     <confirm-tip :visible="remove.visible" :data="remove.data" @handleSubmit="handleRemove" @handleClose="handleRemoveClose"></confirm-tip>
-    <confirm-tip :visible="reset.visible" :data="reset.data" @handleSubmit="handleReset" @handleClose="handleResetClose"></confirm-tip>
+
+    <confirm-tip :visible="reset.visible" :data="reset.data" :info="UserInfo" @handleSubmit="handleReset" @handleClose="handleResetClose" @customBeforExport="customBeforExport"></confirm-tip>
   </div>
 </template>
 
@@ -56,6 +72,7 @@ export default {
   data () {
     return {
       baseUrl: 'sys/sysUser',
+      UserInfo: '是否确认重置密码操作？',
       queryParam: [
         {
           key: 'userName',
@@ -88,10 +105,10 @@ export default {
           // left
           [
             {key: 'index',  label: '序号', width: 80, type: 'slot'},
-            {key: 'userName',  label: '用户名', width: 330, colClass: 'bold-underline', type: 'slot'},
+            {key: 'userName',  label: '用户名', width: 300,colClass: 'bold-underline',type: 'slot'},
             {key: 'empName', label: '姓名', width: 330},
             {key: 'deptName',  label: '部门', width: 330},
-            {key: 'roleNames',  label: '角色', width: 600},
+            {key: 'roleNames',  label: '角色', width: 400},
           ],
           // center
           [
@@ -118,11 +135,17 @@ export default {
         this.reset.data = row
         this.reset.visible = true
       } else {
+        // console.log({type, row})
         this.detail.type = type
         this.$set(this.detail, 'data', row || null)
         this.detail.visible = true
       }
     },
+    customBeforExport() {
+      this.UserInfo = `是否确认重置密码操作？`
+      return true
+    },
+
     handleReset(row) {
       let data = {
         userId: row.userId
@@ -155,5 +178,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.config-audit {
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column
+}
 </style>

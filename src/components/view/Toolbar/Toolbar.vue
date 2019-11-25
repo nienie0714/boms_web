@@ -1,5 +1,6 @@
 <template>
   <div class="toolbar" >
+    <!-- v-if="permissions.export" -->
     <div v-if="permissions.export" class="tool-button export" @click="openExport">
       <div class="icon"></div>
       <div class="label">导出</div>

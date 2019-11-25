@@ -2,8 +2,8 @@
   <div class="comprhs-query module container">
     <div :class="['header', hidden ? 'hidden' : '']">
       <div class="module-img">
-        <div class="title">信息共享平台</div>
-        <div class="sub-title">Information platform</div>
+        <div class="title">信息查询</div>
+        <!-- <div class="sub-title">Information platform</div> -->
       </div>
       <second-menu @skipPath="skipPath" :menuData="menuData"></second-menu>
       <div class="hidden-button" @click="hidden = !hidden"></div>
@@ -31,7 +31,7 @@ export default {
   data () {
     return {
       name: '',
-      title: '信息共享平台',
+      title: '信息查询',
       hidden: false,
       value: '',
       menuData: null,
@@ -86,6 +86,7 @@ export default {
     $route (to, from) {
       this.title = to.name
       localStorage.setItem('topMenuActive', to.path)
+      this.getSecondMenu()
     },
     menuData: {
       handler (value) {
@@ -94,6 +95,9 @@ export default {
         }
       },
       immediate: true
+    },
+    '$store.state.base.ifFullscreen'(val) {
+      this.hidden = val;
     }
   }
 }

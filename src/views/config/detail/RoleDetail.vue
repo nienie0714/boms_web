@@ -24,6 +24,8 @@ export default {
         detailColumn: [
           [
             {key: 'name', label:'角色名称', span: '6'},
+          ],
+          [
             {key: 'description', label:'角色描述', span: '18'}
           ],
           [
@@ -33,12 +35,12 @@ export default {
             {key: 'updateby', label:'修改人', span: '6'}
           ],
           [
-            {key: 'hasRoleTree', label:'权限配置', span: '24', type: 'tree'}
+            {key: 'hasRoleTree', label:'权限', span: '24', type: 'tree'}
           ]
         ],
         column: [
           {key: 'roleId',  label: 'id', width: 2, isHidden: true},
-          {key: 'name',  label: '角色名称', type: 'input', maxlength: 20},
+          {key: 'name',  label: '角色名称', type: 'input', maxlength: 10},
           {key: 'description', label: '角色描述', type: 'textarea', maxlength: 100, placeholder: '在此输入描述信息', rows: 2},
           {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
           {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
@@ -60,7 +62,7 @@ export default {
   },
   methods: {
     changeData () {
-      this.form.data = this.data
+      this.$set(this.form,'data',this.data);
     }
   },
   watch: {
@@ -73,17 +75,28 @@ export default {
     visible: {
       handler (visible) {
         if (visible) {
+          this.form.column = [
+          {key: 'roleId',  label: 'id', width: 2, isHidden: true},
+          {key: 'name',  label: '角色名称', type: 'input', maxlength: 10},
+          {key: 'description', label: '角色描述', type: 'textarea', maxlength: 100, placeholder: '在此输入描述信息', rows: 2},
+          {key: 'createtime',  label: '创建时间', type: 'input', disabled: true, isHidden: true},
+          {key: 'createby',  label: '创建人', type: 'input', disabled: true, isHidden: true},
+          {key: 'updatetime',  label: '修改时间', type: 'input', disabled: true, isHidden: true},
+          {key: 'updateby',  label: '修改人', type: 'input', disabled: true, isHidden: true},
+          {key: 'hasRoleList', label: '权限配置', type: 'tree', saveKey: 'resourceIds', itemValue: 'id', itemLabel: 'text', itemChild: 'children', url: '/sys/sysRole/resourceTree', urlType: 'get'}
+        ];
         }
       }
     },
     type: {
       handler (type) {
         this.form.column.forEach((item, index) => {
+          this.$set(item, 'disabled', false)
           if (item.key == 'createtime' || item.key == 'createby' || item.key == 'updatetime' || item.key == 'updateby') {
             if (type == 'detail') {
               item.isHidden = false
             } else if (type == 'update' || type == 'insert') {
-              item.isHidden = true
+              item.isHidden = true;
             }
           }
         })

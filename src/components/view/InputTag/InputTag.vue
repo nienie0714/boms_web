@@ -4,19 +4,27 @@
     <div class="value">
       <inputs v-if="type == 'input'" :type="type" v-model="currentValue"
       :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled"
-      :maxlength="maxlength" :minlength="minlength"
+      :maxlength="maxlength" :minlength="minlength" :width="width"
       @change="change($event)" @enter="enter($event)"></inputs>
-      <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></tab-button>
-      <el-select v-else-if="type == 'select'" v-model="currentValue" :disabled="disabled" :multiple="multiple" :collapse-tags="multipleShow" :filterable="filterable" :clearable="clearable" @change="change($event)">
+      <tab-button v-else-if="type == 'tab'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @click="change($event)"></tab-button>
+      <el-select v-else-if="type == 'select'" v-model="currentValue" :disabled="disabled" :multiple="multiple" :multiple-limit="multipleLimit" :collapse-tags="multipleShow" :filterable="filterable" :clearable="clearable" @change="change($event)">
         <el-option v-for="(item, index) in options" :value="id ? item[id] : item" :key="index" :label="label ? item[label] : (id ? item[id] : item)"> </el-option>
       </el-select>
-      <date-pickers v-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
-      <el-date-picker v-if="type == 'elDateRange'" v-model="currentValue" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat">
+      <date-pickers v-else-if="type == 'datepicker'" :type="datetype" v-model="currentValue" :defaultVal="defaultVal" :placeholder="placeholder" :disabled="disabled" :max="max" :min="min" @change="change($event)"></date-pickers>
+      <el-time-picker v-else-if="type == 'elTime'" v-model="currentValue" format="HH:mm" value-format="HH:mm" @change="change($event)" :clearable="clearable" :default-value="defaultValue"
+        :picker-options="pickerOptions"
+        placeholder="选择时间"></el-time-picker>
+      <el-time-picker v-else-if="type == 'elTimeRange'" is-range v-model="currentValue" format="HH:mm" value-format="HH:mm" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围" @change="change($event)" :default-value="defaultValue">
+    </el-time-picker>
+      <el-date-picker v-else-if="type == 'elDate'" popper-class="modifyPicker" :type="datetype" :picker-options="pickerOptions" v-model="currentValue" placeholder="选择日期" :format="format" :value-format="valueFormat" :clearable="clearable" @change="change($event)" :default-value="defaultVal" ></el-date-picker>
+      <el-date-picker v-else-if="type == 'elDateTimeRange'" v-model="currentValue" :type="datetype" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat" :clearable="clearable" @change="change($event)" :default-value="defaultVal">
       </el-date-picker>
-      <el-input-number v-if="type == 'number'" v-model.trim.lazy="currentValue" controls-position="right" @change="change($event)" :min="minNumber" :max="maxNumber"></el-input-number>
+      <el-date-picker v-else-if="type == 'elDateRange'" v-model="currentValue" :type="datetype" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :format="format" :value-format="valueFormat" :clearable="clearable" @change="change($event)" :default-value="defaultVal">
+      </el-date-picker>
+      <el-input-number v-else-if="type == 'number'" v-model.trim.lazy="currentValue" controls-position="right" @change="change($event)" :min="minNumber" :max="maxNumber"></el-input-number>
       <!-- <selects v-else-if="type == 'selectPg'" v-model="currentValue" :options="options" :id="id" :label="label" :require="required" :defaultVal="defaultVal" @change="change($event)"></selects> -->
       <!-- <input-list v-else-if="type == 'inputlist'" v-model="currentValue" :options="options" :id="id" :label="label" :defaultVal="defaultVal" :placeholder="placeholder" @change="change($event)"></input-list> -->
-      <!-- <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more> -->
+      <input-list-more v-else-if="type == 'inputlistmore'" v-model="currentValue" :id="id" :label="label" :options="options" :disabled="disabled" @change="change($event)"></input-list-more>
       <!-- <Date-range-picker v-if="type == 'error'" v-model="currentValue[key]" :currentValue="currentValue" :dateRange="item"></Date-range-picker> -->
     </div>
     <div v-if="append" class="append">{{append}}</div>
@@ -34,7 +42,8 @@ import InputListMore from '@view/InputListMore/InputListMore'
 export default {
   components: {
     Inputs,
-    TabButton
+    TabButton,
+    InputListMore
   },
   props: {
     width: {
@@ -80,6 +89,11 @@ export default {
       type: Boolean,
       default: true
     },
+    // 多选限制选项
+    multipleLimit: {
+      type: Number,
+      default: 0
+    },
     id: {
       type: String,
       default: ''
@@ -93,8 +107,7 @@ export default {
       default: null
     },
     defaultVal: {
-      type: [String, Number, Object],
-      default: ''
+      type: [String, Number, Object, Array],
     },
     disabled: {
       type: Boolean,
@@ -115,7 +128,7 @@ export default {
     minlength: {
       type: Number,
       default: null
-    },    
+    },
     max: {
       type: String,
       default: null
@@ -146,6 +159,15 @@ export default {
       type: String,
       default: 'yyyy-MM-dd HH:mm'
     },
+    defaultValue: {
+      type: String,
+    },
+    pickerOptions: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   model: {
     prop: 'value',
@@ -157,8 +179,14 @@ export default {
   },
   methods: {
     change (val) {
-      this.currentValue = val
-      this.$emit('change', val)
+      let tempVal = "" //增加变量过渡，直接赋值计算属性不生效
+      if(!this.clearable && !val && (this.type == 'datepicker' || this.type == 'elDate' || this.type == 'elDateTimeRange' || this.type == 'elDateRange')) {
+        tempVal = this.defaultVal ? this.defaultVal : val
+      } else {
+        tempVal = val
+      }
+      
+      this.$emit('change', tempVal)
     },
     enter (val) {
       this.$emit('enter', val)
@@ -204,7 +232,7 @@ export default {
       >input {
         vertical-align: 1px;
         border: none;
-        border-radius: 0;
+        // border-radius: 0;
 
         &:focus, &:hover {
           border: none;
@@ -226,7 +254,7 @@ export default {
     }
 
     >.selects {
-      
+
       >select {
         vertical-align: 1px;
         border: none;
@@ -295,19 +323,29 @@ export default {
 
     >.tab-button {
       border: none;
-      border-radius: 0;
+      // border-radius: 0;
       margin: 0 auto;
     }
 
-    .el-date-editor--datetimerange.el-input, .el-date-editor--datetimerange.el-input__inner {
+    .el-date-editor--datetimerange.el-input, .el-date-editor--datetimerange.el-input__inner,
+    .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner {
       width: 304px;
+    }
+    .el-date-editor--date.el-input, .el-date-editor--date.el-input__inner {
+      width: 132px;
+    }
+    .el-date-editor--timerange {
+      width: 200px;
+      .el-range-separator {
+        width: 11%;
+      }
     }
     .el-input__inner {
       height: 38px;
       line-height: 38px;
       border: none;
     }
-    
+
     .el-input-number {
       width: 90px!important;
     }
@@ -317,6 +355,11 @@ export default {
     }
     .el-input-number__decrease, .el-input-number__increase {
       width: 20px;
+    }
+
+    .modifyPicker {
+      position: absolute;
+      z-index: 999;
     }
   }
   &:focus-within, &:hover {
